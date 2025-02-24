@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiDAR Visualization</title>
+    <style>
+        canvas {
+            background-color: black;
+            display: block;
+            margin: auto;
+        }
+        textarea {
+            display: block;
+            width: 80%;
+            height: 100px;
+            margin: 10px auto;
+        }
+        button {
+            display: block;
+            margin: auto;
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+<textarea id="dataInput" placeholder='Paste JSON LiDAR data here...'></textarea>
+<p style="text-align: center">Example: [{"angle": 0, "distance": 100}, {"angle": 45, "distance": 150}]</p>
+<button onclick="drawLidarData()">Visualize Data</button>
+<canvas id="lidarCanvas"></canvas>
+
+<script>
+    const canvas = document.getElementById("lidarCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // Set canvas size
+    canvas.width = 600;
+    canvas.height = 600;
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const scale = 0.1; // Scale factor for distance
+
+    function drawLidarData() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+
+        // Draw LiDAR sensor at the center
+        ctx.fillStyle = "red";
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Get input data and parse it as JSON
+        const inputData = document.getElementById("dataInput").value;
+        let data;
+        try {
+            data = JSON.parse(inputData);
+        } catch (e) {
+            console.error("Invalid JSON data", e);
+            return;
+        }
+
+        // Iterate over each data point
+        data.forEach(point => {
+            const angleDeg = parseFloat(point.angle);
+            const distanceCm = parseFloat(point.distance);
+
+            if (!isNaN(angleDeg) && !isNaN(distanceCm)) {
+                const angleRad = (angleDeg * Math.PI) / 180; // Convert to radians
+
+                // Convert polar to Cartesian coordinates
+                const x = centerX + distanceCm * scale * Math.cos(angleRad);
+                const y = centerY - distanceCm * scale * Math.sin(angleRad);
+
+                // Draw point
+                ctx.fillStyle = "lime";
+                ctx.beginPath();
+                ctx.arc(x, y, 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        });
+    }
+</script>
+</body>
+</html>
