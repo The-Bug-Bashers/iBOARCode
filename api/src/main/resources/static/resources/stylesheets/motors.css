@@ -1,10 +1,15 @@
 #motors {
     position: relative;
+    margin-bottom: 1em;
     width: 40vmin;
     height: 33vmin;
     text-align: center;
 }
 
-#motorsImage {
-    width: 30vmin;
+#motorCanvas {
+    margin: 1vh auto 0.5em auto;
+    right: 1em;
+    width: calc(32vh - 2em);
+    height: calc(32vh - 2em);
+    background-color: black;
 }

@@ -6,9 +6,9 @@
 }
 
 #consoleOutput {
-    height: 29vh;
+    height: 14vh;
     overflow-y: auto;
-    font-size: 2vmin;
+    font-size: 0.6em;
 }
 
 #consoleTextField {

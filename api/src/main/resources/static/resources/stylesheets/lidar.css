@@ -2,12 +2,15 @@
     position: relative;
     width: 71vmin;
     text-align: center;
+    height: calc(89vh - 2em);
 }
 
 #lidarCanvas {
-    margin-top: 1em;
+    margin-top: 3vh;
+    margin-left: auto;
+    margin-right: auto;
     right: 1em;
-    width: 71vmin;
-    height: 71vmin;
+    width: calc(89vh - 2em - 12vh);
+    height: calc(89vh - 2em - 12vh);
     background-color: black;
 }

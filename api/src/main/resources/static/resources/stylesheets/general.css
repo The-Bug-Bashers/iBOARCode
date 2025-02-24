@@ -20,7 +20,6 @@ body {
 #header {
     display: flex;
     align-items: center;
-    margin-top: 2vmin;
     margin-left: 2vmin;
 
     #headerLogoText {
@@ -35,20 +34,20 @@ body {
     #headerText {
         margin: 0 2vmin 0 auto;
         text-align: right;
+        font-size: 0.9em;
     }
 }
 
 #logo {
-    width: 10vmin;
-    height: 10vmin;
+    width: 8vh;
+    height: 8vh;
+    margin: 0.5em 0.5em 0.5em 0;
 }
 
 #content {
     position: fixed;
-    top: 14vh;
-    bottom: 2vmin;
-    left: 2vmin;
-    right: 2vmin;
+    width: calc(100% - 1em);
+    padding: 0 0.5em 0 0.5em;
     display: flex;
     flex-direction: row;
     justify-content: space-between;

@@ -1,6 +1,7 @@
 #buttons {
     position: relative;
     width: 30vmin;
+    calc(89vh - 2em);
 
     button {
         font-size: 0.7em;
@@ -29,9 +30,9 @@
     border-collapse: collapse;
 
     p {
-        margin: 0; /* Remove default margins */
+        margin: 0;
         display: flex;
-        align-items: center; /* Center align text vertically */
+        align-items: center;
     }
 
     .directionButtonPlusLabel {
@@ -101,7 +102,7 @@
     z-index: 1;
     font-weight: 600;
     letter-spacing: -1px;
-    font-size: 14px;
+    font-size: 0.6em;
 }
 
 .selection {
