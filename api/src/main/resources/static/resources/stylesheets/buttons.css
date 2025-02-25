@@ -1,6 +1,6 @@
 #buttons {
     position: relative;
-    width: 30vmin;
+    width: 25vw;
     calc(89vh - 2em);
 
     button {
@@ -49,7 +49,6 @@
     align-items: center;
 
     height: 2vh;
-    width: calc(30vmin - 1em);
     border: 4px solid #8e8989;
     border-radius: 8px;
     padding: 1vmin;
