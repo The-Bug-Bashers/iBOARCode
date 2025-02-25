@@ -48,28 +48,28 @@ function getRemoteControlContent() {
                     <input class="custom-checkbox" checked="" type="checkbox" id="forwardRemoteControlCheckbox">
                     <span class="checkmark"></span>
                 </label>
-                <p>Forward</p>
+                <p onclick="document.getElementById('forwardRemoteControlCheckbox').click()">Forward</p>
             </div>
             <div class="directionButtonPlusLabel">
                 <label class="checkbox-container">
                     <input class="custom-checkbox" checked="" type="checkbox" id="rightRemoteControlCheckbox">
                     <span class="checkmark"></span>
                 </label>
-                <p>Right</p>
+                <p onclick="document.getElementById('rightRemoteControlCheckbox').click()">Right</p>
             </div>
             <div class="directionButtonPlusLabel">
                 <label class="checkbox-container">
                     <input class="custom-checkbox" checked="" type="checkbox" id="backwardRemoteControlCheckbox">
                     <span class="checkmark"></span>
                 </label>
-                <p>Backward</p>
+                <p onclick="document.getElementById('backwardRemoteControlCheckbox').click()">Backward</p>
             </div>
             <div class="directionButtonPlusLabel">
                 <label class="checkbox-container">
                     <input class="custom-checkbox" checked="" type="checkbox" id="leftRemoteControlCheckbox">
                     <span class="checkmark"></span>
                 </label>
-                <p>Left</p>
+                <p onclick="document.getElementById('leftRemoteControlCheckbox').click()">Left</p>
             </div>
         </div>
         <h2>Turn</h2>
@@ -109,14 +109,14 @@ function getMoveMotorContent() {
                     <input class="custom-checkbox" checked="" type="checkbox" id="forwardMoveMotorCheckbox">
                     <span class="checkmark"></span>
                 </label>
-                <p>Forward</p>
+                <p onclick="document.getElementById('forwardMoveMotorCheckbox').click()">Forward</p>
             </div>
             <div class="directionButtonPlusLabel">
                 <label class="checkbox-container">
                     <input class="custom-checkbox" checked="" type="checkbox" id="backwardMoveMotorCheckbox">
                     <span class="checkmark"></span>
                 </label>
-                <p>Backward</p>
+                <p onclick="document.getElementById('backwardMoveMotorCheckbox').click()">Backward</p>
             </div>
         </div>
     `;
