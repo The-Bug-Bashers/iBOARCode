@@ -56,7 +56,7 @@
     #speedRemoteControlInput, #speedMoveMotorInput {
         margin-left: 1vmin;
         background-color: transparent;
-        width: calc(100% - 5vmin - 2em);
+        width: 100%;
         border: none;
         outline: none;
         color: white;

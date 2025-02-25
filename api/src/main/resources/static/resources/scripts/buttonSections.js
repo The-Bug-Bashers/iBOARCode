@@ -7,12 +7,14 @@ function showButtons(mode) {
             document.getElementById("rightRemoteControlCheckbox").checked = false;
             document.getElementById("backwardRemoteControlCheckbox").checked = false;
             document.getElementById("leftRemoteControlCheckbox").checked = false;
+            document.getElementById("speedRemoteControlInput").value = 50;
             break;
         case "Move-Motor":
             buttonsContainer.innerHTML = getMoveMotorContent();
             document.getElementById("value-1").checked = true;
             document.getElementById("forwardMoveMotorCheckbox").checked = false;
             document.getElementById("backwardMoveMotorCheckbox").checked = false;
+            document.getElementById("speedMoveMotorInput").value = 50;
             break;
         default:
             buttonsContainer.innerHTML = "";
@@ -74,10 +76,9 @@ function getRemoteControlContent() {
         <button id="turnLeftButton" class="button">left</button>
         <button id="turnRightButton" class="button">right</button>
         <h2>Speed</h2>
-        <form id="speedRemoteControlForm">
+        <div id="speedRemoteControlForm">
             <input type="number" min="0" max="100" id="speedRemoteControlInput" placeholder="Enter speed here (%)" autocomplete="off">
-            <button id="speedRemoteControlSubmit" class="button">Send</button>
-        </form>
+        </div>
     `;
 }
 
@@ -101,7 +102,6 @@ function getMoveMotorContent() {
         <h2>Normal-move</h2>
         <form id="speedMoveMotorForm">
             <input type="number" min="0" max="100" id="speedMoveMotorInput" placeholder="Enter speed here (%)" autocomplete="off">
-            <button id="speedMoveMotorSubmit" class="button">Send</button>
         </form>
         <div id="directionMoveMotorButtons">
             <div class="directionButtonPlusLabel">
