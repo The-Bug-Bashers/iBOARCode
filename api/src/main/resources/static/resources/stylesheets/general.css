@@ -53,7 +53,7 @@ body {
     justify-content: space-between;
 }
 
-#rightColumn {
+#middleColumn {
     position: relative;
     width: fit-content;
     display: flex;

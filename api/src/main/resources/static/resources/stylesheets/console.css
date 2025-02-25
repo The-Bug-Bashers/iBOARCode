@@ -1,8 +1,8 @@
 #console {
     position: relative;
     width: 40vmin;
-    height: 41vmin;
-    margin-top: auto;
+    height: 41vh;
+    margin-top: 2.8vh;
 }
 
 #consoleOutput {
@@ -35,7 +35,6 @@
     #consoleSubmit {
         position: absolute;
         right: 1em;
-        width: 5vmin;
         font-size: 0.5em;
     }
 }

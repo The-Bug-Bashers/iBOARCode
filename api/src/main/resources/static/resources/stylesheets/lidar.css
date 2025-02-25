@@ -2,7 +2,6 @@
     position: relative;
     width: 71vmin;
     text-align: center;
-    height: calc(89vh - 2em);
 }
 
 #lidarCanvas {
