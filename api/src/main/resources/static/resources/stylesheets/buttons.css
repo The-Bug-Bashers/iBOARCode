@@ -1,6 +1,6 @@
 #buttons {
     position: relative;
-    width: 25vw;
+    width: 20vw;
     calc(89vh - 2em);
 
     button {
