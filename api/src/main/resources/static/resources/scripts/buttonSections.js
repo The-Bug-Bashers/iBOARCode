@@ -1,3 +1,21 @@
+document.getElementById("buttonsSelect").value = "Please select";
+document.getElementById("buttonsSelect").addEventListener("change", (event) => {
+    const mode = event.target.value;
+    sendMessage(`{"command": "changeMode", "mode": "${mode}"}`);
+    showButtons(mode);
+
+    const placeholder = document.getElementById("placeholder");
+    if (placeholder) {
+        placeholder.remove();
+    }
+});
+
+document.addEventListener("keydown", (event) => {
+    if (event.key === "w" || event.key === "W") {
+        console.log("The 'w' key was pressed.");
+    }
+});
+
 function showButtons(mode) {
     const buttonsContainer = document.getElementById("buttonsContainer");
     switch (mode) {
@@ -20,24 +38,6 @@ function showButtons(mode) {
             buttonsContainer.innerHTML = "";
     }
 }
-
-document.getElementById("buttonsSelect").value = "Please select";
-document.getElementById("buttonsSelect").addEventListener("change", (event) => {
-    const mode = event.target.value;
-    sendMessage(`{"command": "changeMode", "mode": "${mode}"}`);
-    showButtons(mode);
-
-    const placeholder = document.getElementById("placeholder");
-    if (placeholder) {
-        placeholder.remove();
-    }
-});
-
-document.addEventListener("keydown", (event) => {
-    if (event.key === "w" || event.key === "W") {
-        console.log("The 'w' key was pressed.");
-    }
-});
 
 function getRemoteControlContent() {
     return `
