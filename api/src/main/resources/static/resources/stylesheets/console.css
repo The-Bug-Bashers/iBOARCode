@@ -6,7 +6,7 @@
 }
 
 #consoleOutput {
-    height: 14vh;
+    height: calc(41vh - 35%);
     overflow-y: auto;
     font-size: 0.6em;
 }
