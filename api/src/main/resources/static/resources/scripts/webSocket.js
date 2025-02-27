@@ -85,7 +85,11 @@ function sendMessage(message) {
     if (checkIfCommand(message)) {
         executeCommand(message);
     } else {
-        socket.send(message);
+        try {
+            socket.send(message);
+        } catch (error) {
+            showMessage(`An error occurred: ${error}`, true, true, false);
+        }
     }
 }
 
