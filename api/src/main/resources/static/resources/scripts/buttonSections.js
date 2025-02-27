@@ -8,6 +8,8 @@ document.getElementById("buttonsSelect").addEventListener("change", (event) => {
     if (placeholder) {
         placeholder.remove();
     }
+
+    addRemoteControlEventListeners();
 });
 
 document.addEventListener("keydown", (event) => {
@@ -82,6 +84,54 @@ function getRemoteControlContent() {
             <input type="number" min="0" max="100" id="speedRemoteControlInput" class="numberRange" placeholder="Enter speed here (%)" autocomplete="off">
         </div>
     `;
+}
+
+function addRemoteControlEventListeners() {
+
+    // Event listener for the direction buttons
+    document.querySelectorAll('#directionRemoteControlButtons input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', (event) => {
+            const speed = document.getElementById("speedRemoteControlInput").value;
+            const forward = document.getElementById("forwardRemoteControlCheckbox");
+            const right = document.getElementById("rightRemoteControlCheckbox");
+            const backward = document.getElementById("backwardRemoteControlCheckbox");
+            const left = document.getElementById("leftRemoteControlCheckbox");
+
+            if (event.target.id === "forwardRemoteControlCheckbox" && backward.checked) {
+                backward.checked = false;
+            } else if (event.target.id === "backwardRemoteControlCheckbox" && forward.checked) {
+                forward.checked = false;
+            } else if (event.target.id === "rightRemoteControlCheckbox" && left.checked) {
+                left.checked = false;
+            } else if (event.target.id === "leftRemoteControlCheckbox" && right.checked) {
+                right.checked = false;
+            }
+
+            let angleSum = 0;
+            let count = 0;
+            if (forward.checked) {
+                angleSum += 0;
+                count++;
+            } else if (backward.checked) {
+                angleSum += 180;
+                count++;
+            }
+            if (right.checked) {
+                angleSum += 90;
+                count++;
+            } else if (left.checked) {
+                angleSum += 270;
+                count++;
+            }
+            const angle = angleSum / count;
+
+            if (count !== 0) {
+                sendMessage(`{"command": "drive", "angle": ${angle}, "speed": ${speed}}`);
+            } else {
+                sendMessage(`{"command": "drive", "angle": 0, "speed": 0}`);
+            }
+        });
+    });
 }
 
 function getMoveMotorContent() {
