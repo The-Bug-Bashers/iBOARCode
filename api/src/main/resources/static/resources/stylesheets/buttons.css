@@ -25,7 +25,7 @@
     width: 100%;
 }
 
-#directionRemoteControlButtons, #directionMoveMotorButtons {
+.buttonPlusLabel {
     width: 100%;
     border-collapse: collapse;
 
@@ -54,19 +54,19 @@
     border-radius: 8px;
     padding: 1vmin;
 
-    #speedRemoteControlInput, #speedMoveMotorInput {
-        margin-left: 1vmin;
-        background-color: transparent;
-        width: 100%;
-        border: none;
-        outline: none;
-        color: white;
-    }
-
     #speedRemoteControlSubmit, #speedMoveMotorSubmit {
         font-size: 0.5em;
         margin-left: auto;
     }
+}
+
+.numberRange {
+    margin-left: 1vmin;
+    background-color: transparent;
+    width: 100%;
+    border: none;
+    outline: none;
+    color: white;
 }
 
 

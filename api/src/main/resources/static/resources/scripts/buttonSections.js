@@ -32,6 +32,8 @@ function showButtons(mode) {
             document.getElementById("value-1").checked = true;
             document.getElementById("forwardMoveMotorCheckbox").checked = false;
             document.getElementById("backwardMoveMotorCheckbox").checked = false;
+            document.getElementById("highMoveMotorInput").value = 0;
+            document.getElementById("lowMoveMotorInput").value = 10;
             document.getElementById("speedMoveMotorInput").value = 50;
             break;
         default:
@@ -42,7 +44,7 @@ function showButtons(mode) {
 function getRemoteControlContent() {
     return `
         <h2>Directions</h2>
-        <div id="directionRemoteControlButtons">
+        <div id="directionRemoteControlButtons" class="buttonPlusLabel">
             <div class="directionButtonPlusLabel">
                 <label class="checkbox-container">
                     <input class="custom-checkbox" checked="" type="checkbox" id="forwardRemoteControlCheckbox">
@@ -77,7 +79,7 @@ function getRemoteControlContent() {
         <button id="turnRightButton" class="button">right</button>
         <h2>Speed</h2>
         <div id="speedRemoteControlForm">
-            <input type="number" min="0" max="100" id="speedRemoteControlInput" placeholder="Enter speed here (%)" autocomplete="off">
+            <input type="number" min="0" max="100" id="speedRemoteControlInput" class="numberRange" placeholder="Enter speed here (%)" autocomplete="off">
         </div>
     `;
 }
@@ -101,9 +103,9 @@ function getMoveMotorContent() {
         </form>
         <h2>Normal-move</h2>
         <form id="speedMoveMotorForm">
-            <input type="number" min="0" max="100" id="speedMoveMotorInput" placeholder="Enter speed here (%)" autocomplete="off">
+            <input type="number" min="0" max="100" id="speedMoveMotorInput" class="numberRange" placeholder="Enter speed here (%)" autocomplete="off">
         </form>
-        <div id="directionMoveMotorButtons">
+        <div id="directionMoveMotorButtons" class="buttonPlusLabel">
             <div class="directionButtonPlusLabel">
                 <label class="checkbox-container">
                     <input class="custom-checkbox" checked="" type="checkbox" id="forwardMoveMotorCheckbox">
@@ -117,6 +119,40 @@ function getMoveMotorContent() {
                     <span class="checkmark"></span>
                 </label>
                 <p onclick="document.getElementById('backwardMoveMotorCheckbox').click()">Backward</p>
+            </div>
+        </div>
+        <h2>Pattern-move</h2>
+        <input type="number" min="-100" max="100" id="highMoveMotorInput" class="numberRange" placeholder="Enter speed here (%)" autocomplete="off">
+        <input type="number" min="-100" max="100" id="lowMoveMotorInput" class="numberRange" placeholder="Enter speed here (%)" autocomplete="off">
+        <h3>Patterns</h3>
+        <div class="buttonPlusLabel">
+            <div class="directionButtonPlusLabel">
+                <label class="checkbox-container">
+                    <input class="custom-checkbox" checked="" type="checkbox" id="SineMoveMotorCheckbox">
+                    <span class="checkmark"></span>
+                </label>
+                <p onclick="document.getElementById('SineMoveMotorCheckbox').click()">Sine</p>
+            </div>
+            <div class="directionButtonPlusLabel">
+                <label class="checkbox-container">
+                    <input class="custom-checkbox" checked="" type="checkbox" id="TriangleMoveMotorCheckbox">
+                    <span class="checkmark"></span>
+                </label>
+                <p onclick="document.getElementById('TriangleMoveMotorCheckbox').click()">Triangle</p>
+            </div>
+             <div class="directionButtonPlusLabel">
+                <label class="checkbox-container">
+                    <input class="custom-checkbox" checked="" type="checkbox" id="SquareMoveMotorCheckbox">
+                    <span class="checkmark"></span>
+                </label>
+                <p onclick="document.getElementById('SquareMoveMotorCheckbox').click()">Square</p>
+            </div>
+             <div class="directionButtonPlusLabel">
+                <label class="checkbox-container">
+                    <input class="custom-checkbox" checked="" type="checkbox" id="SawtoothMoveMotorCheckbox">
+                    <span class="checkmark"></span>
+                </label>
+                <p onclick="document.getElementById('SawtoothMoveMotorCheckbox').click()">Sawtooth</p>
             </div>
         </div>
     `;

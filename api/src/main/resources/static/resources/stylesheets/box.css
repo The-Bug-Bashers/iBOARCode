@@ -29,6 +29,10 @@
     margin: 10px 0;
 }
 
+.box h3 {
+    margin: 10px 0 0 0;
+}
+
 .box-row {
     padding: 0.7em;
     border-bottom: 3px solid #ffffff;
