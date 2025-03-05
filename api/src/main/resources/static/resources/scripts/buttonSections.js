@@ -7,14 +7,8 @@ document.getElementById("buttonsSelect").addEventListener("change", (event) => {
     const placeholder = document.getElementById("placeholder");
     if (placeholder) placeholder.remove();
 
-    addRemoteControlEventListeners();
 });
 
-document.addEventListener("keydown", (event) => {
-    if (event.key === "w" || event.key === "W") {
-        console.log("The 'w' key was pressed.");
-    }
-});
 
 function showButtons(mode) {
     const buttonsContainer = document.getElementById("buttonsContainer");
@@ -26,6 +20,7 @@ function showButtons(mode) {
             document.getElementById("backwardRemoteControlCheckbox").checked = false;
             document.getElementById("leftRemoteControlCheckbox").checked = false;
             document.getElementById("speedRemoteControlInput").value = 50;
+            addRemoteControlEventListeners();
             break;
         case "Move-Motor":
             buttonsContainer.innerHTML = getMoveMotorContent();
@@ -86,7 +81,7 @@ function getRemoteControlContent() {
 
 function addRemoteControlEventListeners() {
     
-    // Event listener for the direction buttons
+    // Event listener for the direction switches
     document.querySelectorAll('#directionRemoteControlButtons input[type="checkbox"]').forEach(checkbox => {
         checkbox.addEventListener('change', (event) => {
             const speed = document.getElementById("speedRemoteControlInput").value;
@@ -131,6 +126,7 @@ function addRemoteControlEventListeners() {
         });
     });
 
+    // Event listeners for the turning buttons
     document.getElementById("turnLeftButton").addEventListener("mousedown", () => {
         sendMessage(`{"command": "turn", "direction": "left", "speed": ${document.getElementById("speedRemoteControlInput").value}}`);
     });
@@ -144,6 +140,66 @@ function addRemoteControlEventListeners() {
     document.getElementById("turnRightButton").addEventListener("mouseup", () => {
         sendMessage(`{"command": "turn", "direction": "right", "speed": 0}`);
     });
+
+    // Event listeners for keys getting pressed and released
+    const keyState = {};
+    document.addEventListener("keydown", (event) => {
+        if (!keyState[event.key]) {
+            keyState[event.key] = true;
+            handleKeyDown(event.key);
+        }
+    });
+    document.addEventListener("keyup", (event) => {
+        if (keyState[event.key]) {
+            keyState[event.key] = false;
+            handleKeyUp(event.key);
+        }
+    });
+
+    function handleKeyDown(key) {
+        switch (key.toLowerCase()) {
+            case "q":
+                document.getElementById("turnLeftButton").dispatchEvent(new Event('mousedown'));
+                break;
+            case "e":
+                document.getElementById("turnRightButton").dispatchEvent(new Event('mousedown'));
+                break;
+            case "w":
+                if (!document.getElementById("forwardRemoteControlCheckbox").checked) document.getElementById("forwardRemoteControlCheckbox").click()
+                break;
+            case "d":
+                if (!document.getElementById("rightRemoteControlCheckbox").checked) document.getElementById("rightRemoteControlCheckbox").click()
+                break;
+            case "s":
+                if (!document.getElementById("backwardRemoteControlCheckbox").checked) document.getElementById("backwardRemoteControlCheckbox").click()
+                break;
+            case "a":
+                if (!document.getElementById("leftRemoteControlCheckbox").checked) document.getElementById("leftRemoteControlCheckbox").click()
+                break;
+        }
+    }
+    function handleKeyUp(key) {
+        switch (key.toLowerCase()) {
+            case "q":
+                document.getElementById("turnLeftButton").dispatchEvent(new Event('mouseup'));
+                break;
+            case "e":
+                document.getElementById("turnRightButton").dispatchEvent(new Event('mouseup'));
+                break;
+            case "w":
+                if (document.getElementById("forwardRemoteControlCheckbox").checked) document.getElementById("forwardRemoteControlCheckbox").click()
+                break;
+            case "d":
+                if (document.getElementById("rightRemoteControlCheckbox").checked) document.getElementById("rightRemoteControlCheckbox").click()
+                break;
+            case "s":
+                if (document.getElementById("backwardRemoteControlCheckbox").checked) document.getElementById("backwardRemoteControlCheckbox").click()
+                break;
+            case "a":
+                if (document.getElementById("leftRemoteControlCheckbox").checked) document.getElementById("leftRemoteControlCheckbox").click()
+                break;
+        }
+    }
 }
 
 function getMoveMotorContent() {
