@@ -224,9 +224,9 @@ function getMoveMotorContent() {
             <span class="selection"></span>
         </form>
         <h2>Normal-move</h2>
-        <form id="speedMoveMotorForm">
+        <div id="speedMoveMotorForm">
             <input type="number" min="0" max="100" id="speedMoveMotorInput" class="numberRange" placeholder="Enter speed here (%)" autocomplete="off">
-        </form>
+        </div>
         <div id="directionMoveMotorButtons" class="buttonPlusLabel">
             <div class="directionButtonPlusLabel">
                 <label class="checkbox-container">
