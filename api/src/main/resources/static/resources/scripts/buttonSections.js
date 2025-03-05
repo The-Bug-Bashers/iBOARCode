@@ -5,9 +5,7 @@ document.getElementById("buttonsSelect").addEventListener("change", (event) => {
     showButtons(mode);
 
     const placeholder = document.getElementById("placeholder");
-    if (placeholder) {
-        placeholder.remove();
-    }
+    if (placeholder) placeholder.remove();
 
     addRemoteControlEventListeners();
 });
@@ -87,7 +85,7 @@ function getRemoteControlContent() {
 }
 
 function addRemoteControlEventListeners() {
-
+    
     // Event listener for the direction buttons
     document.querySelectorAll('#directionRemoteControlButtons input[type="checkbox"]').forEach(checkbox => {
         checkbox.addEventListener('change', (event) => {
@@ -131,6 +129,20 @@ function addRemoteControlEventListeners() {
                 sendMessage(`{"command": "drive", "angle": 0, "speed": 0}`);
             }
         });
+    });
+
+    document.getElementById("turnLeftButton").addEventListener("mousedown", () => {
+        sendMessage(`{"command": "turn", "direction": "left", "speed": ${document.getElementById("speedRemoteControlInput").value}}`);
+    });
+    document.getElementById("turnLeftButton").addEventListener("mouseup", () => {
+        sendMessage(`{"command": "turn", "direction": "left", "speed": 0}`);
+    });
+
+    document.getElementById("turnRightButton").addEventListener("mousedown", () => {
+        sendMessage(`{"command": "turn", "direction": "right", "speed": ${document.getElementById("speedRemoteControlInput").value}}`);
+    });
+    document.getElementById("turnRightButton").addEventListener("mouseup", () => {
+        sendMessage(`{"command": "turn", "direction": "right", "speed": 0}`);
     });
 }
 
