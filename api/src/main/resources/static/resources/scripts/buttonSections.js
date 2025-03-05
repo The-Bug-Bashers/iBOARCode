@@ -29,8 +29,12 @@ function showButtons(mode) {
             document.getElementById("value-1").checked = true;
             document.getElementById("forwardMoveMotorCheckbox").checked = false;
             document.getElementById("backwardMoveMotorCheckbox").checked = false;
-            document.getElementById("highMoveMotorInput").value = 0;
-            document.getElementById("lowMoveMotorInput").value = 10;
+            document.getElementById("SineMoveMotorCheckbox").checked = false;
+            document.getElementById("TriangleMoveMotorCheckbox").checked = false;
+            document.getElementById("SquareMoveMotorCheckbox").checked = false;
+            document.getElementById("SawtoothMoveMotorCheckbox").checked = false;
+            document.getElementById("highMoveMotorInput").value = 100;
+            document.getElementById("lowMoveMotorInput").value = 0;
             document.getElementById("speedMoveMotorInput").value = 50;
             break;
         default:
@@ -75,7 +79,7 @@ function getRemoteControlContent() {
         <button id="turnLeftButton" class="button">left</button>
         <button id="turnRightButton" class="button">right</button>
         <h2>Speed</h2>
-        <div id="speedRemoteControlForm">
+        <div id="speedRemoteControlForm" class="inputBorder">
             <input type="number" min="0" max="100" id="speedRemoteControlInput" class="numberRange" placeholder="Enter speed here (%)" autocomplete="off">
         </div>
     `;
@@ -224,7 +228,7 @@ function getMoveMotorContent() {
             <span class="selection"></span>
         </form>
         <h2>Normal-move</h2>
-        <div id="speedMoveMotorForm">
+        <div id="speedMoveMotorForm" class="inputBorder">
             <input type="number" min="0" max="100" id="speedMoveMotorInput" class="numberRange" placeholder="Enter speed here (%)" autocomplete="off">
         </div>
         <div id="directionMoveMotorButtons" class="buttonPlusLabel">
@@ -244,8 +248,12 @@ function getMoveMotorContent() {
             </div>
         </div>
         <h2>Pattern-move</h2>
-        <input type="number" min="-100" max="100" id="highMoveMotorInput" class="numberRange" placeholder="Enter speed here (%)" autocomplete="off">
-        <input type="number" min="-100" max="100" id="lowMoveMotorInput" class="numberRange" placeholder="Enter speed here (%)" autocomplete="off">
+        <div id="highMoveMotorForm" class="inputBorder">
+            <input type="number" min="-100" max="100" id="highMoveMotorInput" class="numberRange" placeholder="Enter speed here (%)" autocomplete="off">
+        </div>
+        <div id="lowMoveMotorForm" class="inputBorder">
+            <input type="number" min="-100" max="100" id="lowMoveMotorInput" class="numberRange" placeholder="Enter speed here (%)" autocomplete="off">
+        </div>
         <h3>Patterns</h3>
         <div class="buttonPlusLabel">
             <div class="directionButtonPlusLabel">
