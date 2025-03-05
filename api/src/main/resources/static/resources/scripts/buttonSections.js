@@ -17,25 +17,22 @@ function showButtons(mode) {
     switch (mode) {
         case "Remote-Control":
             buttonsContainer.innerHTML = getRemoteControlContent();
-            document.getElementById("forwardRemoteControlCheckbox").checked = false;
-            document.getElementById("rightRemoteControlCheckbox").checked = false;
-            document.getElementById("backwardRemoteControlCheckbox").checked = false;
-            document.getElementById("leftRemoteControlCheckbox").checked = false;
+            document.querySelectorAll('#buttonsContainer input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
             document.getElementById("speedRemoteControlInput").value = 50;
             addRemoteControlEventListeners();
             break;
         case "Move-Motor":
             buttonsContainer.innerHTML = getMoveMotorContent();
             document.getElementById("value-1").checked = true;
-            document.getElementById("forwardMoveMotorCheckbox").checked = false;
-            document.getElementById("backwardMoveMotorCheckbox").checked = false;
-            document.getElementById("SineMoveMotorCheckbox").checked = false;
-            document.getElementById("TriangleMoveMotorCheckbox").checked = false;
-            document.getElementById("SquareMoveMotorCheckbox").checked = false;
-            document.getElementById("SawtoothMoveMotorCheckbox").checked = false;
+            document.querySelectorAll('#buttonsContainer input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
             document.getElementById("highMoveMotorInput").value = 100;
             document.getElementById("lowMoveMotorInput").value = 0;
             document.getElementById("speedMoveMotorInput").value = 50;
+            addMoveMotorEventListeners();
             break;
         default:
             buttonsContainer.innerHTML = "";
@@ -163,6 +160,44 @@ function addRemoteControlEventListeners() {
     });
 }
 
+function addMoveMotorEventListeners() {
+    // Event listener for direction move motor buttons
+    document.querySelectorAll('#directionMoveMotorButtons input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', (event) => {
+            const forward = document.getElementById("forwardMoveMotorCheckbox");
+            const backward = document.getElementById("backwardMoveMotorCheckbox");
+
+            if (event.target.id === "forwardMoveMotorCheckbox" && backward.checked) {
+                backward.checked = false;
+            } else if (event.target.id === "backwardMoveMotorCheckbox" && forward.checked) {
+                forward.checked = false;
+            }
+
+            sendMoveMotorMessage();
+        });
+    });
+
+    // Event listener for move motor motor selector
+    document.getElementById("moveMotorMotorSelector").addEventListener("change", () => {
+        sendMoveMotorMessage();
+    });
+}
+
+function sendMoveMotorMessage() {
+    const speed = document.getElementById("speedMoveMotorInput").value;
+    const forward = document.getElementById("forwardMoveMotorCheckbox");
+    const backward = document.getElementById("backwardMoveMotorCheckbox");
+    const selectedMotor = parseInt(document.querySelector('input[name="value-radio"]:checked').value.split('-')[1], 10);
+
+    if (forward.checked) {
+        sendMessage(`{"command": "moveMotor", "motor": ${selectedMotor}, "speed": ${speed}}`);
+    } else if (backward.checked) {
+        sendMessage(`{"command": "moveMotor", "motor": ${selectedMotor}, "speed": -${speed}}`);
+    } else {
+        sendMessage(`{"command": "moveMotor", "motor": ${selectedMotor}, "speed": 0}`);
+    }
+}
+
 function handleKeyDown(key) {
     if (mode !== "Remote-Control") return;
     switch (key.toLowerCase()) {
@@ -212,7 +247,7 @@ function handleKeyUp(key) {
 
 function getMoveMotorContent() {
     return `
-        <form class="radio-input">
+        <form class="radio-input" id="moveMotorMotorSelector">
             <label>
                 <input type="radio" id="value-1" name="value-radio" value="value-1" />
                 <span>1</span>
