@@ -76,7 +76,7 @@ function getRemoteControlContent() {
         <button id="turnLeftButton" class="button">left</button>
         <button id="turnRightButton" class="button">right</button>
         <h2>Speed</h2>
-        <div id="speedRemoteControlForm" class="inputBorder">
+        <div class="inputBorder">
             <input type="number" min="0" max="100" id="speedRemoteControlInput" class="numberRange" placeholder="Enter speed here (%)" autocomplete="off">
         </div>
     `;
@@ -263,7 +263,7 @@ function getMoveMotorContent() {
             <span class="selection"></span>
         </form>
         <h2>Normal-move</h2>
-        <div id="speedMoveMotorForm" class="inputBorder">
+        <div class="inputBorder">
             <input type="number" min="0" max="100" id="speedMoveMotorInput" class="numberRange" placeholder="Enter speed here (%)" autocomplete="off">
         </div>
         <div id="directionMoveMotorButtons" class="buttonPlusLabel">
@@ -283,10 +283,10 @@ function getMoveMotorContent() {
             </div>
         </div>
         <h2>Pattern-move</h2>
-        <div id="highMoveMotorForm" class="inputBorder">
+        <div class="inputBorder">
             <input type="number" min="-100" max="100" id="highMoveMotorInput" class="numberRange" placeholder="Enter speed here (%)" autocomplete="off">
         </div>
-        <div id="lowMoveMotorForm" class="inputBorder">
+        <div class="inputBorder">
             <input type="number" min="-100" max="100" id="lowMoveMotorInput" class="numberRange" placeholder="Enter speed here (%)" autocomplete="off">
         </div>
         <h3>Patterns</h3>
