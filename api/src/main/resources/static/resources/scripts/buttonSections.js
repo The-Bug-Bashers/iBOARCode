@@ -31,6 +31,7 @@ function showButtons(mode) {
             });
             document.getElementById("highMoveMotorInput").value = 100;
             document.getElementById("lowMoveMotorInput").value = 0;
+            document.getElementById("timeMoveMotorInput").value = 5;
             document.getElementById("speedMoveMotorInput").value = 50;
             addMoveMotorEventListeners();
             break;
@@ -41,7 +42,7 @@ function showButtons(mode) {
 
 function getRemoteControlContent() {
     return `
-        <h2>Directions</h2>
+        <h3>Directions</h3>
         <div id="directionRemoteControlButtons" class="buttonPlusLabel">
             <div class="directionButtonPlusLabel">
                 <label class="checkbox-container">
@@ -72,10 +73,10 @@ function getRemoteControlContent() {
                 <p onclick="document.getElementById('leftRemoteControlCheckbox').click()">Left</p>
             </div>
         </div>
-        <h2>Turn</h2>
+        <h3>Turn</h3>
         <button id="turnLeftButton" class="button">left</button>
         <button id="turnRightButton" class="button">right</button>
-        <h2>Speed</h2>
+        <h3>Speed</h3>
         <div class="inputBorder">
             <input type="number" min="0" max="100" id="speedRemoteControlInput" class="numberRange" placeholder="Enter speed here (%)" autocomplete="off">
         </div>
@@ -162,15 +163,15 @@ function addRemoteControlEventListeners() {
 
 function addMoveMotorEventListeners() {
     // Event listener for direction move motor buttons
-    document.querySelectorAll('#directionMoveMotorButtons input[type="checkbox"]').forEach(checkbox => {
+    document.querySelectorAll('.moveMotorSelectors input[type="checkbox"]').forEach(checkbox => {
         checkbox.addEventListener('change', (event) => {
-            const forward = document.getElementById("forwardMoveMotorCheckbox");
-            const backward = document.getElementById("backwardMoveMotorCheckbox");
 
-            if (event.target.id === "forwardMoveMotorCheckbox" && backward.checked) {
-                backward.checked = false;
-            } else if (event.target.id === "backwardMoveMotorCheckbox" && forward.checked) {
-                forward.checked = false;
+            if (event.target.checked) {
+                document.querySelectorAll('.moveMotorSelectors input[type="checkbox"]').forEach(checkbox => {
+                    if (checkbox !== event.target) {
+                        checkbox.checked = false;
+                    }
+                });
             }
 
             sendMoveMotorMessage();
@@ -185,13 +186,22 @@ function addMoveMotorEventListeners() {
 
 function sendMoveMotorMessage() {
     const speed = document.getElementById("speedMoveMotorInput").value;
-    const forward = document.getElementById("forwardMoveMotorCheckbox");
-    const backward = document.getElementById("backwardMoveMotorCheckbox");
     const selectedMotor = parseInt(document.querySelector('input[name="value-radio"]:checked').value.split('-')[1], 10);
+    const paternHighSpeed = document.getElementById("highMoveMotorInput").value;
+    const paternLowSpeed = document.getElementById("lowMoveMotorInput").value;
+    const time= document.getElementById("timeMoveMotorInput").value;
 
-    if (forward.checked) {
+    if (document.getElementById("SineMoveMotorCheckbox").checked) {
+        sendMessage(`{"command": "moveMotor", "motor": ${selectedMotor}, "time": ${time}, "pattern": "sine", "highSpeed": ${paternHighSpeed}, "lowSpeed": ${paternLowSpeed}}`);
+    } else if (document.getElementById("TriangleMoveMotorCheckbox").checked) {
+        sendMessage(`{"command": "moveMotor", "motor": ${selectedMotor}, "time": ${time}, "pattern": "triangle", "highSpeed": ${paternHighSpeed}, "lowSpeed": ${paternLowSpeed}}`);
+    } else if (document.getElementById("SquareMoveMotorCheckbox").checked) {
+        sendMessage(`{"command": "moveMotor", "motor": ${selectedMotor}, "time": ${time}, "pattern": "square", "highSpeed": ${paternHighSpeed}, "lowSpeed": ${paternLowSpeed}}`);
+    } else if (document.getElementById("SawtoothMoveMotorCheckbox").checked) {
+        sendMessage(`{"command": "moveMotor", "motor": ${selectedMotor}, "time": ${time}, "pattern": "sawtooth", "highSpeed": ${paternHighSpeed}, "lowSpeed": ${paternLowSpeed}}`);
+    } else if (document.getElementById("forwardMoveMotorCheckbox").checked) {
         sendMessage(`{"command": "moveMotor", "motor": ${selectedMotor}, "speed": ${speed}}`);
-    } else if (backward.checked) {
+    } else if (document.getElementById("backwardMoveMotorCheckbox").checked) {
         sendMessage(`{"command": "moveMotor", "motor": ${selectedMotor}, "speed": -${speed}}`);
     } else {
         sendMessage(`{"command": "moveMotor", "motor": ${selectedMotor}, "speed": 0}`);
@@ -263,10 +273,13 @@ function getMoveMotorContent() {
             <span class="selection"></span>
         </form>
         <h2>Normal-move</h2>
-        <div class="inputBorder">
-            <input type="number" min="0" max="100" id="speedMoveMotorInput" class="numberRange" placeholder="Enter speed here (%)" autocomplete="off">
+        <div class="inputPlusLabel">
+            <h4>Speed</h4>
+            <div class="inputBorder" style="width: fit-content;">
+                <input type="number" min="0" max="100" id="speedMoveMotorInput" class="numberRange" placeholder="Enter speed here (%)" autocomplete="off">
+            </div>
         </div>
-        <div id="directionMoveMotorButtons" class="buttonPlusLabel">
+        <div id="directionMoveMotorButtons" class="buttonPlusLabel moveMotorSelectors">
             <div class="directionButtonPlusLabel">
                 <label class="checkbox-container">
                     <input class="custom-checkbox" checked="" type="checkbox" id="forwardMoveMotorCheckbox">
@@ -283,14 +296,26 @@ function getMoveMotorContent() {
             </div>
         </div>
         <h2>Pattern-move</h2>
-        <div class="inputBorder">
-            <input type="number" min="-100" max="100" id="highMoveMotorInput" class="numberRange" placeholder="Enter speed here (%)" autocomplete="off">
+        <div class="inputPlusLabel">
+            <h4>High speed</h4>
+            <div class="inputBorder">
+                <input type="number" min="-100" max="100" id="highMoveMotorInput" class="numberRange" placeholder="Enter speed here (%)" autocomplete="off">
+            </div>
         </div>
-        <div class="inputBorder">
-            <input type="number" min="-100" max="100" id="lowMoveMotorInput" class="numberRange" placeholder="Enter speed here (%)" autocomplete="off">
+        <div class="inputPlusLabel">
+            <h4>Low speed</h4>
+            <div class="inputBorder">
+                <input type="number" min="-100" max="100" id="lowMoveMotorInput" class="numberRange" placeholder="Enter speed here (%)" autocomplete="off">
+            </div>
+        </div>
+        <div class="inputPlusLabel">
+            <h4>Time</h4>
+            <div class="inputBorder">
+                <input type="number" min="0" max="60" id="timeMoveMotorInput" class="numberRange" placeholder="Time here (sec)" autocomplete="off">
+            </div>
         </div>
         <h3>Patterns</h3>
-        <div class="buttonPlusLabel">
+        <div id="patternMoveMotorButtons" class="buttonPlusLabel moveMotorSelectors">
             <div class="directionButtonPlusLabel">
                 <label class="checkbox-container">
                     <input class="custom-checkbox" checked="" type="checkbox" id="SineMoveMotorCheckbox">
