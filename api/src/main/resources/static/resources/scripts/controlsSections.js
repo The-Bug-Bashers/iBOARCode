@@ -1,32 +1,31 @@
 let mode;
 
-document.getElementById("buttonsSelect").value = "Please select";
-document.getElementById("buttonsSelect").addEventListener("change", (event) => {
+document.getElementById("modeSelect").value = "Please select";
+document.getElementById("modeSelect").addEventListener("change", (event) => {
     mode = event.target.value;
     sendMessage(`{"command": "changeMode", "mode": "${mode}"}`);
-    showButtons(mode);
+    showControls(mode);
 
     const placeholder = document.getElementById("placeholder");
     if (placeholder) placeholder.remove();
 
 });
 
-
-function showButtons(mode) {
-    const buttonsContainer = document.getElementById("buttonsContainer");
+function showControls(mode) {
+    const controlsContainer = document.getElementById("controlsContainer");
     switch (mode) {
         case "Remote-Control":
-            buttonsContainer.innerHTML = getRemoteControlContent();
-            document.querySelectorAll('#buttonsContainer input[type="checkbox"]').forEach(checkbox => {
+            controlsContainer.innerHTML = getRemoteControlContent();
+            document.querySelectorAll('#controlsContainer input[type="checkbox"]').forEach(checkbox => {
                 checkbox.checked = false;
             });
             document.getElementById("speedRemoteControlInput").value = 50;
             addRemoteControlEventListeners();
             break;
         case "Move-Motor":
-            buttonsContainer.innerHTML = getMoveMotorContent();
+            controlsContainer.innerHTML = getMoveMotorContent();
             document.getElementById("value-1").checked = true;
-            document.querySelectorAll('#buttonsContainer input[type="checkbox"]').forEach(checkbox => {
+            document.querySelectorAll('#controlsContainer input[type="checkbox"]').forEach(checkbox => {
                 checkbox.checked = false;
             });
             document.getElementById("highMoveMotorInput").value = 100;
@@ -36,7 +35,7 @@ function showButtons(mode) {
             addMoveMotorEventListeners();
             break;
         default:
-            buttonsContainer.innerHTML = "";
+            controlsContainer.innerHTML = "";
     }
 }
 

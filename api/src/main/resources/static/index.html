@@ -5,15 +5,15 @@
         <title>iBOAR Control Panel</title>
         <link rel="icon" href="resources/images/BOAR-logo-trans.png">
         <link type="text/css" rel="stylesheet" href="resources/stylesheets/general.css">
-        <link type="text/css" rel="stylesheet" href="resources/stylesheets/box.css">
-        <link type="text/css" rel="stylesheet" href="resources/stylesheets/console.css">
-        <link type="text/css" rel="stylesheet" href="resources/stylesheets/button.css">
+        <link type="text/css" rel="stylesheet" href="resources/stylesheets/elements/box.css">
+        <link type="text/css" rel="stylesheet" href="resources/stylesheets/elements/console.css">
+        <link type="text/css" rel="stylesheet" href="resources/stylesheets/elements/button.css">
         <link type="text/css" rel="stylesheet" href="resources/stylesheets/motors.css">
         <link type="text/css" rel="stylesheet" href="resources/stylesheets/lidar.css">
-        <link type="text/css" rel="stylesheet" href="resources/stylesheets/buttons.css">
-        <link type="text/css" rel="stylesheet" href="resources/stylesheets/select.css">
+        <link type="text/css" rel="stylesheet" href="resources/stylesheets/controls.css">
+        <link type="text/css" rel="stylesheet" href="resources/stylesheets/elements/select.css">
         <script src="resources/scripts/webSocket.js" defer></script>
-        <script src="resources/scripts/buttonSections.js" defer></script>
+        <script src="resources/scripts/controlsSections.js" defer></script>
     </head>
     <body>
     <div>
@@ -26,17 +26,17 @@
             <p id="headerText">improved Basic Obstacle Avoidance Robot<br>by Justus Dicker, Jannik Händel & Jakob Ricken</p>
         </div>
         <div id="content">
-            <div class="box" id="buttons">
-                <h1>Buttons</h1>
+            <div class="box" id="controls">
+                <h1>Controls</h1>
                 <label>
-                    <select id="buttonsSelect">
+                    <select id="modeSelect">
                         <option selected id="placeholder">Please select</option>
                         <option>Remote-Control</option>
                         <option>Move-Motor</option>
                     </select>
                 </label>
-                <div id="buttonsContainer">
-                    <!-- Buttons get inserted here -->
+                <div id="controlsContainer">
+                    <!-- Controls get inserted here -->
                 </div>
             </div>
             <div id="middleColumn">

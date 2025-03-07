@@ -1,4 +1,4 @@
-#buttons {
+#controls {
     position: relative;
     width: 20vw;
     calc(89vh - 2em);
@@ -13,14 +13,14 @@
     }
 }
 
-#buttonsContainer {
+#controlsContainer {
     flex-direction: column;
     align-items: center;
     text-align: left;
     justify-content: center;
 }
 
-#buttonsSelect, #motorsSelect {
+#modeSelect, #motorsSelect {
     margin-top: 1vh;
     width: 100%;
 }
