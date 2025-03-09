@@ -34,4 +34,4 @@ else
     exit 1
 fi
 
-echo -e "${GREEN}Started iBOAR systems successfully!§{NC}"
+echo -e "${GREEN}Started iBOAR systems successfully!${NC}"
