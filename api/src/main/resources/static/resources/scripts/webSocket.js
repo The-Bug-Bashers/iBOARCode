@@ -1,5 +1,7 @@
-const socketURL = 'wss://ws.ifelse.io';
-let socket = new WebSocket(socketURL);
+const commandSocketURL = `ws://${window.location.host}/commands`;
+const dataSocketURL = `ws://${window.location.host}/commands`; //TODO: implement connection to data socket
+
+let socket = new WebSocket(commandSocketURL);
 
 // Displays the message in the console
 function showMessage(message, received, error, info) {
@@ -53,7 +55,7 @@ function executeCommand(command) {
         if (socket.readyState === WebSocket.OPEN) {
             showMessage("You're already connected to the server.", true, true, false);
         } else {
-            socket = new WebSocket(socketURL);
+            socket = new WebSocket(commandSocketURL);
             addEventListeners();
         }
     } else {
