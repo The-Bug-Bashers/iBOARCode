@@ -37,6 +37,6 @@ public class MqttPublisher {
             System.err.println("Failed to publish message: " + e);
             throw e;
         }
-        return "command sent: " + payload;
+        return "command sent: " + payload + " to topic: " + topic;
     }
 }
