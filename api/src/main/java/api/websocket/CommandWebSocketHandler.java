@@ -22,12 +22,12 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
         try {
             jsonMessage = objectMapper.readTree(payload);
         } catch (Exception e) {
-            session.sendMessage(new TextMessage("JSON not formated correctly. Example: " + COMMAND_EXAMPLE));
+            session.sendMessage(new TextMessage("Error: JSON not formated correctly. Example: " + COMMAND_EXAMPLE));
             return;
         }
 
         if (!jsonMessage.has("command")) {
-            session.sendMessage(new TextMessage("Bad Request. Request needs to include \"command\" attribute. Example: " + COMMAND_EXAMPLE));
+            session.sendMessage(new TextMessage("Error: Bad Request. Request needs to include \"command\" attribute. Example: " + COMMAND_EXAMPLE));
             return;
         }
 
@@ -46,7 +46,7 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
                     final String status = MqttPublisher.sendMQTTMessage("boar/control/mode", "desired_parameter", 2, true); //TODO: send real new mode
                     session.sendMessage(new TextMessage(status));
                 } catch (MqttException e) {
-                    session.sendMessage(new TextMessage("Failed to send MQTT message: " + e));
+                    session.sendMessage(new TextMessage("Error: Failed to send MQTT message: " + e));
                 }
                 break;
             case "drive":
