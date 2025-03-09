@@ -26,7 +26,7 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
         }
 
         if (!jsonNode.has("command")) {
-            session.sendMessage(new TextMessage("Bad Request. Example: " + COMMAND_EXAMPLE));
+            session.sendMessage(new TextMessage("Bad Request. Request needs to include \"command\" attribute. Example: " + COMMAND_EXAMPLE));
             return;
         }
 
