@@ -106,7 +106,7 @@ function addEventListeners() {
 
     // Event listener for when a message is received
     socket.addEventListener('message', (event) => {
-        showMessage(event.data, true, false, false);
+        showMessage(event.data.replace(/^Error: /, ''), true, event.data.startsWith("Error: "), false);
     });
 
     // Event listener for when the connection is closed
