@@ -17,11 +17,11 @@ Mosquitto is the central server that handles all messages between the modules.
 #### QoS (Quality of Service) Levels
 there are 3 Qos levels with which messages can be send:
 
-- 1 (Fire and forget): no receive confirmation
+- 0 (Fire and forget): no receive confirmation
   - This is potimal if messages need to get send and received fast, but it does not matter, if a message is not received (for example the remote controll mode of the web interface uses this mode)
-- 2 (Delivered at least once): messages can get delivered multiple times
+- 1 (Delivered at least once): messages can get delivered multiple times
   - I (me: @Flottegurke) am not shure which usecase this could have (maybe data, like lidarData or motor currentMotorSpeeds?)
-- 3 (Guaranteed exactly once): slowest but safest
+- 2 (Guaranteed exactly once): slowest but safest
   - Greate for commands in general, like startAutonomusMaping or startLidarScan
  
 #### Topic structure
