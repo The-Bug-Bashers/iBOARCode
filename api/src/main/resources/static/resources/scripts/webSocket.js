@@ -1,5 +1,6 @@
-const commandSocketURL = `ws://${window.location.host}/commands`;
-const dataSocketURL = `ws://${window.location.host}/data`; //TODO: implement connection to data socket
+const hostname = window.location.hostname.split(':')[0]
+const commandSocketURL = `ws://${hostname}:8080/commands`;
+const dataSocketURL = `ws://${hostname}:8080/data`; //TODO: implement connection to data socket
 
 let socket = new WebSocket(commandSocketURL);
 
