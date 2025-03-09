@@ -1,8 +1,9 @@
 const hostname = window.location.hostname.split(':')[0]
 const commandSocketURL = `ws://${hostname}:8080/commands`;
-const dataSocketURL = `ws://${hostname}:8080/data`; //TODO: implement connection to data socket
+const dataSocketURL = `ws://${hostname}:8080/data`;
 
-let socket = new WebSocket(commandSocketURL);
+let commandSocket = new WebSocket(commandSocketURL);
+let dataSocket = new WebSocket(dataSocketURL);
 
 // Displays the message in the console
 function showMessage(message, received, error, info) {
@@ -31,33 +32,44 @@ function showMessage(message, received, error, info) {
 
 // Returns a list of available commands
 function getCommandList() {
-    return ["clear", "disconnect", "help", "connect"];
-}
-
-// Checks if the message is a command
-function checkIfCommand(command) {
-    const commandList = getCommandList();
-    return commandList.includes(command);
+    return ["clear",  "connect commandSocket", "connect dataSocket", "disconnect commandSocket", "disconnect dataSocket", "help",];
 }
 
 // Executes the command
 function executeCommand(command) {
     if (command === "clear") {
         clearConsole();
-    } else if (command === "disconnect") {
-        socket.close();
+    } else if (command === "disconnect commandSocket") {
+        commandSocket.close();
+    } else if (command === "disconnect dataSocket") {
+        dataSocket.close();
     } else if (command === "help") {
         showMessage("You've asked for help!", true, false, true);
-        showMessage("This is a simple WebSocket console that sends messages to the BOAR server.", true, false, true);
-        showMessage("You can send a message by entering it into the text field and pressing ENTER or the button.", true, false, true);
-        showMessage("There are also some commands available to control the console.", true, false, true);
-        showAvailableCommands();
-    } else if (command === "connect") {
-        if (socket.readyState === WebSocket.OPEN) {
-            showMessage("You're already connected to the server.", true, true, false);
+        showMessage("This web interface sends and receives data via WebSockets a REST API.", true, false, true);
+        showMessage("The REST API then sends valid commands to an internal messaging server (MQTT).", true, false, true);
+        showMessage("The web interface is connected to 2 WebSockets: command, which handles commands, and data, which handles incoming sensor data.", true, false, true);
+        
+        let message = "You can use certain commands to change the behaviour of the web interface. Those are: ";
+        getCommandList().forEach((command) => {
+            message += `"${command}", `;
+        });
+        message = message.slice(0, -2);
+        showMessage(message, true, false, true);
+        
+        showMessage("All other commands get sent to the REST API and need to be formatted in JSON.", true, false, true);
+    } else if (command === "connect commandSocket") {
+        if (commandSocket.readyState === WebSocket.OPEN) {
+            showMessage("You're already connected to the CommandSocket.", true, true, false);
         } else {
-            socket = new WebSocket(commandSocketURL);
-            addEventListeners();
+            commandSocket = new WebSocket(commandSocketURL);
+            addCommandSocketEventListeners();
+        }
+    } else if (command === "connect dataSocket") {
+        if (dataSocket.readyState === WebSocket.OPEN) {
+            showMessage("You're already connected to the DataSocket.", true, true, false);
+        } else {
+            dataSocket = new WebSocket(dataSocketURL);
+            addDataSocketEventListeners();
         }
     } else {
         showMessage("There was a program-intern error with recognizing the command.", true, true, false);
@@ -70,9 +82,8 @@ function clearConsole() {
 }
 
 function showAvailableCommands() {
-    const commands = getCommandList();
     let message = "Available commands: ";
-    commands.forEach((command) => {
+    getCommandList().forEach((command) => {
         message += `"${command}", `;
     });
     message = message.slice(0, -2);
@@ -85,11 +96,11 @@ function sendMessage(message) {
     showMessage(message, false, false, false);
     document.getElementById("consoleInput").value = ""; // Clear the input field
 
-    if (checkIfCommand(message)) {
+    if (getCommandList().includes(message)) {
         executeCommand(message);
     } else {
         try {
-            socket.send(message);
+            commandSocket.send(message);
         } catch (error) {
             showMessage(`An error occurred: ${error}`, true, true, false);
         }
@@ -97,31 +108,54 @@ function sendMessage(message) {
 }
 
 // Event listeners
-function addEventListeners() {
+function addCommandSocketEventListeners() {
     // Event listener for when the connection is open
-    socket.addEventListener('open', () => {
-        console.log('WebSocket connection established.');
-        showMessage("Connection established.", true, false, true);
+    commandSocket.addEventListener('open', () => {
+        showMessage("Connection to CommandSocket established.", true, false, true);
     });
 
     // Event listener for when a message is received
-    socket.addEventListener('message', (event) => {
+    commandSocket.addEventListener('message', (event) => {
         showMessage(event.data.replace(/^Error: /, ''), true, event.data.startsWith("Error: "), false);
     });
 
     // Event listener for when the connection is closed
-    socket.addEventListener('close', () => {
-        showMessage("Connection closed.", true, true, false);
+    commandSocket.addEventListener('close', () => {
+        showMessage("Connection to CommandSocket closed.", true, true, false);
     });
 
     // Event listener for errors
-    socket.addEventListener('error', (error) => {
-        showMessage(`An error occurred: ${error}`, true, true, false);
-        console.error('WebSocket error:', error);
+    commandSocket.addEventListener('error', (error) => {
+        showMessage(`An error occurred with CommandSocket: ${error}`, true, true, false);
+        console.error('CommandSocket error:', error);
     });
 }
 
-addEventListeners();
+function addDataSocketEventListeners() {
+    // Event listener for when the connection is open
+    dataSocket.addEventListener('open', () => {
+        showMessage("Connection to DataSocket established.", true, false, true);
+    });
+    
+    // Event listener for when a message is received
+    dataSocket.addEventListener('message', (event) => {
+        console.log(event.data);
+    });
+
+    // Event listener for when the connection is closed
+    dataSocket.addEventListener('close', () => {
+        showMessage("Connection to DataSocket closed.", true, true, false);
+    });
+
+    // Event listener for errors
+    dataSocket.addEventListener('error', (error) => {
+        showMessage(`An error occurred with DataSocket: ${error}`, true, true, false);
+        console.error('DataSocket error:', error);
+    });
+}
+
+addCommandSocketEventListeners();
+addDataSocketEventListeners();
 
 function scrollDownInConsole() {
     const element = document.getElementById("consoleOutput");
