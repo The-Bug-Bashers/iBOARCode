@@ -23,6 +23,14 @@ there are 3 Qos levels with which messages can be send:
   - I (me: @Flottegurke) am not shure which usecase this could have (maybe data, like lidarData or motor currentMotorSpeeds?)
 - 3 (Guaranteed exactly once): slowest but safest
   - Greate for commands in general, like startAutonomusMaping or startLidarScan
+ 
+#### Topic structure
+toppics are strictured like this: `toppic/subToppic/subSubToppic`
+
+##### Wildcards
+- `topic/#`: subscribes to all topics starting with the specifyed topic (for example the motorControll module subscribes to all motor topics)
+- `+/subTopic`: subscribes to all sub topics ending with the specifyed sub topic (for example the RESTAPI module subscribes to all data subtopics)
+
 
 ### Basic commands
 #### Installing: `sudo apt install mosquitto mosquitto-clients`
