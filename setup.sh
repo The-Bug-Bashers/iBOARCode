@@ -50,4 +50,7 @@ sudo apt install -y maven
 echo -e "${BLUE}Installing Maven dependencies...${NC}"
 (cd api && sudo mvn clean install)
 
+echo -e "${BLUE}Installing screen...${NC}"
+sudo apt install -y screen
+
 echo -e "${GREEN}Setup complete.${NC}"
