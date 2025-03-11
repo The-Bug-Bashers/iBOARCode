@@ -53,4 +53,13 @@ echo -e "${BLUE}Installing Maven dependencies...${NC}"
 echo -e "${BLUE}Installing screen...${NC}"
 sudo apt install -y screen
 
+echo -e "${BLUE}Installing motorController dependencies...${NC}"
+echo -e "${BLUE}Installing pigpio...${NC}"
+sudo apt-get install -y pigpio
+
+echo -e "${BLUE}Installing mosquitto for c++...${NC}"
+sudo apt install -y libmosquitto-dev
+
+
+
 echo -e "${GREEN}Setup complete.${NC}"

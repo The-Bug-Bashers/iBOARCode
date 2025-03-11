@@ -34,14 +34,4 @@ else
     exit 1
 fi
 
-echo -e "${BLUE}Installing motorController dependencies...${NC}"
-echo -e "${BLUE}Installing libgpiod...${NC}"
-sudo apt install -y gpiod libgpiod-dev
-
-echo -e "${BLUE}Installing mosquitto for c++...${NC}"
-sudo apt install -y libmosquitto-dev mosquitto-clients
-
-
-
-
 echo -e "${GREEN}Started iBOAR systems successfully!${NC}"

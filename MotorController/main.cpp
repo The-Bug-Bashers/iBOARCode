@@ -65,7 +65,7 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
     double vx, vy, omega;
     if(message->payloadlen > 0) {
         // Expecting payload as text: \"vx vy omega\"\n
-        if(sscanf((char *)message->payload, \"%lf %lf %lf\", &vx, &vy, &omega) == 3) {
+        if(sscanf((char *)message->payload, "%lf %lf %lf", &vx, &vy, &omega) == 3) {
             double m1, m2, m3;
             calculateMotorSpeeds(vx, vy, omega, m1, m2, m3);
             // Optionally: integrate PID correction using encoder feedback here
@@ -73,7 +73,7 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
             setMotorSpeed(motor2, m2);
             setMotorSpeed(motor3, m3);
         } else {
-            std::cerr << \"Invalid payload format\" << std::endl;
+            std::cerr << "Invalid payload format" << std::endl;
         }
     }
 }
@@ -81,7 +81,7 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
 int main() {
     // Initialize pigpio
     if (gpioInitialise() < 0) {
-        std::cerr << \"pigpio initialization failed\" << std::endl;
+        std::cerr << "pigpio initialization failed" << std::endl;
         return 1;
     }
 
@@ -100,17 +100,17 @@ int main() {
 
     // Initialize Mosquitto library
     mosquitto_lib_init();
-    struct mosquitto *mosq = mosquitto_new(\"kiwi_bot\", true, NULL);
+    struct mosquitto *mosq = mosquitto_new("MotorController", true, NULL);
     if(!mosq) {
-        std::cerr << \"Error: Could not create Mosquitto instance.\" << std::endl;
+        std::cerr << "Error: Could not create Mosquitto instance." << std::endl;
         gpioTerminate();
         return 1;
     }
 
     // Connect to the MQTT broker on localhost
-    int ret = mosquitto_connect(mosq, \"localhost\", 1883, 60);
+    int ret = mosquitto_connect(mosq, "localhost", 1883, 60);
     if(ret != MOSQ_ERR_SUCCESS) {
-        std::cerr << \"MQTT connection error: \" << mosquitto_strerror(ret) << std::endl;
+        std::cerr << "MQTT connection error: " << mosquitto_strerror(ret) << std::endl;
         mosquitto_destroy(mosq);
         gpioTerminate();
         return 1;
@@ -118,12 +118,12 @@ int main() {
 
     // Set the MQTT message callback and subscribe to topic\n
     mosquitto_message_callback_set(mosq, onMessage);
-    mosquitto_subscribe(mosq, NULL, \"robot/move\", 0);
+    mosquitto_subscribe(mosq, NULL, "robot/move", 0);
 
     // Main loop
     ret = mosquitto_loop_forever(mosq, -1, 1);
     if(ret != MOSQ_ERR_SUCCESS) {
-        std::cerr << \"MQTT loop error: \" << mosquitto_strerror(ret) << std::endl;
+        std::cerr << "MQTT loop error: " << mosquitto_strerror(ret) << std::endl;
     }
 
     // Clean up\n
