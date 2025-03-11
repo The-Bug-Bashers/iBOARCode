@@ -54,12 +54,14 @@ echo -e "${BLUE}Installing screen...${NC}"
 sudo apt install -y screen
 
 echo -e "${BLUE}Installing motorController dependencies...${NC}"
-echo -e "${BLUE}Installing pigpio...${NC}"
-sudo apt-get install -y pigpio
+echo -e "${BLUE}Installing libgpiod...${NC}"
+sudo apt-get install -y libgpiod-dev
+
+echo -e "${BLUE}Installing nlohmann-json...${NC}"
+sudo apt install -y nlohmann-json3-dev
+
 
 echo -e "${BLUE}Installing mosquitto for c++...${NC}"
 sudo apt install -y libmosquitto-dev
-
-
 
 echo -e "${GREEN}Setup complete.${NC}"
