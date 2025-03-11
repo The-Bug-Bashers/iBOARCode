@@ -151,8 +151,8 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
 
             // Convert (angle, speed) to (vx, vy)
             double radians = angle * M_PI / 180.0;
-            double vx = speed * cos(radians);
-            double vy = speed * sin(radians);
+            double vx = speed * sin(radians);
+            double vy = speed * cos(radians);
 
             // Calculate motor speeds
             double m1, m2, m3;
