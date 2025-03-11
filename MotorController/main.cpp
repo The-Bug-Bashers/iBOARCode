@@ -9,11 +9,8 @@
 #include <gpiod.h>
 #include <nlohmann/json.hpp>
 
-// ----- Motor Controller Class using libgpiod ----- //
 class MotorController {
 public:
-    // chip: pointer to the already opened gpio chip
-    // pwm_offset, forward_offset, backward_offset: BCM GPIO numbers
     MotorController(struct gpiod_chip *chip, int pwm_offset, int forward_offset, int backward_offset)
     : duty(0), running(true)
     {
@@ -44,7 +41,6 @@ public:
         gpiod_line_release(backward_line);
     }
 
-    // Set motor speed: positive => forward, negative => backward.
     // Speed is expected in a range where the absolute value maps to a duty cycle (0-255).
     void setSpeed(double speed) {
         int newDuty = std::min(255, std::max(0, static_cast<int>(std::fabs(speed))));
@@ -64,8 +60,6 @@ public:
 
     // Logging function: outputs the intended duty and current values of direction pins.
     void logPinStates(const std::string &motorName) {
-        // Note: PWM line state may be rapidly toggling due to the PWM thread.
-        // We log the intended duty cycle instead.
         int forwardState = gpiod_line_get_value(forward_line);
         int backwardState = gpiod_line_get_value(backward_line);
         std::cout << motorName << " -> Intended Duty: " << duty.load()
@@ -74,18 +68,15 @@ public:
     }
 
 private:
-    // Simple software PWM loop
     void pwmLoop() {
         const int period_us = 10000; // 10 ms period = 100 Hz PWM frequency
         while(running.load()) {
             int currentDuty = duty.load();
             int on_time = (currentDuty * period_us) / 255;
 
-            // Turn PWM high
             gpiod_line_set_value(pwm_line, 1);
             std::this_thread::sleep_for(std::chrono::microseconds(on_time));
 
-            // Turn PWM low
             gpiod_line_set_value(pwm_line, 0);
             std::this_thread::sleep_for(std::chrono::microseconds(period_us - on_time));
         }
@@ -99,7 +90,6 @@ private:
     struct gpiod_line *backward_line;
 };
 
-// ----- PID Controller (Placeholder) ----- //
 struct PID {
     double kp, ki, kd;
     double integral, previousError;
@@ -113,7 +103,6 @@ double computePID(PID &pid, double target, double actual) {
     return (pid.kp * error) + (pid.ki * pid.integral) + (pid.kd * derivative);
 }
 
-// ----- Kinematics for Kiwi Drive ----- //
 // Converts desired velocities (vx, vy, omega) to individual motor speeds.
 void calculateMotorSpeeds(double vx, double vy, double omega, double &m1, double &m2, double &m3) {
     m1 = vx - omega;
@@ -121,21 +110,18 @@ void calculateMotorSpeeds(double vx, double vy, double omega, double &m1, double
     m3 = (-0.5 * vx - (std::sqrt(3) / 2.0) * vy - omega);
 }
 
-// ----- Global Variables ----- //
 struct gpiod_chip *chip;
 MotorController *motor1Controller = nullptr;
 MotorController *motor2Controller = nullptr;
 MotorController *motor3Controller = nullptr;
 
-// MQTT message callback
-// Expected payload format (as text): "vx vy omega"
+
 void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message) {
     if (message->payloadlen > 0) {
         try {
             // Parse JSON
             auto jsonPayload = nlohmann::json::parse((char *)message->payload);
 
-            // Ensure correct structure
             if (!jsonPayload.contains("command") || !jsonPayload.contains("angle") || !jsonPayload.contains("speed")) {
                 std::cerr << "Invalid JSON format: missing required fields." << std::endl;
                 return;
@@ -143,7 +129,7 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
 
             std::string command = jsonPayload["command"];
             if (command != "drive") {
-                return; // Ignore non-drive commands
+                return;
             }
 
             double angle = jsonPayload["angle"];
@@ -177,7 +163,6 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
 }
 
 int main() {
-    // Open GPIO chip (usually gpiochip0)
     chip = gpiod_chip_open_by_name("gpiochip0");
     if (!chip) {
         std::cerr << "Failed to open gpiochip0." << std::endl;
@@ -211,22 +196,13 @@ int main() {
     mosquitto_message_callback_set(mosq, onMessage);
     mosquitto_subscribe(mosq, NULL, "boar/motor/drive", 0);
 
-    std::thread loggingThread([](){
-        while(true) {
-            motor1Controller->logPinStates("Motor 1");
-            motor2Controller->logPinStates("Motor 2");
-            motor3Controller->logPinStates("Motor 3");
-            std::this_thread::sleep_for(std::chrono::seconds(2)); // log every 2 seconds
-        }
-    });
-
     // Start MQTT loop (blocking call)
     ret = mosquitto_loop_forever(mosq, -1, 1);
     if (ret != MOSQ_ERR_SUCCESS) {
         std::cerr << "MQTT loop error: " << mosquitto_strerror(ret) << std::endl;
     }
 
-    // Clean up (unreachable unless MQTT loop exits (fails))
+    // Clean up
     mosquitto_destroy(mosq);
     mosquitto_lib_cleanup();
     delete motor1Controller;
