@@ -61,6 +61,17 @@ public:
         }
     }
 
+    // Logging function: outputs the intended duty and current values of direction pins.
+    void logPinStates(const std::string &motorName) {
+        // Note: PWM line state may be rapidly toggling due to the PWM thread.
+        // We log the intended duty cycle instead.
+        int forwardState = gpiod_line_get_value(forward_line);
+        int backwardState = gpiod_line_get_value(backward_line);
+        std::cout << motorName << " -> Intended Duty: " << duty.load()
+                  << ", Forward: " << forwardState
+                  << ", Backward: " << backwardState << std::endl;
+    }
+
 private:
     // Simple software PWM loop
     void pwmLoop() {
@@ -171,6 +182,15 @@ int main() {
 
     mosquitto_message_callback_set(mosq, onMessage);
     mosquitto_subscribe(mosq, NULL, "robot/move", 0);
+
+    std::thread loggingThread([](){
+        while(true) {
+            motor1Controller->logPinStates("Motor 1");
+            motor2Controller->logPinStates("Motor 2");
+            motor3Controller->logPinStates("Motor 3");
+            std::this_thread::sleep_for(std::chrono::seconds(2)); // log every 2 seconds
+        }
+    });
 
     // Start MQTT loop (blocking call)
     ret = mosquitto_loop_forever(mosq, -1, 1);
