@@ -34,4 +34,14 @@ else
     exit 1
 fi
 
+echo -e "${BLUE}Installing motorController dependencies...${NC}"
+echo -e "${BLUE}Installing pigpio...${NC}"
+sudo apt install -y pigpio
+
+echo -e "${BLUE}Installing mosquitto for c++...${NC}"
+sudo apt install -y libmosquitto-dev mosquitto-clients
+
+
+
+
 echo -e "${GREEN}Started iBOAR systems successfully!${NC}"
