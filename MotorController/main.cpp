@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <mosquitto.h>
 #include <gpiod.h>
+#include <nlohmann/json.hpp>
 
 // ----- Motor Controller Class using libgpiod ----- //
 class MotorController {
@@ -129,21 +130,48 @@ MotorController *motor3Controller = nullptr;
 // MQTT message callback
 // Expected payload format (as text): "vx vy omega"
 void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message) {
-    double vx, vy, omega;
-    if(message->payloadlen > 0) {
-        if (sscanf((char *)message->payload, "%lf %lf %lf", &vx, &vy, &omega) == 3) {
-            double m1, m2, m3;
-            calculateMotorSpeeds(vx, vy, omega, m1, m2, m3);
+    if (message->payloadlen > 0) {
+        try {
+            // Parse JSON
+            auto jsonPayload = nlohmann::json::parse((char *)message->payload);
 
-            // Here you could add PID corrections using encoder feedback
-            // For now we directly set motor speeds (mapped to duty cycle values)
+            // Ensure correct structure
+            if (!jsonPayload.contains("command") || !jsonPayload.contains("angle") || !jsonPayload.contains("speed")) {
+                std::cerr << "Invalid JSON format: missing required fields." << std::endl;
+                return;
+            }
+
+            std::string command = jsonPayload["command"];
+            if (command != "drive") {
+                return; // Ignore non-drive commands
+            }
+
+            double angle = jsonPayload["angle"];
+            double speed = jsonPayload["speed"];
+
+            // Convert (angle, speed) to (vx, vy)
+            double radians = angle * M_PI / 180.0;
+            double vx = speed * cos(radians);
+            double vy = speed * sin(radians);
+
+            // Calculate motor speeds
+            double m1, m2, m3;
+            calculateMotorSpeeds(vx, vy, 0, m1, m2, m3);
+
+            // Set motor speeds
             motor1Controller->setSpeed(m1);
             motor2Controller->setSpeed(m2);
             motor3Controller->setSpeed(m3);
 
-            std::cout << "Received command: vx=" << vx << " vy=" << vy << " omega=" << omega << std::endl;
-        } else {
-            std::cerr << "Invalid payload format." << std::endl;
+            // Logging
+            std::cout << "Received command: drive, angle=" << angle << ", speed=" << speed << std::endl;
+            std::cout << "Converted to: vx=" << vx << ", vy=" << vy << std::endl;
+            motor1Controller->logPinStates("Motor 1");
+            motor2Controller->logPinStates("Motor 2");
+            motor3Controller->logPinStates("Motor 3");
+
+        } catch (const std::exception &e) {
+            std::cerr << "JSON parsing error: " << e.what() << std::endl;
         }
     }
 }
@@ -181,7 +209,7 @@ int main() {
     }
 
     mosquitto_message_callback_set(mosq, onMessage);
-    mosquitto_subscribe(mosq, NULL, "robot/move", 0);
+    mosquitto_subscribe(mosq, NULL, "boar/motor/drive", 0);
 
     std::thread loggingThread([](){
         while(true) {
