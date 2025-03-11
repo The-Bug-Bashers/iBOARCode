@@ -91,6 +91,21 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
                     session.sendMessage(new TextMessage("Error: Failed to send MQTT message: " + e));
                 }
                 break;
+            case "drive":
+                Map<String, Object> driveParams = new HashMap<>();
+                driveParams.put("command", "drive");
+                driveParams.put("angle", new int[]{0, 360});
+                driveParams.put("speed", new int[]{0, 100});
+
+                if (!verifyParams(jsonMessage, session, driveParams)) return;
+
+                try {
+                    final String status = MqttPublisher.sendMQTTMessage("boar/motor/drive", jsonMessage.toString(), 2, true);
+                    session.sendMessage(new TextMessage(status));
+                } catch (MqttException e) {
+                    session.sendMessage(new TextMessage("Error: Failed to send MQTT message: " + e));
+                }
+                break;
             default:
                 session.sendMessage(new TextMessage("command not found"));
                 break;
