@@ -1,4 +1,0 @@
-C:\Users\justu\AppData\Local\Programs\CLion\bin\cmake\win\x64\bin\cmake.exe -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=C:/Users/justu/AppData/Local/Programs/CLion/bin/ninja/win/x64/ninja.exe -G Ninja -S "C:\Users\justu\OneDrive\Desktop\Schule\NWT\Minibot\gitRepo (BOAR)\iBOARCode\MotorController" -B "C:\Users\justu\OneDrive\Desktop\Schule\NWT\Minibot\gitRepo (BOAR)\iBOARCode\MotorController\cmake-build-debug"
--- Configuring done (0.2s)
--- Generating done (0.0s)
--- Build files have been written to: C:/Users/justu/OneDrive/Desktop/Schule/NWT/Minibot/gitRepo (BOAR)/iBOARCode/MotorController/cmake-build-debug

@@ -1,3 +1,0 @@
-C:/Users/justu/OneDrive/Desktop/Schule/NWT/Minibot/gitRepo (BOAR)/iBOARCode/MotorController/cmake-build-debug/CMakeFiles/MotorController.dir
-C:/Users/justu/OneDrive/Desktop/Schule/NWT/Minibot/gitRepo (BOAR)/iBOARCode/MotorController/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/justu/OneDrive/Desktop/Schule/NWT/Minibot/gitRepo (BOAR)/iBOARCode/MotorController/cmake-build-debug/CMakeFiles/rebuild_cache.dir
