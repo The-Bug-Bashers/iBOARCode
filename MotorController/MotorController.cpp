@@ -1,6 +1,7 @@
 #include "MotorController.h"
 #include <chrono>
 #include <cmath>
+#include <iostream>
 
 MotorController::MotorController(struct gpiod_chip *chip, int pwm_offset, int forward_offset, int backward_offset, int encoderA, int encoderB)
 : duty(0), running(true) {
@@ -30,6 +31,14 @@ MotorController::~MotorController(){
     gpiod_line_release(backward_line);
 }
 
+void MotorController::logMotorStatus(double targetSpeed, double pidOutput) {
+    double actualSpeed = getActualSpeed();
+    std::cout << "Motor Speed Log -> Target: " << targetSpeed
+              << " | Actual: " << actualSpeed
+              << " | PID Output: " << pidOutput
+              << std::endl;
+}
+
 double MotorController::getActualSpeed() {
     return encoder->getSpeed();
 }
@@ -48,6 +57,8 @@ void MotorController::setSpeed(double pidOutput) {
         gpiod_line_set_value(forward_line, 0);
         gpiod_line_set_value(backward_line, 0);
     }
+
+    logMotorStatus(newDuty, pidOutput);
 }
 
 

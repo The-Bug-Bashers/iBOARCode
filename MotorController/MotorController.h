@@ -15,6 +15,7 @@ public:
     double getActualSpeed();
     void setSpeed(double pidOutput);
     void logPinStates(const std::string &motorName);
+    void logMotorStatus(double targetSpeed, double pidOutput);
 
 private:
     void pwmLoop();
