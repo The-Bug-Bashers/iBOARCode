@@ -8,42 +8,70 @@
 #include <mosquitto.h>
 #include <gpiod.h>
 #include <nlohmann/json.hpp>
-#include <wiringPi.h>
 
 class Encoder {
 public:
-    Encoder(int pinA, int pinB) : count(0) {
-        wiringPiSetupGpio();
-        pinMode(pinA, INPUT);
-        pinMode(pinB, INPUT);
-
-        // For multiple encoders this static pointer mechanism needs to be refactored.
-        Encoder::instance = this;
-
-        wiringPiISR(pinA, INT_EDGE_BOTH, &Encoder::updateCountWrapper);
-        wiringPiISR(pinB, INT_EDGE_BOTH, &Encoder::updateCountWrapper);
+    // Pass the already-opened chip and the two GPIO numbers.
+    Encoder(struct gpiod_chip *chip, int lineA_num, int lineB_num)
+        : count(0), running(true)
+    {
+        // Get the lines.
+        lineA = gpiod_chip_get_line(chip, lineA_num);
+        lineB = gpiod_chip_get_line(chip, lineB_num);
+        if (!lineA || !lineB) {
+            std::cerr << "Failed to get encoder lines." << std::endl;
+            exit(1);
+        }
+        // Request events on both lines.
+        if(gpiod_line_request_both_edges_events(lineA, "Encoder") < 0 ||
+           gpiod_line_request_both_edges_events(lineB, "Encoder") < 0) {
+            std::cerr << "Failed to request events for encoder lines." << std::endl;
+            exit(1);
+        }
+        // Start the polling thread.
+        poll_thread = std::thread(&Encoder::pollEvents, this);
     }
 
-    static void updateCountWrapper() {
-        if(instance)
-            instance->updateCount();
+    ~Encoder() {
+        running = false;
+        if(poll_thread.joinable())
+            poll_thread.join();
+        gpiod_line_release(lineA);
+        gpiod_line_release(lineB);
     }
 
-    void updateCount() {
-        count++;
+    // Poll for events and update the counter.
+    void pollEvents() {
+        struct gpiod_line_event event;
+        // Use a short timeout for the wait loop.
+        struct timespec timeout = { .tv_sec = 0, .tv_nsec = 100000000 }; // 100ms
+        while (running.load()) {
+            // Check events on lineA.
+            if (gpiod_line_event_wait(lineA, &timeout) > 0) {
+                if(gpiod_line_event_read(lineA, &event) == 0)
+                    count++;
+            }
+            // Check events on lineB.
+            if (gpiod_line_event_wait(lineB, &timeout) > 0) {
+                if(gpiod_line_event_read(lineB, &event) == 0)
+                    count++;
+            }
+        }
     }
 
-    // Returns RPM based on 1200 counts per revolution of the gearbox output shaft.
+    // Returns RPM based on 1200 counts per revolution.
     double getSpeed() {
         int pulses = count.exchange(0);
         return (pulses / 1200.0) * 60.0;
     }
 
 private:
+    struct gpiod_line *lineA;
+    struct gpiod_line *lineB;
     std::atomic<int> count;
-    static Encoder *instance;
+    std::atomic<bool> running;
+    std::thread poll_thread;
 };
-Encoder *Encoder::instance = nullptr;
 
 struct PID {
     double kp, ki, kd;
