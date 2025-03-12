@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cmath>
 #include <nlohmann/json.hpp>
+#include "PID.h"
 
 extern PID pid1, pid2, pid3;
 

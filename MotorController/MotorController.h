@@ -5,7 +5,6 @@
 #include <thread>
 #include <atomic>
 #include <gpiod.h>
-#include "PID.h"
 #include "Encoder.h"
 
 class MotorController {
@@ -14,7 +13,7 @@ public:
     ~MotorController();
 
     double getActualSpeed();
-    void setSpeed(double targetSpeed, double actualSpeed);
+    void setSpeed(double pidOutput);
     void logPinStates(const std::string &motorName);
 
 private:

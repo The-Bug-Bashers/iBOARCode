@@ -34,8 +34,7 @@ double MotorController::getActualSpeed() {
     return encoder->getSpeed();
 }
 
-void MotorController::setSpeed(double targetSpeed, double actualSpeed) {
-    double pidOutput = computePID(pid, targetSpeed, actualSpeed);
+void MotorController::setSpeed(double pidOutput) {
     int newDuty = std::min(255, std::max(0, static_cast<int>(std::fabs(pidOutput))));
     duty.store(newDuty);
 
@@ -50,6 +49,7 @@ void MotorController::setSpeed(double targetSpeed, double actualSpeed) {
         gpiod_line_set_value(backward_line, 0);
     }
 }
+
 
 void MotorController::logPinStates(const std::string &motorName) {
     int forwardState = gpiod_line_get_value(forward_line);
