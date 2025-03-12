@@ -5,6 +5,7 @@
 #include <mosquitto.h>
 #include <gpiod.h>
 #include <iostream>
+#include "PID.h"
 
 struct gpiod_chip *chip;
 MotorController *motor1Controller = nullptr;
@@ -18,9 +19,13 @@ int main() {
         return 1;
     }
 
-    motor1Controller = new MotorController(chip, 4, 27, 22);
-    motor2Controller = new MotorController(chip, 12, 8, 25);
-    motor3Controller = new MotorController(chip, 26, 19, 13);
+    PID pid1 = {0.1, 0.01, 0.05, 0, 0};
+    PID pid2 = {0.1, 0.01, 0.05, 0, 0};
+    PID pid3 = {0.1, 0.01, 0.05, 0, 0};
+
+    motor1Controller = new MotorController(chip, 4, 27, 22, 14, 15);
+    motor2Controller = new MotorController(chip, 12, 8, 25, 11, 9);
+    motor3Controller = new MotorController(chip, 26, 19, 13, 21, 20);
 
     mosquitto_lib_init();
     struct mosquitto *mosq = mosquitto_new("MotorController", true, NULL);

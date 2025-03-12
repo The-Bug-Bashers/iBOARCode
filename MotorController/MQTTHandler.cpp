@@ -2,7 +2,10 @@
 #include "MotorControl.h"
 #include "MotorController.h"
 #include <iostream>
+#include <cmath>
 #include <nlohmann/json.hpp>
+
+extern PID pid1, pid2, pid3;
 
 extern MotorController *motor1Controller;
 extern MotorController *motor2Controller;
@@ -32,9 +35,14 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
             double m1, m2, m3;
             calculateMotorSpeeds(vx, vy, 0, m1, m2, m3);
 
-            motor1Controller->setSpeed(m1);
-            motor2Controller->setSpeed(m2);
-            motor3Controller->setSpeed(m3);
+            double actualSpeed1 = motor1Controller->getActualSpeed();
+            double actualSpeed2 = motor2Controller->getActualSpeed();
+            double actualSpeed3 = motor3Controller->getActualSpeed();
+
+            motor1Controller->setSpeed(computePID(pid1, m1, actualSpeed1));
+            motor2Controller->setSpeed(computePID(pid2, m2, actualSpeed2));
+            motor3Controller->setSpeed(computePID(pid3, m3, actualSpeed3));
+
         } catch (const std::exception &e) {
             std::cerr << "JSON parsing error: " << e.what() << std::endl;
         }

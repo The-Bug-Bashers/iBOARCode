@@ -2,12 +2,12 @@
 #include <chrono>
 #include <cmath>
 
-MotorController::MotorController(struct gpiod_chip *chip, int pwm_offset, int forward_offset, int backward_offset)
-: duty(0), running(true)
-{
+MotorController::MotorController(struct gpiod_chip *chip, int pwm_offset, int forward_offset, int backward_offset, int encoderA, int encoderB)
+: duty(0), running(true) {
     pwm_line = gpiod_chip_get_line(chip, pwm_offset);
     forward_line = gpiod_chip_get_line(chip, forward_offset);
     backward_line = gpiod_chip_get_line(chip, backward_offset);
+    encoder = new Encoder(chip, encoderA, encoderB);
 
     if(gpiod_line_request_output(pwm_line, "MotorController", 0) < 0 ||
        gpiod_line_request_output(forward_line, "MotorController", 0) < 0 ||
@@ -24,19 +24,25 @@ MotorController::~MotorController(){
     if(pwm_thread.joinable())
         pwm_thread.join();
 
+    delete encoder;
     gpiod_line_release(pwm_line);
     gpiod_line_release(forward_line);
     gpiod_line_release(backward_line);
 }
 
-void MotorController::setSpeed(double speed) {
-    int newDuty = std::min(255, std::max(0, static_cast<int>(std::fabs(speed))));
+double MotorController::getActualSpeed() {
+    return encoder->getSpeed();
+}
+
+void MotorController::setSpeed(double targetSpeed, double actualSpeed) {
+    double pidOutput = computePID(pid, targetSpeed, actualSpeed);
+    int newDuty = std::min(255, std::max(0, static_cast<int>(std::fabs(pidOutput))));
     duty.store(newDuty);
 
-    if (speed > 0) {
+    if (pidOutput > 0) {
         gpiod_line_set_value(forward_line, 1);
         gpiod_line_set_value(backward_line, 0);
-    } else if (speed < 0) {
+    } else if (pidOutput < 0) {
         gpiod_line_set_value(forward_line, 0);
         gpiod_line_set_value(backward_line, 1);
     } else {

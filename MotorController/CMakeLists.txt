@@ -14,6 +14,8 @@ add_executable(MotorController main.cpp
         MotorControl.h
         MQTTHandler.cpp
         MQTTHandler.h
+        Encoder.cpp
+        Encoder.h
 )
 
 target_link_libraries(MotorController

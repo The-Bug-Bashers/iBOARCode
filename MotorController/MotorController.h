@@ -5,12 +5,16 @@
 #include <thread>
 #include <atomic>
 #include <gpiod.h>
+#include "PID.h"
+#include "Encoder.h"
 
 class MotorController {
 public:
-    MotorController(struct gpiod_chip *chip, int pwm_offset, int forward_offset, int backward_offset);
+    MotorController(struct gpiod_chip *chip, int pwm_offset, int forward_offset, int backward_offset, int encoderA, int encoderB);
     ~MotorController();
-    void setSpeed(double speed);
+
+    double getActualSpeed();
+    void setSpeed(double targetSpeed, double actualSpeed);
     void logPinStates(const std::string &motorName);
 
 private:
@@ -21,6 +25,7 @@ private:
     struct gpiod_line *pwm_line;
     struct gpiod_line *forward_line;
     struct gpiod_line *backward_line;
+    Encoder *encoder;
 };
 
 #endif
