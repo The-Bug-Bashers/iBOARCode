@@ -1,0 +1,33 @@
+# CLion spezifische Dateien
+.idea/
+cmake-build-debug/
+cmake-build-release/
+cmake-build-*/
+
+# CMake generierte Dateien
+CMakeFiles/
+CMakeCache.txt
+Makefile
+CMakeLists.txt.user
+Testing/
+CTestTestfile.cmake
+cmake_install.cmake
+
+# Compiler- und Build-Dateien
+*.o
+*.obj
+*.so
+*.dylib
+*.dll
+*.a
+*.lib
+*.exe
+
+# Logs und temporäre Dateien
+*.log
+*.tmp
+*.swp
+*.swo
+
+# CLion Run/Debug Konfigurationen
+/.run/
