@@ -24,7 +24,7 @@ cd api || { echo -e "${RED}Failed to enter 'api' directory${NC}"; exit 1; }
 sudo screen -dmS API mvn spring-boot:run
 
 echo -e "${BLUE}Waiting for REST API to start...${NC}"
-sleep 12
+sleep 8
 
 # Check if the screen session is still running (using sudo to check root's screen sessions)
 if sudo screen -list | grep -q "API"; then
