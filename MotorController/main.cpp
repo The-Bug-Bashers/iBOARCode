@@ -45,6 +45,9 @@ int main() {
     mosquitto_message_callback_set(mosq, onMessage);
     mosquitto_subscribe(mosq, NULL, "boar/motor/drive", 0);
 
+    std::thread dataThread(publishMotorData, mosq);
+    dataThread.detach();  // Runs in the background
+
     ret = mosquitto_loop_forever(mosq, -1, 1);
     if (ret != MOSQ_ERR_SUCCESS) {
         std::cerr << "MQTT loop error: " << mosquitto_strerror(ret) << std::endl;

@@ -7,6 +7,7 @@
 #include <gpiod.h>
 #include "Encoder.h"
 
+
 class MotorController {
 public:
     MotorController(struct gpiod_chip *chip, int pwm_offset, int forward_offset, int backward_offset, int encoderA, int encoderB);
@@ -15,7 +16,9 @@ public:
     double getActualSpeed();
     void setSpeed(double pidOutput);
     void logPinStates(const std::string &motorName);
-    void logMotorStatus(double targetSpeed, double pidOutput);
+    void logMotorStatus(double targetSpeed, double pidOutput)
+    void getMotorData(double &targetSpeed, double &actualSpeed);
+
 
 private:
     void pwmLoop();

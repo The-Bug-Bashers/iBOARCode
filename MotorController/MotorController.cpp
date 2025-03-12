@@ -45,6 +45,12 @@ double MotorController::getActualSpeed() {
     return speed;
 }
 
+void MotorController::getMotorData(double &targetSpeed, double &actualSpeed) {
+    actualSpeed = getActualSpeed();
+    targetSpeed = duty.load();  // Since duty represents PWM, scale if necessary
+}
+
+
 void MotorController::setSpeed(double pidOutput) {
     int newDuty = std::min(255, std::max(0, static_cast<int>(std::fabs(pidOutput))));
     duty.store(newDuty);
