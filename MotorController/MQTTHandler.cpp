@@ -51,7 +51,7 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
         }
     }
 
-    void publishMotorData(struct mosquitto *mosq) {
+    void publishMotorData(struct mosquitto *mosq); {
         while (true) {
             double target1, actual1, target2, actual2, target3, actual3;
 
