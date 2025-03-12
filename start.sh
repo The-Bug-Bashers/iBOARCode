@@ -6,8 +6,6 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
-# Store the current user
-CURRENT_USER=$(whoami)
 
 echo -e "${BLUE}Starting iBOAR systems...${NC}"
 
