@@ -8,87 +8,42 @@
 #include <mosquitto.h>
 #include <gpiod.h>
 #include <nlohmann/json.hpp>
+#include <wiringPi.h>
 
-class MotorController {
+class Encoder {
 public:
-    MotorController(struct gpiod_chip *chip, int pwm_offset, int forward_offset, int backward_offset)
-    : duty(0), running(true)
-    {
-        // Get lines from chip
-        pwm_line = gpiod_chip_get_line(chip, pwm_offset);
-        forward_line = gpiod_chip_get_line(chip, forward_offset);
-        backward_line = gpiod_chip_get_line(chip, backward_offset);
+    Encoder(int pinA, int pinB) : count(0) {
+        wiringPiSetupGpio();
+        pinMode(pinA, INPUT);
+        pinMode(pinB, INPUT);
 
-        // Request output for each line
-        if(gpiod_line_request_output(pwm_line, "MotorController", 0) < 0 ||
-           gpiod_line_request_output(forward_line, "MotorController", 0) < 0 ||
-           gpiod_line_request_output(backward_line, "MotorController", 0) < 0) {
-            std::cerr << "Failed to request GPIO lines." << std::endl;
-            exit(1);
-        }
+        // For multiple encoders this static pointer mechanism needs to be refactored.
+        Encoder::instance = this;
 
-        // Start the software PWM thread
-        pwm_thread = std::thread(&MotorController::pwmLoop, this);
+        wiringPiISR(pinA, INT_EDGE_BOTH, &Encoder::updateCountWrapper);
+        wiringPiISR(pinB, INT_EDGE_BOTH, &Encoder::updateCountWrapper);
     }
 
-    ~MotorController(){
-        running = false;
-        if(pwm_thread.joinable())
-            pwm_thread.join();
-
-        gpiod_line_release(pwm_line);
-        gpiod_line_release(forward_line);
-        gpiod_line_release(backward_line);
+    static void updateCountWrapper() {
+        if(instance)
+            instance->updateCount();
     }
 
-    // Speed is expected in a range where the absolute value maps to a duty cycle (0-255).
-    void setSpeed(double speed) {
-        int newDuty = std::min(255, std::max(0, static_cast<int>(std::fabs(speed))));
-        duty.store(newDuty);
-
-        if (speed > 0) {
-            gpiod_line_set_value(forward_line, 1);
-            gpiod_line_set_value(backward_line, 0);
-        } else if (speed < 0) {
-            gpiod_line_set_value(forward_line, 0);
-            gpiod_line_set_value(backward_line, 1);
-        } else {
-            gpiod_line_set_value(forward_line, 0);
-            gpiod_line_set_value(backward_line, 0);
-        }
+    void updateCount() {
+        count++;
     }
 
-    // Logging function: outputs the intended duty and current values of direction pins.
-    void logPinStates(const std::string &motorName) {
-        int forwardState = gpiod_line_get_value(forward_line);
-        int backwardState = gpiod_line_get_value(backward_line);
-        std::cout << motorName << " -> Intended Duty: " << duty.load()
-                  << ", Forward: " << forwardState
-                  << ", Backward: " << backwardState << std::endl;
+    // Returns RPM based on 1200 counts per revolution of the gearbox output shaft.
+    double getSpeed() {
+        int pulses = count.exchange(0);
+        return (pulses / 1200.0) * 60.0;
     }
 
 private:
-    void pwmLoop() {
-        const int period_us = 10000; // 10 ms period = 100 Hz PWM frequency
-        while(running.load()) {
-            int currentDuty = duty.load();
-            int on_time = (currentDuty * period_us) / 255;
-
-            gpiod_line_set_value(pwm_line, 1);
-            std::this_thread::sleep_for(std::chrono::microseconds(on_time));
-
-            gpiod_line_set_value(pwm_line, 0);
-            std::this_thread::sleep_for(std::chrono::microseconds(period_us - on_time));
-        }
-    }
-
-    std::atomic<int> duty;
-    std::atomic<bool> running;
-    std::thread pwm_thread;
-    struct gpiod_line *pwm_line;
-    struct gpiod_line *forward_line;
-    struct gpiod_line *backward_line;
+    std::atomic<int> count;
+    static Encoder *instance;
 };
+Encoder *Encoder::instance = nullptr;
 
 struct PID {
     double kp, ki, kd;
@@ -103,25 +58,82 @@ double computePID(PID &pid, double target, double actual) {
     return (pid.kp * error) + (pid.ki * pid.integral) + (pid.kd * derivative);
 }
 
-// Converts desired velocities (vx, vy, omega) to individual motor speeds.
-void calculateMotorSpeeds(double vx, double vy, double omega, double &m1, double &m2, double &m3) {
-    m1 = vx - omega;
-    m2 = (-0.5 * vx + (std::sqrt(3) / 2.0) * vy - omega);
-    m3 = (-0.5 * vx - (std::sqrt(3) / 2.0) * vy - omega);
-}
+class MotorController {
+public:
+    MotorController(struct gpiod_chip *chip, int pwm_offset, int forward_offset, int backward_offset, Encoder *encoder)
+        : duty(0), running(true), pid{0.1, 0.01, 0.05, 0, 0}, encoder(encoder) {
+        pwm_line = gpiod_chip_get_line(chip, pwm_offset);
+        forward_line = gpiod_chip_get_line(chip, forward_offset);
+        backward_line = gpiod_chip_get_line(chip, backward_offset);
 
-struct gpiod_chip *chip;
-MotorController *motor1Controller = nullptr;
-MotorController *motor2Controller = nullptr;
-MotorController *motor3Controller = nullptr;
+        if(gpiod_line_request_output(pwm_line, "MotorController", 0) < 0 ||
+           gpiod_line_request_output(forward_line, "MotorController", 0) < 0 ||
+           gpiod_line_request_output(backward_line, "MotorController", 0) < 0) {
+            std::cerr << "Failed to request GPIO lines." << std::endl;
+            exit(1);
+        }
 
+        pwm_thread = std::thread(&MotorController::pwmLoop, this);
+    }
+
+    ~MotorController(){
+        running = false;
+        if(pwm_thread.joinable())
+            pwm_thread.join();
+        gpiod_line_release(pwm_line);
+        gpiod_line_release(forward_line);
+        gpiod_line_release(backward_line);
+    }
+
+    // Set target speed (in RPM) for the PID controller
+    void setSpeed(double targetSpeed) {
+        this->targetSpeed = targetSpeed;
+    }
+
+private:
+    void pwmLoop() {
+        while(running.load()) {
+            // Read actual speed from the encoder.
+            double actualSpeed = encoder->getSpeed();
+            // Compute PID output based on the target and actual speeds.
+            double pidOutput = computePID(pid, targetSpeed, actualSpeed);
+
+            // Set motor direction based on PID output sign.
+            if (pidOutput >= 0) {
+                gpiod_line_set_value(forward_line, 1);
+                gpiod_line_set_value(backward_line, 0);
+            } else {
+                gpiod_line_set_value(forward_line, 0);
+                gpiod_line_set_value(backward_line, 1);
+            }
+
+            // Compute PWM duty cycle from the magnitude of PID output.
+            int newDuty = std::min(255, std::max(0, static_cast<int>(std::fabs(pidOutput))));
+            duty.store(newDuty);
+
+            // Generate PWM signal on pwm_line based on computed duty.
+            gpiod_line_set_value(pwm_line, 1);
+            std::this_thread::sleep_for(std::chrono::microseconds(newDuty * 10000 / 255));
+            gpiod_line_set_value(pwm_line, 0);
+            std::this_thread::sleep_for(std::chrono::microseconds(10000 - (newDuty * 10000 / 255)));
+        }
+    }
+
+    PID pid;
+    std::atomic<int> duty;
+    std::atomic<bool> running;
+    std::thread pwm_thread;
+    struct gpiod_line *pwm_line;
+    struct gpiod_line *forward_line;
+    struct gpiod_line *backward_line;
+    Encoder *encoder;
+    std::atomic<double> targetSpeed;
+};
 
 void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message) {
     if (message->payloadlen > 0) {
         try {
-            // Parse JSON
             auto jsonPayload = nlohmann::json::parse((char *)message->payload);
-
             if (!jsonPayload.contains("command") || !jsonPayload.contains("angle") || !jsonPayload.contains("speed")) {
                 std::cerr << "Invalid JSON format: missing required fields." << std::endl;
                 return;
@@ -134,28 +146,17 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
 
             double angle = jsonPayload["angle"];
             double speed = jsonPayload["speed"];
-
-            // Convert (angle, speed) to (vx, vy)
             double radians = angle * M_PI / 180.0;
             double vx = speed * sin(radians);
             double vy = speed * cos(radians);
 
-            // Calculate motor speeds
             double m1, m2, m3;
             calculateMotorSpeeds(vx, vy, 0, m1, m2, m3);
 
-            // Set motor speeds
+            // Set target speeds for each motor controller.
             motor1Controller->setSpeed(m1);
             motor2Controller->setSpeed(m2);
             motor3Controller->setSpeed(m3);
-
-            // Logging
-            std::cout << "Received command: drive, angle=" << angle << ", speed=" << speed << std::endl;
-            std::cout << "Converted to: vx=" << vx << ", vy=" << vy << std::endl;
-            motor1Controller->logPinStates("Motor 1");
-            motor2Controller->logPinStates("Motor 2");
-            motor3Controller->logPinStates("Motor 3");
-
         } catch (const std::exception &e) {
             std::cerr << "JSON parsing error: " << e.what() << std::endl;
         }
@@ -169,15 +170,16 @@ int main() {
         return 1;
     }
 
-    // Create MotorController objects with BCM pin numbers
-    // Motor 1: PWM=4, Forward=27, Backward=22
-    // Motor 2: PWM=12, Forward=8, Backward=25
-    // Motor 3: PWM=26, Forward=19, Backward=13
-    motor1Controller = new MotorController(chip, 4, 27, 22);
-    motor2Controller = new MotorController(chip, 12, 8, 25);
-    motor3Controller = new MotorController(chip, 26, 19, 13);
+    // Create encoders for each motor.
+    Encoder encoder1(14, 15);
+    Encoder encoder2(11, 9);
+    Encoder encoder3(21, 20);
 
-    // Initialize Mosquitto library
+    // Instantiate motor controllers with given GPIO offsets.
+    motor1Controller = new MotorController(chip, 4, 27, 22, &encoder1);
+    motor2Controller = new MotorController(chip, 12, 8, 25, &encoder2);
+    motor3Controller = new MotorController(chip, 26, 19, 13, &encoder3);
+
     mosquitto_lib_init();
     struct mosquitto *mosq = mosquitto_new("MotorController", true, NULL);
     if (!mosq) {
@@ -185,7 +187,6 @@ int main() {
         return 1;
     }
 
-    // Connect to the MQTT broker on localhost
     int ret = mosquitto_connect(mosq, "localhost", 1883, 60);
     if (ret != MOSQ_ERR_SUCCESS) {
         std::cerr << "MQTT connection error: " << mosquitto_strerror(ret) << std::endl;
@@ -195,14 +196,8 @@ int main() {
 
     mosquitto_message_callback_set(mosq, onMessage);
     mosquitto_subscribe(mosq, NULL, "boar/motor/drive", 0);
-
-    // Start MQTT loop (blocking call)
     ret = mosquitto_loop_forever(mosq, -1, 1);
-    if (ret != MOSQ_ERR_SUCCESS) {
-        std::cerr << "MQTT loop error: " << mosquitto_strerror(ret) << std::endl;
-    }
 
-    // Clean up
     mosquitto_destroy(mosq);
     mosquitto_lib_cleanup();
     delete motor1Controller;
