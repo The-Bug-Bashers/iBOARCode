@@ -31,7 +31,7 @@ MotorController::~MotorController(){
     gpiod_line_release(backward_line);
 }
 
-void MotorController::logMotorStatus(double targetSpeed, double pidOutput) {
+void MotorController::logMotorStatus(double targetSpeed, double pidOutput); {
     double actualSpeed = getActualSpeed();
     std::cout << "Motor Speed Log -> Target: " << targetSpeed
               << " | Actual: " << actualSpeed
