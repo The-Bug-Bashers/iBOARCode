@@ -6,11 +6,16 @@
 #include <gpiod.h>
 #include <iostream>
 #include "PID.h"
+#include "MQTTHandler.h"
 
 struct gpiod_chip *chip;
 MotorController *motor1Controller = nullptr;
 MotorController *motor2Controller = nullptr;
 MotorController *motor3Controller = nullptr;
+
+PID pid1 = {0.1, 0.01, 0.05, 0, 0};
+PID pid2 = {0.1, 0.01, 0.05, 0, 0};
+PID pid3 = {0.1, 0.01, 0.05, 0, 0};
 
 int main() {
     chip = gpiod_chip_open_by_name("gpiochip0");
@@ -18,10 +23,6 @@ int main() {
         std::cerr << "Failed to open gpiochip0." << std::endl;
         return 1;
     }
-
-    PID pid1 = {0.1, 0.01, 0.05, 0, 0};
-    PID pid2 = {0.1, 0.01, 0.05, 0, 0};
-    PID pid3 = {0.1, 0.01, 0.05, 0, 0};
 
     motor1Controller = new MotorController(chip, 4, 27, 22, 14, 15);
     motor2Controller = new MotorController(chip, 12, 8, 25, 11, 9);
