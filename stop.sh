@@ -10,7 +10,7 @@ NC='\033[0m' # No Color
 echo -e "${BLUE}Stopping iBOAR systems...${NC}"
 
 echo -e "${BLUE}Stopping REST API...${NC}"
-screen -S API -X stuff "^C"
+sudo screen -S API -X stuff "^C"
 echo -e "${BLUE}Waiting for REST API to stop...${NC}"
 sleep 4
 

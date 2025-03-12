@@ -40,7 +40,9 @@ void MotorController::logMotorStatus(double targetSpeed, double pidOutput) {
 }
 
 double MotorController::getActualSpeed() {
-    return encoder->getSpeed();
+    double speed = encoder->getSpeed();
+    std::cout << "[Encoder] Raw Speed: " << speed << " RPM" << std::endl;
+    return speed;
 }
 
 void MotorController::setSpeed(double pidOutput) {
