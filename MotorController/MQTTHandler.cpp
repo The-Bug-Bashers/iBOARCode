@@ -42,9 +42,10 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
             double actualSpeed2 = motor2Controller->getActualSpeed();
             double actualSpeed3 = motor3Controller->getActualSpeed();
 
-            motor1Controller->setSpeed(computePID(pid1, m1, actualSpeed1));
-            motor2Controller->setSpeed(computePID(pid2, m2, actualSpeed2));
-            motor3Controller->setSpeed(computePID(pid3, m3, actualSpeed3));
+            motor1Controller->setTargetSpeed(m1);
+            motor2Controller->setTargetSpeed(m2);
+            motor3Controller->setTargetSpeed(m3);
+
 
         } catch (const std::exception &e) {
             std::cerr << "JSON parsing error: " << e.what() << std::endl;

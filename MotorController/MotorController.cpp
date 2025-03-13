@@ -2,9 +2,13 @@
 #include <chrono>
 #include <cmath>
 #include <iostream>
+#include <thread>
+#include "PID.h"
+#include "Encoder.h"
 
-MotorController::MotorController(struct gpiod_chip *chip, int pwm_offset, int forward_offset, int backward_offset, int encoderA, int encoderB)
-: duty(0), running(true) {
+
+MotorController::MotorController(struct gpiod_chip *chip, int pwm_offset, int forward_offset, int backward_offset, int encoderA, int encoderB, double kp, double ki, double kd)
+: duty(0), running(true), targetSpeed(0), pid{kp, ki, kd, 0, 0} {
     pwm_line = gpiod_chip_get_line(chip, pwm_offset);
     forward_line = gpiod_chip_get_line(chip, forward_offset);
     backward_line = gpiod_chip_get_line(chip, backward_offset);
@@ -18,6 +22,7 @@ MotorController::MotorController(struct gpiod_chip *chip, int pwm_offset, int fo
     }
 
     pwm_thread = std::thread(&MotorController::pwmLoop, this);
+    pid_thread = std::thread(&MotorController::pidLoop, this, std::ref(pid));
 }
 
 MotorController::~MotorController(){
@@ -29,7 +34,27 @@ MotorController::~MotorController(){
     gpiod_line_release(pwm_line);
     gpiod_line_release(forward_line);
     gpiod_line_release(backward_line);
+    running = false;
+    if (pid_thread.joinable()) pid_thread.join();
+
 }
+
+void MotorController::setTargetSpeed(double speed) {
+    targetSpeed.store(speed);
+}
+
+void MotorController::pidLoop(PID &pid) {
+    while (running) {
+        double actualSpeed = getActualSpeed();
+        double target = targetSpeed.load();
+        double pidOutput = computePID(pid, target, actualSpeed);
+
+        setSpeed(pidOutput);  // Continuously update motor speed
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(50)); // Update every 50ms
+    }
+}
+
 
 void MotorController::logMotorStatus(double targetSpeed, double pidOutput) {
     double actualSpeed = getActualSpeed();
