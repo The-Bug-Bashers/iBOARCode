@@ -59,10 +59,6 @@ void MotorController::pidLoop() {
 
 void MotorController::logMotorStatus(double targetSpeed, double pidOutput) {
     double actualSpeed = getActualSpeed();
-    std::cout << "Motor Speed Log -> Target: " << targetSpeed
-              << " | Actual: " << actualSpeed
-              << " | PID Output: " << pidOutput
-              << std::endl;
 }
 
 double MotorController::getActualSpeed() {
