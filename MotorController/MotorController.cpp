@@ -41,6 +41,7 @@ MotorController::~MotorController(){
 }
 
 void MotorController::setTargetSpeed(double speed) {
+    std::cout << "[DEBUG] Setting Target Speed: " << speed << std::endl;
     targetSpeed.store(speed);
 }
 
