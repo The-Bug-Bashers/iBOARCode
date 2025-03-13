@@ -38,10 +38,18 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
             double m1, m2, m3;
             calculateMotorSpeeds(vx, vy, 0, m1, m2, m3);
 
+            // Logging for debugging
+            std::cout << "[MQTT] Received command: " << command
+                      << " | Angle: " << angle
+                      << " | Speed: " << speed << std::endl;
+            std::cout << "[MQTT] Computed motor speeds: M1 = " << m1
+                      << ", M2 = " << m2
+                      << ", M3 = " << m3 << std::endl;
+
+            // Ensure each motor gets its own values
             motor1Controller->setTargetSpeed(m1);
             motor2Controller->setTargetSpeed(m2);
             motor3Controller->setTargetSpeed(m3);
-
 
         } catch (const std::exception &e) {
             std::cerr << "JSON parsing error: " << e.what() << std::endl;
