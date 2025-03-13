@@ -4,7 +4,6 @@
 #include <atomic>
 #include <thread>
 #include <gpiod.h>
-#include <chrono>
 
 class Encoder {
 public:

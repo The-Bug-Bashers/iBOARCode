@@ -1,10 +1,10 @@
 #include "Encoder.h"
 #include <iostream>
-#include <cmath>
+#include <chrono>
 
-constexpr int CPR = 64; // Counts per revolution of motor shaft
+constexpr int CPR = 64;
 constexpr double GEAR_RATIO = 18.75;
-constexpr int COUNTS_PER_WHEEL_ROTATION = CPR * GEAR_RATIO; // 1200 counts per full wheel rotation
+constexpr int COUNTS_PER_WHEEL_ROTATION = CPR * GEAR_RATIO;
 
 Encoder::Encoder(struct gpiod_chip *chip, int pinA, int pinB) : pulseCount(0), running(true) {
     lineA = gpiod_chip_get_line(chip, pinA);
@@ -19,30 +19,25 @@ Encoder::Encoder(struct gpiod_chip *chip, int pinA, int pinB) : pulseCount(0), r
 }
 
 Encoder::~Encoder() {
-    running = false;
+    running.store(false, std::memory_order_relaxed);
     if (encoderThread.joinable()) {
         encoderThread.join();
     }
-
     gpiod_line_release(lineA);
     gpiod_line_release(lineB);
 }
 
 void Encoder::countPulses() {
-    int lastStateA = gpiod_line_get_value(lineA);
-
-    while (running) {
-        int currentStateA = gpiod_line_get_value(lineA);
-        if (currentStateA != lastStateA) {
-            pulseCount++;
+    while (running.load(std::memory_order_relaxed)) {
+        int stateA = gpiod_line_get_value(lineA);
+        if (stateA) {
+            pulseCount.fetch_add(1, std::memory_order_relaxed);
         }
-        lastStateA = currentStateA;
-        std::this_thread::sleep_for(std::chrono::microseconds(100)); // Debounce
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }
 
 double Encoder::getSpeed() {
-    int pulses = pulseCount.exchange(0); // Reset counter after reading
-    double rotations = static_cast<double>(pulses) / COUNTS_PER_WHEEL_ROTATION;
-    return rotations * 60.0; // Convert to RPM
+    int pulses = pulseCount.exchange(0, std::memory_order_relaxed);
+    return (static_cast<double>(pulses) / COUNTS_PER_WHEEL_ROTATION) * 60.0;
 }
