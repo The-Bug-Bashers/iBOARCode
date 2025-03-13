@@ -7,6 +7,7 @@
 #include <iostream>
 #include "PID.h"
 #include "MQTTHandler.h"
+#include "MQTTHandler.h"
 
 struct gpiod_chip *chip;
 MotorController *motor1Controller = nullptr;

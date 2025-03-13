@@ -50,27 +50,27 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
             std::cerr << "JSON parsing error: " << e.what() << std::endl;
         }
     }
+}
 
-    void publishMotorData(struct mosquitto *mosq); {
-        while (true) {
-            double target1, actual1, target2, actual2, target3, actual3;
+void publishMotorData(struct mosquitto *mosq); {
+    while (true) {
+        double target1, actual1, target2, actual2, target3, actual3;
 
-            motor1Controller->getMotorData(target1, actual1);
-            motor2Controller->getMotorData(target2, actual2);
-            motor3Controller->getMotorData(target3, actual3);
+        motor1Controller->getMotorData(target1, actual1);
+        motor2Controller->getMotorData(target2, actual2);
+        motor3Controller->getMotorData(target3, actual3);
 
-            nlohmann::json data = {
-                {"motor1", {{"target", target1}, {"actual", actual1}}},
-                {"motor2", {{"target", target2}, {"actual", actual2}}},
-                {"motor3", {{"target", target3}, {"actual", actual3}}}
-            };
+        nlohmann::json data = {
+            {"motor1", {{"target", target1}, {"actual", actual1}}},
+            {"motor2", {{"target", target2}, {"actual", actual2}}},
+            {"motor3", {{"target", target3}, {"actual", actual3}}}
+        };
 
-            std::string message = data.dump();
-            mosquitto_publish(mosq, NULL, "boar/motor/data", message.length(), message.c_str(), 0, false);
+        std::string message = data.dump();
+        mosquitto_publish(mosq, NULL, "boar/motor/data", message.length(), message.c_str(), 0, false);
 
-            std::cout << "[MQTT] Sent motor data: " << message << std::endl;
+        std::cout << "[MQTT] Sent motor data: " << message << std::endl;
 
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-        }
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 }
