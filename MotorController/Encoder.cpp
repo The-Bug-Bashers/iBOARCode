@@ -52,9 +52,11 @@ double Encoder::getSpeed() {
     auto currentTime = std::chrono::steady_clock::now();
     double elapsedSeconds = std::chrono::duration<double>(currentTime - lastTime).count();
     lastTime = currentTime;
-
-
     int pulses = pulseCount.exchange(0, std::memory_order_relaxed);
     double rotations = static_cast<double>(pulses) / COUNTS_PER_WHEEL_ROTATION;
-    return (rotations / elapsedSeconds) * 60.0; // Convert to RPM
+    double rpm = (rotations / elapsedSeconds) * 60.0;
+
+    std::cout << "[ENCODER] Elapsed Time: " << elapsedSeconds << " sec, Pulses: " << pulses << ", Rotations: " << rotations << ", RPM: " << rpm << std::endl;
+
+    return rpm;
 }
