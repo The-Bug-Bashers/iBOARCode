@@ -69,9 +69,10 @@ double MotorController::getActualSpeed() {
     return encoder->getSpeed();;
 }
 
-void MotorController::getMotorData(double &targetSpeed, double &actualSpeed, double &pidOutput) {
+void MotorController::getMotorData(double &currentTargetSpeed, double &actualSpeed, double &pidOutput) {
     actualSpeed = getActualSpeed();
-    targetSpeed = duty.load();  // Since duty represents PWM, scale if necessary
+    currentTargetSpeed = duty.load();  // Since duty represents PWM, scale if necessary
+
     pidOutput = lastPidOutput;
 }
 
