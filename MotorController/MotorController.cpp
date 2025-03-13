@@ -52,6 +52,8 @@ void MotorController::pidLoop() {
     while (running) {
         std::cout << "requesting new speed (pidLoop): " << std::endl;
         double actualSpeed = getActualSpeed();
+        lastMeasuredSpeed.store(actualSpeed, std::memory_order_relaxed);
+
         double target = targetSpeed.load();
         double pidOutput = computePID(pid, target, actualSpeed);
 
@@ -66,8 +68,7 @@ double MotorController::getActualSpeed() {
 }
 
 void MotorController::getMotorData(double &currentTargetSpeed, double &actualSpeed, double &pidOutput) {
-    std::cout << "requesting new speed (getMotorData): " << std::endl;
-    actualSpeed = getActualSpeed();
+    actualSpeed = lastMeasuredSpeed.load(std::memory_order_relaxed);
     currentTargetSpeed = targetSpeed.load();
 
     pidOutput = lastPidOutput;

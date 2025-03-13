@@ -26,6 +26,7 @@ public:
 
 
 private:
+    std::atomic<double> lastMeasuredSpeed;
     double lastPidOutput = 0;
     void pwmLoop();
     std::atomic<double> targetSpeed;
