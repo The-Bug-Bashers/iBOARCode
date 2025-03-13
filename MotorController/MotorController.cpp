@@ -41,6 +41,9 @@ MotorController::~MotorController(){
 }
 
 void MotorController::setTargetSpeed(double speed) {
+    if (speed == 0) {
+        pid.integral = 0;  // Reset PID integral to prevent wind-up
+    }
     std::cout << "[DEBUG] Setting Target Speed: " << speed << std::endl;
     targetSpeed.store(speed);
 }
