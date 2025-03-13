@@ -56,13 +56,8 @@ void MotorController::pidLoop() {
 
         setSpeed(pidOutput);  // Continuously update motor speed
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(50)); // Update every 50ms
+        std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Update every 500 ms
     }
-}
-
-
-void MotorController::logMotorStatus(double targetSpeed, double pidOutput) {
-    double actualSpeed = getActualSpeed();
 }
 
 double MotorController::getActualSpeed() {
@@ -93,7 +88,6 @@ void MotorController::setSpeed(double pidOutput) {
         gpiod_line_set_value(backward_line, 0);
     }
 
-    logMotorStatus(newDuty, pidOutput);
 }
 
 

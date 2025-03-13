@@ -38,10 +38,6 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
             double m1, m2, m3;
             calculateMotorSpeeds(vx, vy, 0, m1, m2, m3);
 
-            double actualSpeed1 = motor1Controller->getActualSpeed();
-            double actualSpeed2 = motor2Controller->getActualSpeed();
-            double actualSpeed3 = motor3Controller->getActualSpeed();
-
             motor1Controller->setTargetSpeed(m1);
             motor2Controller->setTargetSpeed(m2);
             motor3Controller->setTargetSpeed(m3);

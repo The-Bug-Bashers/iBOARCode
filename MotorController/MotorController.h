@@ -17,7 +17,6 @@ public:
     double getActualSpeed();
     void setSpeed(double pidOutput);
     void logPinStates(const std::string &motorName);
-    void logMotorStatus(double targetSpeed, double pidOutput);
     void getMotorData(double &targetSpeed, double &actualSpeed, double &pidOutput);
     void pidLoop();
     std::thread pid_thread;
