@@ -17,10 +17,11 @@ public:
     void setSpeed(double pidOutput);
     void logPinStates(const std::string &motorName);
     void logMotorStatus(double targetSpeed, double pidOutput);
-    void getMotorData(double &targetSpeed, double &actualSpeed);
+    void getMotorData(double &targetSpeed, double &actualSpeed, double &pidOutput);
 
 
 private:
+    double lastPidOutput = 0;
     void pwmLoop();
     std::atomic<int> duty;
     std::atomic<bool> running;

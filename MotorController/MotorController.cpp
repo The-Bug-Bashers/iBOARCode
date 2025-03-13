@@ -40,20 +40,20 @@ void MotorController::logMotorStatus(double targetSpeed, double pidOutput) {
 }
 
 double MotorController::getActualSpeed() {
-    double speed = encoder->getSpeed();
-    std::cout << "[Encoder] Raw Speed: " << speed << " RPM" << std::endl;
-    return speed;
+    return encoder->getSpeed();;
 }
 
-void MotorController::getMotorData(double &targetSpeed, double &actualSpeed) {
+void MotorController::getMotorData(double &targetSpeed, double &actualSpeed, double &pidOutput) {
     actualSpeed = getActualSpeed();
     targetSpeed = duty.load();  // Since duty represents PWM, scale if necessary
+    pidOutput = lastPidOutput;
 }
 
 
 void MotorController::setSpeed(double pidOutput) {
     int newDuty = std::min(255, std::max(0, static_cast<int>(std::fabs(pidOutput))));
     duty.store(newDuty);
+    lastPidOutput = pidOutput;
 
     if (pidOutput > 0) {
         gpiod_line_set_value(forward_line, 1);
