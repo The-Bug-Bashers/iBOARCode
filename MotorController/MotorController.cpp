@@ -49,7 +49,7 @@ void MotorController::setTargetSpeed(double speed) {
 }
 
 void MotorController::pidLoop() {
-    while (running) {
+    while (running) { std::cout << "requesting new speed: " << std::endl;
         double actualSpeed = getActualSpeed();
         double target = targetSpeed.load();
         double pidOutput = computePID(pid, target, actualSpeed);
