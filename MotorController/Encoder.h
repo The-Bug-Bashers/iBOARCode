@@ -12,6 +12,7 @@ public:
     double getSpeed(); // Returns speed in RPM
 
 private:
+    std::chrono::steady_clock::time_point lastTime;
     void countPulses();
     std::atomic<int> pulseCount;
     std::atomic<bool> running;
