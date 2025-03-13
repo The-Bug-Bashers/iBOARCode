@@ -23,6 +23,7 @@ MotorController::MotorController(struct gpiod_chip *chip, int pwm_offset, int fo
 
     pwm_thread = std::thread(&MotorController::pwmLoop, this);
     pid_thread = std::thread(&MotorController::pidLoop, this);
+
 }
 
 MotorController::~MotorController(){
@@ -43,7 +44,7 @@ void MotorController::setTargetSpeed(double speed) {
     targetSpeed.store(speed);
 }
 
-void MotorController::pidLoop(PID &pid) {
+void MotorController::pidLoop() {
     while (running) {
         double actualSpeed = getActualSpeed();
         double target = targetSpeed.load();
