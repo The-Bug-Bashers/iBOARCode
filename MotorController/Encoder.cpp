@@ -2,9 +2,7 @@
 #include <iostream>
 #include <chrono>
 
-constexpr int CPR = 64;
-constexpr double GEAR_RATIO = 18.75;
-constexpr int COUNTS_PER_WHEEL_ROTATION = CPR * GEAR_RATIO;
+constexpr int COUNTS_PER_WHEEL_ROTATION = 1200; // CPR * GEAR_RATIO -> 64 * 18.75 -> 1200
 
 Encoder::Encoder(struct gpiod_chip *chip, int pinA, int pinB) : pulseCount(0), running(true) {
     lineA = gpiod_chip_get_line(chip, pinA);
@@ -28,16 +26,35 @@ Encoder::~Encoder() {
 }
 
 void Encoder::countPulses() {
+    int lastA = gpiod_line_get_value(lineA);
+    int lastB = gpiod_line_get_value(lineB);
+
     while (running.load(std::memory_order_relaxed)) {
-        int stateA = gpiod_line_get_value(lineA);
-        if (stateA) {
-            pulseCount.fetch_add(1, std::memory_order_relaxed);
+        int currentA = gpiod_line_get_value(lineA);
+        int currentB = gpiod_line_get_value(lineB);
+
+        if (currentA != lastA) { // A signal changed
+            if (currentA == currentB) {
+                pulseCount.fetch_add(1, std::memory_order_relaxed);  // Forward
+            } else {
+                pulseCount.fetch_sub(1, std::memory_order_relaxed);  // Backward
+            }
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
+        lastA = currentA;
+        lastB = currentB;
+        std::this_thread::sleep_for(std::chrono::microseconds(50)); // Debounce
     }
 }
 
 double Encoder::getSpeed() {
+    static auto lastTime = std::chrono::steady_clock::now();
+    auto currentTime = std::chrono::steady_clock::now();
+    double elapsedSeconds = std::chrono::duration<double>(currentTime - lastTime).count();
+    lastTime = currentTime;
+
+
     int pulses = pulseCount.exchange(0, std::memory_order_relaxed);
-    return (static_cast<double>(pulses) / COUNTS_PER_WHEEL_ROTATION) * 60.0;
+    double rotations = static_cast<double>(pulses) / COUNTS_PER_WHEEL_ROTATION;
+    return (rotations / elapsedSeconds) * 60.0; // Convert to RPM
 }
