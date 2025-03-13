@@ -22,7 +22,7 @@ MotorController::MotorController(struct gpiod_chip *chip, int pwm_offset, int fo
     }
 
     pwm_thread = std::thread(&MotorController::pwmLoop, this);
-    pid_thread = std::thread(&MotorController::pidLoop, this, std::ref(pid));
+    pid_thread = std::thread(&MotorController::pidLoop, this);
 }
 
 MotorController::~MotorController(){

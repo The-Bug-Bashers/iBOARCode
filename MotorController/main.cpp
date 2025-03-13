@@ -25,9 +25,9 @@ int main() {
         return 1;
     }
 
-    motor1Controller = new MotorController(chip, 4, 27, 22, 14, 15);
-    motor2Controller = new MotorController(chip, 12, 8, 25, 11, 9);
-    motor3Controller = new MotorController(chip, 26, 19, 13, 21, 20);
+    motor1Controller = new MotorController(chip, 4, 27, 22, 14, 15, 0.1, 0.01, 0.05);
+    motor2Controller = new MotorController(chip, 12, 8, 25, 11, 9, 0.1, 0.01, 0.05);
+    motor3Controller = new MotorController(chip, 26, 19, 13, 21, 20, 0.1, 0.01, 0.05);
 
     mosquitto_lib_init();
     struct mosquitto *mosq = mosquitto_new("MotorController", true, NULL);
