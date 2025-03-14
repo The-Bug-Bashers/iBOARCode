@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
-import org.springframework.lang.NonNullApi;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -27,7 +26,7 @@ public class DataWebSocketHandler extends TextWebSocketHandler {
     private MqttClient mqttClient;
 
     @Value("${mqtt.broker.url}") String BROKER_URL;
-    @Value("${mqtt.client.id}") String CLIENT_ID;
+    @Value("${mqtt.client.data.id}") String CLIENT_ID;
     @Value("${mqtt.channel.motor.data}") String MQTT_TOPIC;
 
     @PostConstruct
@@ -74,7 +73,8 @@ public class DataWebSocketHandler extends TextWebSocketHandler {
     @PreDestroy
     public void close() {
         try {
-            this.mqttClient.close();
+            mqttClient.disconnect();
+            mqttClient.close();
         } catch (MqttException e) {
             log.error("Failed to close mqttClient", e);
         }
