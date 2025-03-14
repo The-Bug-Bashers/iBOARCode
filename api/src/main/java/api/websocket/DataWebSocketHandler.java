@@ -3,6 +3,8 @@ package api.websocket;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.eclipse.paho.client.mqttv3.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.lang.NonNullApi;
@@ -20,6 +22,7 @@ import java.util.Set;
 @Profile("!local")
 @Component
 public class DataWebSocketHandler extends TextWebSocketHandler {
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
     private MqttClient mqttClient;
 
@@ -30,6 +33,7 @@ public class DataWebSocketHandler extends TextWebSocketHandler {
     @PostConstruct
     public void ini() {
         try {
+            log.info("Connecting to broker: {}", BROKER_URL);
             mqttClient = new MqttClient(BROKER_URL, CLIENT_ID);
             MqttConnectOptions options = new MqttConnectOptions();
             options.setCleanSession(true);
@@ -40,7 +44,7 @@ public class DataWebSocketHandler extends TextWebSocketHandler {
                 broadcastMessage(payload);
             });
         } catch (MqttException e) {
-            System.err.println("Failed to connect to MQTT broker: " + e);
+            log.error("Failed to connect to MQTT broker", e);
         }
     }
 
@@ -60,7 +64,7 @@ public class DataWebSocketHandler extends TextWebSocketHandler {
                 try {
                     session.sendMessage(new TextMessage(message));
                 } catch (IOException e) {
-                    System.err.println("Failed to send WebSocket message: " + e.getMessage());
+                    log.error("Failed to send WebSocket message", e);
                 }
             }
         }
@@ -71,7 +75,7 @@ public class DataWebSocketHandler extends TextWebSocketHandler {
         try {
             this.mqttClient.close();
         } catch (MqttException e) {
-            System.err.println("Failed to close mqttClient: " + e.getMessage());
+            log.error("Failed to close mqttClient", e);
         }
     }
 
