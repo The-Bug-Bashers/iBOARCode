@@ -1,7 +1,11 @@
 package api.websocket;
 
+import jakarta.annotation.PreDestroy;
 import org.eclipse.paho.client.mqttv3.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
+import org.springframework.lang.NonNullApi;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -12,6 +16,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+@Profile("!local")
+@Component
 public class DataWebSocketHandler extends TextWebSocketHandler {
     private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
     private MqttClient mqttClient;
@@ -20,12 +26,7 @@ public class DataWebSocketHandler extends TextWebSocketHandler {
     @Value("${mqtt.client.id}") String CLIENT_ID;
     @Value("${mqtt.channel.motor.data}") String MQTT_TOPIC;
 
-
-
-
     public DataWebSocketHandler() {
-        MqttClient tempClient = null; //TODO: fix program creasing when could not connect to MQTT server, and tempClient remains null
-
         try {
             mqttClient = new MqttClient(BROKER_URL, CLIENT_ID);
             MqttConnectOptions options = new MqttConnectOptions();
@@ -62,4 +63,14 @@ public class DataWebSocketHandler extends TextWebSocketHandler {
             }
         }
     }
+
+    @PreDestroy
+    public void close() {
+        try {
+            this.mqttClient.close();
+        } catch (MqttException e) {
+            System.err.println("Failed to close mqttClient: " + e.getMessage());
+        }
+    }
+
 }
