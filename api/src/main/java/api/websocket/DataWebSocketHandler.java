@@ -1,5 +1,6 @@
 package api.websocket;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.eclipse.paho.client.mqttv3.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +27,8 @@ public class DataWebSocketHandler extends TextWebSocketHandler {
     @Value("${mqtt.client.id}") String CLIENT_ID;
     @Value("${mqtt.channel.motor.data}") String MQTT_TOPIC;
 
-    public DataWebSocketHandler() {
+    @PostConstruct
+    public void ini() {
         try {
             mqttClient = new MqttClient(BROKER_URL, CLIENT_ID);
             MqttConnectOptions options = new MqttConnectOptions();
