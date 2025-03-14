@@ -98,11 +98,12 @@
 
     // WebSocket connection
     const hostname = window.location.hostname.split(':')[0]
-    const dataSocketURL = `ws://${hostname}:8080/data`;
+    const dataSocketURL = `ws://boar:8080/data`;
     const dataSocket = new WebSocket(dataSocketURL);
 
     dataSocket.onmessage = function(event) {
         processData(event.data);
+        console.log(("Received: " + event.data))
     };
 
     // Function to process received or manually entered data

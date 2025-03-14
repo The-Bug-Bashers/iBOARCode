@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class MqttPublisher {
 
-    private static MqttClient client;
+    private MqttClient client;
 
     public MqttPublisher(
             @Value("${mqtt.broker.url}") String BROKER_URL,
@@ -26,7 +26,7 @@ public class MqttPublisher {
         }
     }
 
-    public static String sendMQTTMessage(String topic, String payload, int qos, boolean retained) throws MqttException {
+    public String sendMQTTMessage(String topic, String payload, int qos, boolean retained) throws MqttException {
         try {
             MqttMessage message = new MqttMessage(payload.getBytes());
             message.setQos(qos);
