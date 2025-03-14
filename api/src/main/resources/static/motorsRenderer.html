@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motor Speed Monitoring</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .chart-container {
+            width: 80%;
+            margin: auto;
+        }
+        canvas {
+            max-width: 600px;
+            max-height: 400px;
+        }
+        .manual-input {
+            margin: 20px;
+        }
+        textarea {
+            width: 80%;
+            height: 100px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+<h1>Motor Speed Monitoring</h1>
+
+<div class="manual-input">
+    <h3>Simulate WebSocket Data</h3>
+    <textarea id="manualData">{
+    "motor1": {"actual": 100, "pid_output": 200, "target": 300},
+    "motor2": {"actual": -150, "pid_output": -100, "target": -200},
+    "motor3": {"actual": 50, "pid_output": 80, "target": 90}
+}</textarea>
+    <br>
+    <button onclick="simulateData()">Send Data</button>
+</div>
+
+<div class="chart-container">
+    <canvas id="combinedChart"></canvas>
+</div>
+
+<script>
+    // Initialize the combined chart
+    const ctx = document.getElementById('combinedChart').getContext('2d');
+    const combinedChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [
+                { label: 'Motor 1 Actual', data: [], borderColor: 'blue', borderWidth: 2, fill: false, tension: 0.1 },
+                { label: 'Motor 1 Target', data: [], borderColor: 'red', borderWidth: 2, fill: false, borderDash: [5, 5], tension: 0.1 },
+                { label: 'Motor 2 Actual', data: [], borderColor: 'green', borderWidth: 2, fill: false, tension: 0.1 },
+                { label: 'Motor 2 Target', data: [], borderColor: 'orange', borderWidth: 2, fill: false, borderDash: [5, 5], tension: 0.1 },
+                { label: 'Motor 3 Actual', data: [], borderColor: 'purple', borderWidth: 2, fill: false, tension: 0.1 },
+                { label: 'Motor 3 Target', data: [], borderColor: 'pink', borderWidth: 2, fill: false, borderDash: [5, 5], tension: 0.1 }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: { title: { display: true, text: 'Time' } },
+                y: { title: { display: true, text: 'Speed (RPM)' }, suggestedMin: -600, suggestedMax: 600 }
+            },
+            animation: {
+                duration: 0, // Keep smooth updates
+            }
+        }
+    });
+
+    // Function to update the combined chart
+    function updateChart(actual1, target1, actual2, target2, actual3, target3) {
+        const time = new Date().toLocaleTimeString();
+        const labels = combinedChart.data.labels;
+        const datasets = combinedChart.data.datasets;
+
+        if (labels.length > 20) { // Keep only the last 20 entries
+            labels.shift();
+            datasets.forEach(dataset => dataset.data.shift());
+        }
+
+        labels.push(time);
+        datasets[0].data.push(actual1);
+        datasets[1].data.push(target1);
+        datasets[2].data.push(actual2);
+        datasets[3].data.push(target2);
+        datasets[4].data.push(actual3);
+        datasets[5].data.push(target3);
+
+        combinedChart.update();
+    }
+
+    // WebSocket connection
+    const hostname = window.location.hostname.split(':')[0]
+    const dataSocketURL = `ws://${hostname}:8080/data`;
+    const dataSocket = new WebSocket(dataSocketURL);
+
+    dataSocket.onmessage = function(event) {
+        processData(event.data);
+    };
+
+    // Function to process received or manually entered data
+    function processData(jsonData) {
+        try {
+            const data = JSON.parse(jsonData);
+            updateChart(
+                data.motor1.actual, data.motor1.target,
+                data.motor2.actual, data.motor2.target,
+                data.motor3.actual, data.motor3.target
+            );
+        } catch (error) {
+            console.error("Invalid JSON data:", error);
+            alert("Invalid JSON format!");
+        }
+    }
+
+    // Simulate receiving a WebSocket message
+    function simulateData() {
+        const inputData = document.getElementById('manualData').value;
+        processData(inputData);
+    }
+</script>
+</body>
+</html>
