@@ -4,6 +4,16 @@
     width: 25vw;
     height: 33vh;
     text-align: center;
+
+    canvas {
+        max-width: 600px;
+        max-height: 400px;
+    }
+    textarea {
+        width: 80%;
+        height: 100px;
+        font-family: monospace;
+    }
 }
 
 #motorCanvas {
