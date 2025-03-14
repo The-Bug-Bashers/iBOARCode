@@ -6,6 +6,8 @@ document.getElementById("modeSelect").addEventListener("change", (event) => {
     sendMessage(`{"command": "changeMode", "mode": "${mode}"}`);
     showControls(mode);
 
+    adjustControlsHeight();
+
     const placeholder = document.getElementById("placeholder");
     if (placeholder) placeholder.remove();
 

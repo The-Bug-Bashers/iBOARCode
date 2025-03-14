@@ -13,11 +13,16 @@
     }
 }
 
+#controlsContent {
+    height: calc(92vh - 2em - 12vh);
+}
+
 #controlsContainer {
     flex-direction: column;
     align-items: center;
     text-align: left;
     justify-content: center;
+    overflow-y: auto;
 }
 
 #modeSelect, #motorsSelect {
