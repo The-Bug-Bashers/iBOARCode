@@ -26,26 +26,23 @@ Encoder::~Encoder() {
 }
 
 void Encoder::countPulses() {
-    int lastA = gpiod_line_get_value(lineA);
-    int lastB = gpiod_line_get_value(lineB);
+    struct gpiod_line_event event;
 
     while (running.load(std::memory_order_relaxed)) {
-        int currentA = gpiod_line_get_value(lineA);
-        int currentB = gpiod_line_get_value(lineB);
+        if (gpiod_line_event_wait(lineA, NULL, 1000) > 0) {  // Wait for GPIO change
+            gpiod_line_event_read(lineA, &event);
+            int currentA = gpiod_line_get_value(lineA);
+            int currentB = gpiod_line_get_value(lineB);
 
-        if (currentA != lastA) { // A signal changed
             if (currentA == currentB) {
-                pulseCount.fetch_add(1, std::memory_order_relaxed);  // Forward
+                pulseCount.fetch_add(1, std::memory_order_relaxed);
             } else {
-                pulseCount.fetch_sub(1, std::memory_order_relaxed);  // Backward
+                pulseCount.fetch_sub(1, std::memory_order_relaxed);
             }
         }
-
-        lastA = currentA;
-        lastB = currentB;
-        std::this_thread::sleep_for(std::chrono::microseconds(50)); // Debounce
     }
 }
+
 
 double Encoder::getSpeed() {
     auto currentTime = std::chrono::steady_clock::now();
