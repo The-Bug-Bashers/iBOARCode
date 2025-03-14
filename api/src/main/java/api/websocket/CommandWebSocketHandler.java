@@ -4,7 +4,10 @@ import api.MqttPublisher;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
@@ -15,10 +18,19 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-
+@Component
 public class CommandWebSocketHandler extends TextWebSocketHandler {
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final MqttPublisher mqttPublisher;
     private String currentMode = ""; // Stores the current mode
+    @Value("${mqtt.channel.mode}") String MQTT_MODE_CHANNEL;
+    @Value("${mqtt.channel.motor.move}") String MQTT_MOTOR_MOVE_CHANNEL;
+    @Value("${mqtt.channel.motor.drive}") String MQTT_MOTOR_DRIVE_CHANNEL;
+
+    public CommandWebSocketHandler(MqttPublisher mqttPublisher) {
+        this.mqttPublisher = mqttPublisher;
+    }
 
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
@@ -42,6 +54,7 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
         try {
             executeCommand(jsonMessage, session);
         } catch (IOException e) {
+            log.error("Failed to execute command", e);
             session.sendMessage(new TextMessage("Error: Failed to execute command: " + e));
         }
     }
@@ -63,10 +76,11 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
                     return;
                 }
                 try {
-                    final String status = MqttPublisher.sendMQTTMessage("boar/control/mode", mode, 2, true);
+                    final String status = mqttPublisher.sendMQTTMessage(MQTT_MODE_CHANNEL, mode, 2, true);
                     session.sendMessage(new TextMessage(status));
                     currentMode = mode;
                 } catch (MqttException e) {
+                    log.error("Failed to send MQTT message", e);
                     session.sendMessage(new TextMessage("Error: Failed to send MQTT message: " + e));
                 }
                 break;
@@ -85,9 +99,10 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
                 if (!verifyParams(jsonMessage, session, moveMotorParams)) return;
 
                 try {
-                    final String status = MqttPublisher.sendMQTTMessage("boar/motor/move", jsonMessage.toString(), 2, true);
+                    final String status = mqttPublisher.sendMQTTMessage(MQTT_MOTOR_MOVE_CHANNEL, jsonMessage.toString(), 2, true);
                     session.sendMessage(new TextMessage(status));
                 } catch (MqttException e) {
+                    log.error("Failed to send MQTT message", e);
                     session.sendMessage(new TextMessage("Error: Failed to send MQTT message: " + e));
                 }
                 break;
@@ -100,9 +115,10 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
                 if (!verifyParams(jsonMessage, session, driveParams)) return;
 
                 try {
-                    final String status = MqttPublisher.sendMQTTMessage("boar/motor/drive", jsonMessage.toString(), 2, true);
+                    final String status = mqttPublisher.sendMQTTMessage(MQTT_MOTOR_DRIVE_CHANNEL, jsonMessage.toString(), 2, true);
                     session.sendMessage(new TextMessage(status));
                 } catch (MqttException e) {
+                    log.error("Failed to send MQTT message", e);
                     session.sendMessage(new TextMessage("Error: Failed to send MQTT message: " + e));
                 }
                 break;
