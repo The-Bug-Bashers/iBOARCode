@@ -26,31 +26,32 @@ Encoder::~Encoder() {
 }
 
 void Encoder::countPulses() {
-    struct gpiod_line_event event;
-    struct timespec timeout = {1, 0};  // 1 second timeout
+    int lastA = gpiod_line_get_value(lineA);
+    int lastB = gpiod_line_get_value(lineB);
 
     while (running.load(std::memory_order_relaxed)) {
-        if (gpiod_line_event_wait(lineA, &timeout) > 0) {  // Wait for GPIO change
-            gpiod_line_event_read(lineA, &event);
-            int currentA = gpiod_line_get_value(lineA);
-            int currentB = gpiod_line_get_value(lineB);
+        int currentA = gpiod_line_get_value(lineA);
+        int currentB = gpiod_line_get_value(lineB);
 
+        if (currentA != lastA) { // A signal changed
             if (currentA == currentB) {
-                pulseCount.fetch_add(1, std::memory_order_relaxed);
+                pulseCount.fetch_add(1, std::memory_order_relaxed);  // Forward
             } else {
-                pulseCount.fetch_sub(1, std::memory_order_relaxed);
+                pulseCount.fetch_sub(1, std::memory_order_relaxed);  // Backward
             }
         }
+
+        lastA = currentA;
+        lastB = currentB;
+        std::this_thread::sleep_for(std::chrono::microseconds(50)); // Debounce
     }
 }
-
-
 
 double Encoder::getSpeed() {
     auto currentTime = std::chrono::steady_clock::now();
     double elapsedSeconds = std::chrono::duration<double>(currentTime - lastTime).count();
     lastTime = std::chrono::steady_clock::now();
-
+    
     int pulses = pulseCount.exchange(0, std::memory_order_relaxed);
     double rotations = static_cast<double>(pulses) / COUNTS_PER_WHEEL_ROTATION;
     double rpm = (rotations / elapsedSeconds) * 60.0;
