@@ -33,7 +33,7 @@ public class DataWebSocketHandler extends TextWebSocketHandler {
     @PostConstruct
     public void ini() {
         try {
-            log.info("Connecting to broker: {}", BROKER_URL);
+            log.info("Connecting to broker {}", BROKER_URL);
             mqttClient = new MqttClient(BROKER_URL, CLIENT_ID);
             MqttConnectOptions options = new MqttConnectOptions();
             options.setCleanSession(true);
@@ -43,6 +43,7 @@ public class DataWebSocketHandler extends TextWebSocketHandler {
                 String payload = new String(message.getPayload());
                 broadcastMessage(payload);
             });
+            log.info("Connected: {}, id: {}", mqttClient.isConnected(), mqttClient.getClientId());
         } catch (MqttException e) {
             log.error("Failed to connect to MQTT broker", e);
         }

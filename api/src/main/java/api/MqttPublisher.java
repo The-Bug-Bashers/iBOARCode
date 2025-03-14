@@ -24,6 +24,7 @@ public class MqttPublisher {
             MqttConnectOptions options = new MqttConnectOptions();
             options.setCleanSession(true);
             client.connect(options);
+            log.info("Connected: {}, id: {}", client.isConnected(), client.getClientId());
         } catch (MqttException e) {
             log.error("Failed to connect to MQTT broker", e);
         }
