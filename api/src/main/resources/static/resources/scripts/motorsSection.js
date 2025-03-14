@@ -5,17 +5,23 @@ const combinedChart = new Chart(ctx, {
         labels: [],
         datasets: [
             { label: 'Motor 1 Actual', data: [], borderColor: 'blue', borderWidth: 2, fill: false, tension: 0.1 },
-            { label: 'Motor 1 Target', data: [], borderColor: 'red', borderWidth: 2, fill: false, borderDash: [5, 5], tension: 0.1 },
+            { label: 'Motor 1 Target', data: [], borderColor: 'red', borderWidth: 2, fill: false, borderDash: [6, 5], tension: 0.1 },
+            { label: 'Motor 1 Pid', data: [], borderColor: 'red', borderWidth: 2, fill: false, borderDash: [3, 3], tension: 0.1 },
             { label: 'Motor 2 Actual', data: [], borderColor: 'green', borderWidth: 2, fill: false, tension: 0.1 },
-            { label: 'Motor 2 Target', data: [], borderColor: 'orange', borderWidth: 2, fill: false, borderDash: [5, 5], tension: 0.1 },
+            { label: 'Motor 2 Target', data: [], borderColor: 'orange', borderWidth: 2, fill: false, borderDash: [6, 5], tension: 0.1 },
+            { label: 'Motor 2 Pid', data: [], borderColor: 'orange', borderWidth: 2, fill: false, borderDash: [3, 3], tension: 0.1 },
             { label: 'Motor 3 Actual', data: [], borderColor: 'purple', borderWidth: 2, fill: false, tension: 0.1 },
-            { label: 'Motor 3 Target', data: [], borderColor: 'pink', borderWidth: 2, fill: false, borderDash: [5, 5], tension: 0.1 }
+            { label: 'Motor 3 Target', data: [], borderColor: 'pink', borderWidth: 2, fill: false, borderDash: [6, 5], tension: 0.1 },
+            { label: 'Motor 3 Pid', data: [], borderColor: 'pink', borderWidth: 2, fill: false, borderDash: [3, 3], tension: 0.1 }
         ]
     },
     options: {
         responsive: true,
         scales: {
-            x: { title: { display: true, text: 'Time' } },
+            x: {
+                title: { display: true, text: 'Time' },
+                ticks: { display: false }
+            },
             y: { title: { display: true, text: 'Speed (RPM)' }, suggestedMin: -600, suggestedMax: 600 }
         },
         animation: {
@@ -54,9 +60,9 @@ function processData(jsonData) {
     try {
         const data = JSON.parse(jsonData);
         updateChart(
-            data.motor1.actual, data.motor1.target,
-            data.motor2.actual, data.motor2.target,
-            data.motor3.actual, data.motor3.target
+            data.motor1.actual, data.motor1.target, data.motor1.pid_output,
+            data.motor2.actual, data.motor2.target, data.motor2.pid_output,
+            data.motor3.actual, data.motor3.target, data.motor3.pid_output
         );
     } catch (error) {
         console.error("Invalid JSON data:", error);
