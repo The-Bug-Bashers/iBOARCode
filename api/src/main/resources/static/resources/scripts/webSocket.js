@@ -3,7 +3,7 @@ const commandSocketURL = `ws://${hostname}:8080/commands`;
 const dataSocketURL = `ws://${hostname}:8080/data`;
 
 let commandSocket = new WebSocket(commandSocketURL);
-let dataSocket = new WebSocket(dataSocketURL);
+let dataSocket;
 
 // Displays the message in the console
 function showMessage(message, received, error, info) {
@@ -155,7 +155,6 @@ function addDataSocketEventListeners() {
 }
 
 addCommandSocketEventListeners();
-addDataSocketEventListeners();
 
 function scrollDownInConsole() {
     const element = document.getElementById("consoleOutput");

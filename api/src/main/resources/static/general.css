@@ -30,6 +30,17 @@ body {
     #headerButtons {
         margin-left: 2vmin;
         display: flex;
+        height: fit-content;
+        white-space: nowrap;
+
+        p {
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .checkbox-container {
+            margin-bottom: 13%;
+        }
     }
     #headerText {
         margin: 0 2vmin 0 auto;

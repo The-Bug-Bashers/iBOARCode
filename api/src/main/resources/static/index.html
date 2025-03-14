@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <title>iBOAR Control Panel</title>
         <link rel="icon" href="resources/images/BOAR-logo-trans.png">
-        <link type="text/css" rel="stylesheet" href="resources/stylesheets/general.css">
+        <link type="text/css" rel="stylesheet" href="general.css">
         <link type="text/css" rel="stylesheet" href="resources/stylesheets/elements/box.css">
         <link type="text/css" rel="stylesheet" href="resources/stylesheets/elements/console.css">
         <link type="text/css" rel="stylesheet" href="resources/stylesheets/elements/button.css">
@@ -14,14 +14,18 @@
         <link type="text/css" rel="stylesheet" href="resources/stylesheets/elements/select.css">
         <script src="resources/scripts/webSocket.js" defer></script>
         <script src="resources/scripts/controlsSections.js" defer></script>
+        <script src="general.js" defer></script>
     </head>
     <body>
     <div>
         <div id="header">
             <h1 id="headerLogoText">i</h1><img src="resources/images/BOAR-logo-trans.png" id="logo" alt="BOAR logo">
-            <div id="headerButtons">
-                <button class="button">Refresh</button><br><button class="button">Start auto-refresh</button>
-                <button class="button">Stop auto-refresh</button>
+            <div class="inputBorder directionButtonPlusLabel" id="headerButtons">
+                <label class="checkbox-container">
+                    <input class="custom-checkbox" checked="" type="checkbox" id="autoRefreshCheckbox">
+                    <span class="checkmark"></span>
+                </label>
+                <p onclick="document.getElementById('autoRefreshCheckbox').click()">Auto Refresh</p>
             </div>
             <p id="headerText">improved Basic Obstacle Avoidance Robot<br>by Justus Dicker, Jannik Händel & Jakob Ricken</p>
         </div>

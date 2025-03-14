@@ -83,7 +83,6 @@ function getRemoteControlContent() {
 }
 
 function addRemoteControlEventListeners() {
-    
     // Event listener for the direction switches
     document.querySelectorAll('#directionRemoteControlButtons input[type="checkbox"]').forEach(checkbox => {
         checkbox.addEventListener('change', (event) => {
