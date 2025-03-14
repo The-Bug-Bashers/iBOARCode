@@ -27,9 +27,10 @@ Encoder::~Encoder() {
 
 void Encoder::countPulses() {
     struct gpiod_line_event event;
+    struct timespec timeout = {1, 0};  // 1 second timeout
 
     while (running.load(std::memory_order_relaxed)) {
-        if (gpiod_line_event_wait(lineA, NULL, 1000) > 0) {  // Wait for GPIO change
+        if (gpiod_line_event_wait(lineA, &timeout) > 0) {  // Wait for GPIO change
             gpiod_line_event_read(lineA, &event);
             int currentA = gpiod_line_get_value(lineA);
             int currentB = gpiod_line_get_value(lineB);
@@ -42,6 +43,7 @@ void Encoder::countPulses() {
         }
     }
 }
+
 
 
 double Encoder::getSpeed() {
