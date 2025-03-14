@@ -17,12 +17,13 @@ public class MqttPublisher {
 
     public MqttPublisher(
             @Value("${mqtt.broker.url}") String BROKER_URL,
-            @Value("${mqtt.client.id}") String CLIENT_ID) {
+            @Value("${mqtt.client.command.id}") String CLIENT_ID) {
         try {
             log.info("Connecting to broker {}", BROKER_URL);
             client = new MqttClient(BROKER_URL, CLIENT_ID);
             MqttConnectOptions options = new MqttConnectOptions();
             options.setCleanSession(true);
+            options.setAutomaticReconnect(true);
             client.connect(options);
             log.info("Connected: {}, id: {}", client.isConnected(), client.getClientId());
         } catch (MqttException e) {
