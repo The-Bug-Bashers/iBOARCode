@@ -24,32 +24,42 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
             }
 
             std::string command = jsonPayload["command"];
-            if (command != "drive") {
-                return;
+            if (command == "drive") {
+                double angle = jsonPayload["angle"];
+                double speed = jsonPayload["speed"];
+
+                double radians = angle * M_PI / 180.0;
+                double vx = speed * sin(radians);
+                double vy = speed * cos(radians);
+
+                double m1, m2, m3;
+                calculateMotorSpeeds(vx, vy, 0, m1, m2, m3);
+
+                // Logging
+                std::cout << "[MQTT] Received command: " << command
+                          << " | Angle: " << angle
+                          << " | Speed: " << speed << std::endl;
+                std::cout << "[MQTT] Computed motor speeds: M1 = " << m1
+                          << ", M2 = " << m2
+                          << ", M3 = " << m3 << std::endl;
+
+                motor1Controller->setTargetSpeed((m1 / 100.0) * 530.0);
+                motor2Controller->setTargetSpeed((m2 / 100.0) * 530.0);
+                motor3Controller->setTargetSpeed((m3 / 100.0) * 530.0);
+            } if (command == "turn") {
+                double direction = jsonPayload["direction"];
+                double speed = jsonPayload["speed"];
+
+                if (direction == "left") {
+                    speed *= -1;
+                } else if (direction != "right") {
+                    return;
+                }
+
+                motor1Controller->setTargetSpeed(speed);
+                motor2Controller->setTargetSpeed(speed);
+                motor3Controller->setTargetSpeed(speed);
             }
-
-            double angle = jsonPayload["angle"];
-            double speed = jsonPayload["speed"];
-
-            double radians = angle * M_PI / 180.0;
-            double vx = speed * sin(radians);
-            double vy = speed * cos(radians);
-
-            double m1, m2, m3;
-            calculateMotorSpeeds(vx, vy, 0, m1, m2, m3);
-
-            // Logging for debugging
-            std::cout << "[MQTT] Received command: " << command
-                      << " | Angle: " << angle
-                      << " | Speed: " << speed << std::endl;
-            std::cout << "[MQTT] Computed motor speeds: M1 = " << m1
-                      << ", M2 = " << m2
-                      << ", M3 = " << m3 << std::endl;
-
-            // Ensure each motor gets its own values
-            motor1Controller->setTargetSpeed((m1 / 100.0) * 530.0);
-            motor2Controller->setTargetSpeed((m2 / 100.0) * 530.0);
-            motor3Controller->setTargetSpeed((m3 / 100.0) * 530.0);
 
         } catch (const std::exception &e) {
             std::cerr << "JSON parsing error: " << e.what() << std::endl;

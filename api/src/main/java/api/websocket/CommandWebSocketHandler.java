@@ -109,10 +109,26 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
             case "drive":
                 Map<String, Object> driveParams = new HashMap<>();
                 driveParams.put("command", "drive");
-                driveParams.put("angle", new int[]{0, 360});
+                driveParams.put("angle", Set.of("left", "right"));
                 driveParams.put("speed", new int[]{0, 100});
 
                 if (!verifyParams(jsonMessage, session, driveParams)) return;
+
+                try {
+                    final String status = mqttPublisher.sendMQTTMessage(MQTT_MOTOR_DRIVE_CHANNEL, jsonMessage.toString(), 2, true);
+                    session.sendMessage(new TextMessage(status));
+                } catch (MqttException e) {
+                    log.error("Failed to send MQTT message", e);
+                    session.sendMessage(new TextMessage("Error: Failed to send MQTT message: " + e));
+                }
+                break;
+            case "turn":
+                Map<String, Object> turnParams = new HashMap<>();
+                turnParams.put("command", "turn");
+                turnParams.put("direction", new int[]{0, 360});
+                turnParams.put("speed", new int[]{0, 100});
+
+                if (!verifyParams(jsonMessage, session, turnParams)) return;
 
                 try {
                     final String status = mqttPublisher.sendMQTTMessage(MQTT_MOTOR_DRIVE_CHANNEL, jsonMessage.toString(), 2, true);
