@@ -123,7 +123,7 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
                 }
                 break;
             default:
-                session.sendMessage(new TextMessage("command not found"));
+                session.sendMessage(new TextMessage("Error: command not found"));
                 break;
         }
     }
