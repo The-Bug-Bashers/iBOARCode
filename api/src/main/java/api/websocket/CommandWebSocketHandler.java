@@ -109,7 +109,7 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
             case "drive":
                 Map<String, Object> driveParams = new HashMap<>();
                 driveParams.put("command", "drive");
-                driveParams.put("angle", Set.of("left", "right"));
+                driveParams.put("angle", new int[]{0, 360});
                 driveParams.put("speed", new int[]{0, 100});
 
                 if (!verifyParams(jsonMessage, session, driveParams)) return;
@@ -125,7 +125,7 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
             case "turn":
                 Map<String, Object> turnParams = new HashMap<>();
                 turnParams.put("command", "turn");
-                turnParams.put("direction", new int[]{0, 360});
+                turnParams.put("direction", Set.of("left", "right"));
                 turnParams.put("speed", new int[]{0, 100});
 
                 if (!verifyParams(jsonMessage, session, turnParams)) return;
