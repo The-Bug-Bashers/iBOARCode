@@ -117,6 +117,10 @@ function addRemoteControlEventListeners() {
                 angleSum += 90;
                 count++;
             } else if (left.checked) {
+                if (forward.checked) {
+                    count = 0;
+                    angleSum += 45;
+                }
                 angleSum += 270;
                 count++;
             }
