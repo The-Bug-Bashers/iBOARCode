@@ -18,13 +18,17 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
     if (message->payloadlen > 0) {
         try {
             auto jsonPayload = nlohmann::json::parse((char *)message->payload);
-            if (!jsonPayload.contains("command") || !jsonPayload.contains("angle") || !jsonPayload.contains("speed")) {
+            if (!jsonPayload.contains("command") || !jsonPayload.contains("speed")) {
                 std::cerr << "Invalid JSON format: missing required fields." << std::endl;
                 return;
             }
 
             std::string command = jsonPayload["command"];
             if (command == "drive") {
+                if (!jsonPayload.contains("angle")) {
+                    std::cerr << "Invalid JSON format: missing required fields." << std::endl;
+                    return;
+                }
                 double angle = jsonPayload["angle"];
                 double speed = jsonPayload["speed"];
 
@@ -47,7 +51,11 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
                 motor2Controller->setTargetSpeed((m2 / 100.0) * 530.0);
                 motor3Controller->setTargetSpeed((m3 / 100.0) * 530.0);
             } if (command == "turn") {
-                double direction = jsonPayload["direction"];
+                if (!jsonPayload.contains("direction")) {
+                    std::cerr << "Invalid JSON format: missing required fields." << std::endl;
+                    return;
+                }
+                std::string direction = jsonPayload["direction"];
                 double speed = jsonPayload["speed"];
 
                 if (direction == "left") {
