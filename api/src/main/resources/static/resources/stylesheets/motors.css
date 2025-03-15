@@ -1,27 +1,6 @@
-#motors {
-    position: relative;
-    margin-bottom: 1em;
-    width: 25vw;
-    height: 33vh;
+#combinedChart {
+    margin-top: 1vh;
+    height: 100%;
     text-align: center;
-
-    canvas {
-        text-align: center;
-        max-width: 600px;
-        max-height: 400px;
-        background-color: white;
-    }
-    textarea {
-        width: 80%;
-        height: 100px;
-        font-family: monospace;
-    }
-}
-
-#motorCanvas {
-    margin: 1vh auto 0.5em auto;
-    right: 1em;
-    width: calc(32vh - 2em);
-    height: calc(32vh - 2em);
-    background-color: black;
+    background-color: white;
 }

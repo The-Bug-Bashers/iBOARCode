@@ -1,18 +1,18 @@
-const ctx = document.getElementById('combinedChart').getContext('2d');
-const combinedChart = new Chart(ctx, {
+ctx = document.getElementById('combinedChart').getContext('2d');
+combinedChart = new Chart(ctx, {
     type: 'line',
     data: {
         labels: [],
         datasets: [
-            { label: 'Motor 1 Actual', data: [], borderColor: 'blue', borderWidth: 2, fill: false, tension: 0.1 },
-            { label: 'Motor 1 Target', data: [], borderColor: 'red', borderWidth: 2, fill: false, borderDash: [6, 5], tension: 0.1 },
-            { label: 'Motor 1 Pid', data: [], borderColor: 'red', borderWidth: 2, fill: false, borderDash: [3, 3], tension: 0.1 },
-            { label: 'Motor 2 Actual', data: [], borderColor: 'green', borderWidth: 2, fill: false, tension: 0.1 },
-            { label: 'Motor 2 Target', data: [], borderColor: 'orange', borderWidth: 2, fill: false, borderDash: [6, 5], tension: 0.1 },
-            { label: 'Motor 2 Pid', data: [], borderColor: 'orange', borderWidth: 2, fill: false, borderDash: [3, 3], tension: 0.1 },
-            { label: 'Motor 3 Actual', data: [], borderColor: 'purple', borderWidth: 2, fill: false, tension: 0.1 },
-            { label: 'Motor 3 Target', data: [], borderColor: 'pink', borderWidth: 2, fill: false, borderDash: [6, 5], tension: 0.1 },
-            { label: 'Motor 3 Pid', data: [], borderColor: 'pink', borderWidth: 2, fill: false, borderDash: [3, 3], tension: 0.1 }
+            { label: 'Motor 1 Actual', data: [], borderColor: 'blue', borderWidth: 2, fill: false, tension: 0.1, pointRadius: 0 },
+            { label: 'Motor 1 Target', data: [], borderColor: 'red', borderWidth: 2, fill: false, tension: 0.1, pointRadius: 0, borderDash: [6, 5] },
+            { label: 'Motor 1 Pid', data: [], borderColor: 'red', borderWidth: 2, fill: false, tension: 0.1, pointRadius: 0, borderDash: [3, 3] },
+            { label: 'Motor 2 Actual', data: [], borderColor: 'green', borderWidth: 2, fill: false, tension: 0.1, pointRadius: 0 },
+            { label: 'Motor 2 Target', data: [], borderColor: 'orange', borderWidth: 2, fill: false, tension: 0.1, pointRadius: 0, borderDash: [6, 5] },
+            { label: 'Motor 2 Pid', data: [], borderColor: 'orange', borderWidth: 2, fill: false, tension: 0.1, pointRadius: 0, borderDash: [3, 3] },
+            { label: 'Motor 3 Actual', data: [], borderColor: 'purple', borderWidth: 2, fill: false, tension: 0.1, pointRadius: 0 },
+            { label: 'Motor 3 Target', data: [], borderColor: 'pink', borderWidth: 2, fill: false, tension: 0.1, pointRadius: 0, borderDash: [6, 5] },
+            { label: 'Motor 3 Pid', data: [], borderColor: 'pink', borderWidth: 2, fill: false, tension: 0.1, pointRadius: 0, borderDash: [3, 3] }
         ]
     },
     options: {
@@ -22,7 +22,7 @@ const combinedChart = new Chart(ctx, {
                 title: { display: true, text: 'Time' },
                 ticks: { display: false }
             },
-            y: { title: { display: true, text: 'Speed (RPM)' }, suggestedMin: -600, suggestedMax: 600 }
+            y: { title: { display: true, text: 'Speed (RPM)' }, suggestedMin: -150, suggestedMax: 150 }
         },
         animation: {
             duration: 0
@@ -35,7 +35,7 @@ function updateChart(actual1, target1, actual2, target2, actual3, target3) {
     const labels = combinedChart.data.labels;
     const datasets = combinedChart.data.datasets;
 
-    if (labels.length > 20) {
+    if (labels.length > 50) {
         labels.shift();
         datasets.forEach(dataset => dataset.data.shift());
     }
@@ -51,10 +51,12 @@ function updateChart(actual1, target1, actual2, target2, actual3, target3) {
     combinedChart.update();
 }
 
-dataSocket.onmessage = function(event) {
-    processData(event.data);
-    console.log("Received: " + event.data);
-};
+function addMotorRendererDataSocketListener() {
+    dataSocket.onmessage = function (event) {
+        processData(event.data);
+        console.log("Received: " + event.data);
+    };
+}
 
 function processData(jsonData) {
     try {

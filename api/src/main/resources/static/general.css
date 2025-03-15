@@ -27,7 +27,7 @@ body {
         line-height: 10vmin;
         font-size: 8vmin;
     }
-    #headerButtons {
+    .headerButtons {
         margin-left: 2vmin;
         display: flex;
         height: fit-content;
@@ -63,6 +63,20 @@ body {
     flex-direction: row;
     justify-content: space-between;
     bottom: 0;
+}
+
+#smallDisplayBox {
+    position: relative;
+    margin-bottom: 1em;
+    width: 25vw;
+    height: 33vh;
+    text-align: center;
+}
+
+#bigDisplayBox {
+    position: relative;
+    width: 40vw;
+    text-align: center;
 }
 
 #middleColumn {

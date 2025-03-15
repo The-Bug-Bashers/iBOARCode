@@ -1,9 +1,3 @@
-#lidar {
-    position: relative;
-    width: 40vw;
-    text-align: center;
-}
-
 #lidarCanvas {
     margin-top: 3vh;
     margin-left: auto;
