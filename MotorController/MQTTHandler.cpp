@@ -25,7 +25,7 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
 
             std::string command = jsonPayload["command"];
             if (command == "drive") {
-                if (!jsonPayload.contains("angle")  || !jsonPayload.contains("speed")765e4w) {
+                if (!jsonPayload.contains("angle")  || !jsonPayload.contains("speed")) {
                     std::cerr << "Invalid JSON format: missing required fields." << std::endl;
                     return;
                 }
