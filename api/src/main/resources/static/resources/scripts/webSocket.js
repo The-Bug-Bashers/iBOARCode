@@ -1,4 +1,4 @@
-const hostname = window.location.hostname.split(':')[0]
+const hostname = "boar"
 const commandSocketURL = `ws://${hostname}:8080/commands`;
 const dataSocketURL = `ws://${hostname}:8080/data`;
 
