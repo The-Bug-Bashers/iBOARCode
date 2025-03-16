@@ -50,7 +50,6 @@ void MotorController::setTargetSpeed(double speed) {
 
 void MotorController::pidLoop() {
     while (running) {
-        std::cout << "requesting new speed (pidLoop): " << std::endl;
         double actualSpeed = getActualSpeed();
         lastMeasuredSpeed.store(actualSpeed, std::memory_order_relaxed);
 
@@ -59,7 +58,7 @@ void MotorController::pidLoop() {
 
         setSpeed(pidOutput);  // Continuously update motor speed
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(500)); // Update every 500 ms
+        std::this_thread::sleep_for(std::chrono::milliseconds(50)); // Update every 500 ms
     }
 }
 
