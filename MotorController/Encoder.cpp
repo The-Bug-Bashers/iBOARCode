@@ -46,7 +46,8 @@ void Encoder::countPulses() {
 
         lastA = currentA;
         lastB = currentB;
-        std::this_thread::sleep_for(std::chrono::microseconds(10)); // Debounce (improper but working)
+        std::this_thread::sleep_for(std::chrono::microseconds(30)); // Debounce
+        // improper but working because MAX_RPS(8.3) * COUNTS_PER_WHEEL_ROTATION(1200) = 10600 -> 1/10600 = 0.00009433962s = 94.33962us
     }
 }
 
@@ -55,7 +56,7 @@ double Encoder::getSpeed() {
     double elapsedSeconds = std::chrono::duration<double>(currentTime - lastTime).count();
 
     int pulses = pulseCount.exchange(0, std::memory_order_relaxed);
-    double rotations = static_cast<double>(pulses) / COUNTS_PER_WHEEL_ROTATION;
+    double rotations = static_cast<double>(pulses) / (COUNTS_PER_WHEEL_ROTATION / 2.0); // Divide by 2 because of only every second tic being counted
     double rpm = (rotations / elapsedSeconds) * 60.0;
 
     lastTime = currentTime;
