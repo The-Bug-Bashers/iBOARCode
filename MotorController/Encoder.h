@@ -19,6 +19,7 @@ private:
     std::thread encoderThread;
     struct gpiod_line *lineA;
     struct gpiod_line *lineB;
+    int lastA, lastB;
 };
 
 #endif

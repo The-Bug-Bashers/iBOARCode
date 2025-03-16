@@ -2,9 +2,11 @@
 #include <iostream>
 #include <chrono>
 
-constexpr int COUNTS_PER_WHEEL_ROTATION = 1200; // CPR * GEAR_RATIO -> 64 * 18.75 -> 1200
+constexpr int COUNTS_PER_WHEEL_ROTATION = 1200; // 64 CPR * 18.75 Gear Ratio = 1200
 
-Encoder::Encoder(struct gpiod_chip *chip, int pinA, int pinB) : pulseCount(0), running(true) {
+Encoder::Encoder(struct gpiod_chip *chip, int pinA, int pinB)
+    : pulseCount(0), running(true), lastTime(std::chrono::steady_clock::now()) {
+
     lineA = gpiod_chip_get_line(chip, pinA);
     lineB = gpiod_chip_get_line(chip, pinB);
 
@@ -12,6 +14,9 @@ Encoder::Encoder(struct gpiod_chip *chip, int pinA, int pinB) : pulseCount(0), r
         std::cerr << "Failed to request GPIO lines for encoder" << std::endl;
         exit(1);
     }
+
+    lastA = gpiod_line_get_value(lineA);
+    lastB = gpiod_line_get_value(lineB);
 
     encoderThread = std::thread(&Encoder::countPulses, this);
 }
@@ -26,15 +31,14 @@ Encoder::~Encoder() {
 }
 
 void Encoder::countPulses() {
-    int lastA = gpiod_line_get_value(lineA);
-    int lastB = gpiod_line_get_value(lineB);
-
     while (running.load(std::memory_order_relaxed)) {
         int currentA = gpiod_line_get_value(lineA);
         int currentB = gpiod_line_get_value(lineB);
 
-        if (currentA != lastA) { // A signal changed
-            if (currentA == currentB) {
+        // Quadrature decoding: Detect direction
+        if (currentA != lastA || currentB != lastB) {
+            if ((lastA == 0 && currentA == 1 && lastB == currentB) ||
+                (lastB == 0 && currentB == 1 && lastA == currentA)) {
                 pulseCount.fetch_add(1, std::memory_order_relaxed);  // Forward
             } else {
                 pulseCount.fetch_sub(1, std::memory_order_relaxed);  // Backward
@@ -43,20 +47,22 @@ void Encoder::countPulses() {
 
         lastA = currentA;
         lastB = currentB;
-        std::this_thread::sleep_for(std::chrono::microseconds(50)); // Debounce
+        std::this_thread::sleep_for(std::chrono::microseconds(10)); // Debounce (improper but working)
     }
 }
 
 double Encoder::getSpeed() {
     auto currentTime = std::chrono::steady_clock::now();
     double elapsedSeconds = std::chrono::duration<double>(currentTime - lastTime).count();
-    lastTime = std::chrono::steady_clock::now();
 
     int pulses = pulseCount.exchange(0, std::memory_order_relaxed);
     double rotations = static_cast<double>(pulses) / COUNTS_PER_WHEEL_ROTATION;
     double rpm = (rotations / elapsedSeconds) * 60.0;
 
-    std::cout << "[ENCODER] Elapsed Time: " << elapsedSeconds << " sec, Pulses: " << pulses << ", Rotations: " << rotations << ", RPM: " << rpm << std::endl;
+    lastTime = currentTime;  // Update timestamp AFTER calculation
 
-    return rpm * 3; //TODO: find out why sped is always to low by approx times 3
+    std::cout << "[ENCODER] Elapsed Time: " << elapsedSeconds << " sec, Pulses: "
+              << pulses << ", Rotations: " << rotations << ", RPM: " << rpm << std::endl;
+
+    return rpm;
 }
