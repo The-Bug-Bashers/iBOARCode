@@ -61,8 +61,5 @@ double Encoder::getSpeed() {
 
     lastTime = currentTime;
 
-    std::cout << "[ENCODER] Elapsed Time: " << elapsedSeconds << " sec, Pulses: "
-              << pulses << ", Rotations: " << rotations << ", RPM: " << rpm << std::endl;
-
     return rpm;
 }
