@@ -36,12 +36,11 @@ void Encoder::countPulses() {
         int currentB = gpiod_line_get_value(lineB);
 
         // Quadrature decoding: Detect direction
-        if (currentA != lastA || currentB != lastB) {
-            if ((lastA == 0 && currentA == 1 && lastB == currentB) ||
-                (lastB == 0 && currentB == 1 && lastA == currentA)) {
-                pulseCount.fetch_add(1, std::memory_order_relaxed);  // Forward
-            } else {
+        if (currentA != lastA) {
+            if (currentA != currentB) {
                 pulseCount.fetch_sub(1, std::memory_order_relaxed);  // Backward
+            } else {
+                pulseCount.fetch_add(1, std::memory_order_relaxed);  // Forward
             }
         }
 
@@ -59,7 +58,7 @@ double Encoder::getSpeed() {
     double rotations = static_cast<double>(pulses) / COUNTS_PER_WHEEL_ROTATION;
     double rpm = (rotations / elapsedSeconds) * 60.0;
 
-    lastTime = currentTime;  // Update timestamp AFTER calculation
+    lastTime = currentTime;
 
     std::cout << "[ENCODER] Elapsed Time: " << elapsedSeconds << " sec, Pulses: "
               << pulses << ", Rotations: " << rotations << ", RPM: " << rpm << std::endl;
