@@ -30,18 +30,18 @@ echo -e "${BLUE}Starting API (Java Maven Spring Boot)...${NC}"
 cd api || { echo -e "${RED}Failed to enter 'api' directory${NC}"; exit 1; }
 sudo screen -dmS API mvn spring-boot:run # Start Spring Boot in a detached screen session
 
-echo -e "${BLUE}Waiting for REST API to start (return header)${NC}"
+echo -e "${BLUE}Waiting for API to start (return header)${NC}"
 apiTimeout=20
 apiElapsed=0
 while ! curl -s http://localhost:8080 | grep -q '<title>iBOAR Control Panel</title>'; do
     sleep 2
-    ((brokerElapsed+=2))
+    ((apiElapsed+=2))
     if [[ $apiElapsed -ge $apiTimeout ]]; then
         echo -e "${RED}Failed to start API within $apiTimeout seconds.${NC}"
         exit 1
     fi
 done
-echo -e "${GREEN}REST API started successfully (returned header)!${NC}"
+echo -e "${GREEN}API started successfully (returned header)!${NC}"
 
 
 echo -e "${BLUE}Starting Motor Controller (C++)...${NC}"
@@ -49,13 +49,13 @@ cd ../MotorController || { echo -e "${RED}Failed to enter 'MotorController' dire
 sudo screen -dmS MotorController ./MotorController # Start MotorController in a detached screen session
 
 echo -e "${BLUE}Waiting for Motor Controller to start (not terminate)${NC}"
-sleep 2
+sleep 3
 if sudo screen -list | grep -q "MotorController"; then
     echo -e "${GREEN}Motor Controller started successfully (not terminated)!${NC}"
 else
     echo -e "${RED}Motor Controller terminated.${NC}"
     exit 1
 fi
-echo -e "${GREEN}Started Motor Controller successfully (not terminated)!${NC}"
+
 
 echo -e "${GREEN}Started iBOAR systems successfully!${NC}"

@@ -44,7 +44,7 @@ echo -e "${GREEN}Stopped MotorController successfully!${NC}"
 
 
 echo -e "${BLUE}Stopping MQTT broker (mosquitto)...${NC}"
-sudo systemctl stop mosquittog
+sudo systemctl stop mosquitto
 
 echo -e "${BLUE}Waiting for MQTT broker to Stop${NC}"
 brokerTimeout=5
