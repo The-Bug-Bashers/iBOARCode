@@ -14,6 +14,8 @@ extern MotorController *motor1Controller;
 extern MotorController *motor2Controller;
 extern MotorController *motor3Controller;
 
+constexpr double MAX_MOTOR_RPM = 500.0;
+
 void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message) {
     if (message->payloadlen > 0) {
         try {
@@ -47,9 +49,9 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
                           << ", M2 = " << m2
                           << ", M3 = " << m3 << std::endl;
 
-                motor1Controller->setTargetSpeed((m1 / 100.0) * 530.0);
-                motor2Controller->setTargetSpeed((m2 / 100.0) * 530.0);
-                motor3Controller->setTargetSpeed((m3 / 100.0) * 530.0);
+                motor1Controller->setTargetSpeed((m1 / 100.0) * MAX_MOTOR_RPM);
+                motor2Controller->setTargetSpeed((m2 / 100.0) * MAX_MOTOR_RPM);
+                motor3Controller->setTargetSpeed((m3 / 100.0) * MAX_MOTOR_RPM);
             } if (command == "turn") {
                 if (!jsonPayload.contains("direction")) {
                     std::cerr << "Invalid JSON format: missing required fields." << std::endl;
@@ -58,7 +60,7 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
                 std::string direction = jsonPayload["direction"];
                 double speed = jsonPayload["speed"];
 
-                speed = (speed / 100) * 255;
+                speed = (speed / 100) * MAX_MOTOR_RPM;
                 if (direction == "left") {
                     speed *= -1;
                 } else if (direction != "right") {
