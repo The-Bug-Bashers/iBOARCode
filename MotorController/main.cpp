@@ -22,9 +22,9 @@ int main() {
         return 1;
     }
 
-    motor1Controller = std::make_unique<MotorController>(chip, 4, 27, 22, 14, 15, 0.1, 0.01, 0.05);
-    motor2Controller = std::make_unique<MotorController>(chip, 12, 8, 25, 11, 9, 0.1, 0.01, 0.05);
-    motor3Controller = std::make_unique<MotorController>(chip, 26, 19, 13, 21, 20, 0.1, 0.01, 0.05);
+    motor1Controller = std::make_unique<MotorController>(chip, 4, 27, 22, 14, 15, 6.8, 0.0002, 0.0005);
+    motor2Controller = std::make_unique<MotorController>(chip, 12, 8, 25, 11, 9, 6.8, 0.0002, 0.0005);
+    motor3Controller = std::make_unique<MotorController>(chip, 26, 19, 13, 21, 20, 6.8, 0.0002, 0.0005);
 
     mosquitto_lib_init();
     struct mosquitto *mosq = mosquitto_new("MotorController", true, nullptr);

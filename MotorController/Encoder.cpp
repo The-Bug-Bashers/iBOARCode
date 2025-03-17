@@ -58,6 +58,7 @@ double Encoder::getSpeed() {
     int pulses = pulseCount.exchange(0, std::memory_order_relaxed);
     double rotations = static_cast<double>(pulses) / (COUNTS_PER_WHEEL_ROTATION / 2.0); // Divide by 2 because of only every second tic being counted
     double rpm = (rotations / elapsedSeconds) * 60.0;
+    if (rpm < 13.0 && rpm > -13.0 ) {rpm = 0.0;}
 
     lastTime = currentTime;
 

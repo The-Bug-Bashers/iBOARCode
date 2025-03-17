@@ -58,7 +58,7 @@ void MotorController::pidLoop() {
 
         setSpeed(pidOutput);  // Continuously update motor speed
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(4)); // Update every 500 ms
+        std::this_thread::sleep_for(std::chrono::milliseconds(10)); // Update 100 times a second
     }
 }
 
