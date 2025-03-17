@@ -12,7 +12,8 @@ combinedChart = new Chart(ctx, {
             { label: 'Motor 2 Pid', data: [], borderColor: 'orange', borderWidth: 2, fill: false, tension: 0.1, pointRadius: 0, borderDash: [3, 3] },
             { label: 'Motor 3 Actual', data: [], borderColor: 'purple', borderWidth: 2, fill: false, tension: 0.1, pointRadius: 0 },
             { label: 'Motor 3 Target', data: [], borderColor: 'pink', borderWidth: 2, fill: false, tension: 0.1, pointRadius: 0, borderDash: [6, 5] },
-            { label: 'Motor 3 Pid', data: [], borderColor: 'pink', borderWidth: 2, fill: false, tension: 0.1, pointRadius: 0, borderDash: [3, 3] }
+            { label: 'Motor 3 Pid', data:
+                    [], borderColor: 'pink', borderWidth: 2, fill: false, tension: 0.1, pointRadius: 0, borderDash: [3, 3] }
         ]
     },
     options: {
@@ -30,7 +31,7 @@ combinedChart = new Chart(ctx, {
     }
 });
 
-function updateChart(actual1, target1, actual2, target2, actual3, target3) {
+function updateChart(actual1, target1, pid_output1, actual2, target2, pid_output2, actual3, target3, pid_output3) {
     const time = new Date().toLocaleTimeString();
     const labels = combinedChart.data.labels;
     const datasets = combinedChart.data.datasets;
@@ -43,10 +44,13 @@ function updateChart(actual1, target1, actual2, target2, actual3, target3) {
     labels.push(time);
     datasets[0].data.push(actual1);
     datasets[1].data.push(target1);
-    datasets[2].data.push(actual2);
-    datasets[3].data.push(target2);
-    datasets[4].data.push(actual3);
-    datasets[5].data.push(target3);
+    datasets[2].data.push(pid_output1);
+    datasets[3].data.push(actual2);
+    datasets[4].data.push(target2);
+    datasets[5].data.push(pid_output2);
+    datasets[6].data.push(actual3);
+    datasets[7].data.push(target3);
+    datasets[8].data.push(pid_output3);
 
     combinedChart.update();
 }
