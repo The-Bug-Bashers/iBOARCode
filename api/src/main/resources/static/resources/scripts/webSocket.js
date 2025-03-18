@@ -32,23 +32,23 @@ function showMessage(message, received, error, info) {
 
 // Returns a list of available commands
 function getCommandList() {
-    return ["clear",  "connect commandSocket", "connect dataSocket", "disconnect commandSocket", "disconnect dataSocket", "help",];
+    return ["clear", "help",  "socket connect commands", "socket connect data", "socket disconnect commands", "socket disconnect data", "socket status",];
 }
 
 // Executes the command
 function executeCommand(command) {
     if (command === "clear") {
         clearConsole();
-    } else if (command === "disconnect commandSocket") {
+    } else if (command === "socket disconnect commands") {
         commandSocket.close();
-    } else if (command === "disconnect dataSocket") {
+    } else if (command === "socket disconnect data") {
         dataSocket.close();
     } else if (command === "help") {
         showMessage("You've asked for help!", true, false, true);
         showMessage("This web interface sends and receives data via WebSockets a REST API.", true, false, true);
         showMessage("The REST API then sends valid commands to an internal messaging server (MQTT).", true, false, true);
         showMessage("The web interface is connected to 2 WebSockets: command, which handles commands, and data, which handles incoming sensor data.", true, false, true);
-        
+
         let message = "You can use certain commands to change the behaviour of the web interface. Those are: ";
         getCommandList().forEach((command) => {
             message += `"${command}", `;
@@ -57,20 +57,28 @@ function executeCommand(command) {
         showMessage(message, true, false, true);
         
         showMessage("All other commands get sent to the REST API and need to be formatted in JSON.", true, false, true);
-    } else if (command === "connect commandSocket") {
+    } else if (command === "socket connect commands") {
         if (commandSocket.readyState === WebSocket.OPEN) {
             showMessage("You're already connected to the CommandSocket.", true, true, false);
         } else {
             commandSocket = new WebSocket(commandSocketURL);
             addCommandSocketEventListeners();
         }
-    } else if (command === "connect dataSocket") {
+    } else if (command === "socket connect data") {
         if (dataSocket.readyState === WebSocket.OPEN) {
             showMessage("You're already connected to the DataSocket.", true, true, false);
         } else {
             dataSocket = new WebSocket(dataSocketURL);
             addDataSocketEventListeners();
         }
+    } else if (command === "socket status") {
+        let commandSocketStatus = false;
+        let dataSocketStatus = false;
+        if(commandSocket) {commandSocketStatus = commandSocket.readyState === WebSocket.OPEN}
+        if (dataSocket) {dataSocketStatus = dataSocket.readyState === WebSocket.OPEN}
+
+        showMessage("CommandSocket connected: " + commandSocketStatus, true, false, true);
+        showMessage("DataSocket connected: " + dataSocketStatus, true, false, true);
     } else {
         showMessage("There was a program-intern error with recognizing the command.", true, true, false);
     }
