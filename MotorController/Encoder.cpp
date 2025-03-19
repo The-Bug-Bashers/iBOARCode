@@ -22,7 +22,7 @@ Encoder::Encoder(struct gpiod_chip *chip, int pinA, int pinB)
 }
 
 Encoder::~Encoder() {
-    running.store(false, std::memory_order_relaxed);
+    running.store(false, std::memory_order_relaxed);    
     if (encoderThread.joinable()) {
         encoderThread.join();
     }
@@ -58,7 +58,7 @@ double Encoder::getSpeed() {
     int pulses = pulseCount.exchange(0, std::memory_order_relaxed);
     double rotations = static_cast<double>(pulses) / (COUNTS_PER_WHEEL_ROTATION / 2.0); // Divide by 2 because of only every second tic being counted
     double rpm = (rotations / elapsedSeconds) * 60.0;
-    if (rpm < 13.0 && rpm > -13.0 ) {rpm = 0.0;}
+    if (rpm < 0.001 && rpm > -0.001 ) {rpm = 0.0;} //TODO: Remove once all PID bugs are fixed
 
     lastTime = currentTime;
 

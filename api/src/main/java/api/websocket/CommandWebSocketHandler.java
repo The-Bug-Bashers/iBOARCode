@@ -115,7 +115,7 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
                 if (!verifyParams(jsonMessage, session, driveParams)) return;
 
                 try {
-                    final String status = mqttPublisher.sendMQTTMessage(MQTT_MOTOR_DRIVE_CHANNEL, jsonMessage.toString(), 2, true);
+                    final String status = mqttPublisher.sendMQTTMessage(MQTT_MOTOR_DRIVE_CHANNEL, jsonMessage.toString(), 1, true);
                     session.sendMessage(new TextMessage(status));
                 } catch (MqttException e) {
                     log.error("Failed to send MQTT message", e);
@@ -131,7 +131,7 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
                 if (!verifyParams(jsonMessage, session, turnParams)) return;
 
                 try {
-                    final String status = mqttPublisher.sendMQTTMessage(MQTT_MOTOR_DRIVE_CHANNEL, jsonMessage.toString(), 2, true);
+                    final String status = mqttPublisher.sendMQTTMessage(MQTT_MOTOR_DRIVE_CHANNEL, jsonMessage.toString(), 1, true);
                     session.sendMessage(new TextMessage(status));
                 } catch (MqttException e) {
                     log.error("Failed to send MQTT message", e);

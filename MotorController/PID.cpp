@@ -10,6 +10,8 @@ double computePID(PID &pid, double target, double actual) {
         pidValue = 255.0;
     } else if (pidValue < -255) {
         pidValue = -255.0;
+    } else if (pidValue < 0.1 && pidValue > -0.1) { /// TODO: Remove once Pid poblems are fixed
+        pidValue = 0;
     }
     return pidValue;
 }
