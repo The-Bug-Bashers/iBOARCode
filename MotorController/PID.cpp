@@ -1,6 +1,7 @@
 #include "PID.h"
 
 double computePID(PID &pid, double target, double actual) {
+    if (target == 0 && actual == 0) return 0;
     double error = target - actual;
     pid.integral += error;
     double derivative = error - pid.previousError;
