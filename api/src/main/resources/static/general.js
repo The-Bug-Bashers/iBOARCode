@@ -87,7 +87,6 @@ function switchFocus(event) {
 document.addEventListener("DOMContentLoaded", () => {
     const autoRefreshCheckbox = document.getElementById("autoRefreshCheckbox");
     autoRefreshCheckbox.checked = false;
-
     autoRefreshCheckbox.addEventListener("change", (event) => {
         if (event.target.checked) {
             dataSocket = new WebSocket(dataSocketURL);
@@ -97,11 +96,17 @@ document.addEventListener("DOMContentLoaded", () => {
             dataSocket.close();
         }
     });
-
+    
+    const motorEnableCheckbox = document.getElementById("motorsEnableCheckbox");
+    motorEnableCheckbox.checked = false;
+    motorEnableCheckbox.addEventListener("change", (event) => {
+        let state = "disabled";
+        if (event.target.checked) state = "enabled";
+        sendMessage("{\"command\": \"changeMotorState\", \"state\": \"" + state + "\"}");
+    })
 
     const motorsFocusCheckbox = document.getElementById("motorsFocusCheckbox");
     motorsFocusCheckbox.checked = false;
-
     motorsFocusCheckbox.addEventListener("change", (event) => {
         switchFocus(event);
     });

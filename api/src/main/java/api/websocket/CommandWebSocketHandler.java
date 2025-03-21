@@ -26,6 +26,7 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
     private String currentMode = ""; // Stores the current mode
     @Value("${mqtt.channel.mode}") String MQTT_MODE_CHANNEL;
     @Value("${mqtt.channel.motor.move}") String MQTT_MOTOR_MOVE_CHANNEL;
+    @Value("${mqtt.channel.motor.control}") String MQTT_MOTOR_CONTROL_CHANNEL;
     @Value("${mqtt.channel.motor.drive}") String MQTT_MOTOR_DRIVE_CHANNEL;
 
     public CommandWebSocketHandler(MqttPublisher mqttPublisher) {
@@ -99,7 +100,21 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
                 if (!verifyParams(jsonMessage, session, moveMotorParams)) return;
 
                 try {
-                    final String status = mqttPublisher.sendMQTTMessage(MQTT_MOTOR_MOVE_CHANNEL, jsonMessage.toString(), 2, true);
+                    final String status = mqttPublisher.sendMQTTMessage(MQTT_MOTOR_MOVE_CHANNEL, jsonMessage.toString(), 1, true);
+                    session.sendMessage(new TextMessage(status));
+                } catch (MqttException e) {
+                    log.error("Failed to send MQTT message", e);
+                    session.sendMessage(new TextMessage("Error: Failed to send MQTT message: " + e));
+                }
+                break;
+            case "changeMotorState":
+                Map<String, Object> changeMotorStateParams = new HashMap<>();
+                changeMotorStateParams.put("command", "changeMotorState");
+                changeMotorStateParams.put("state", Set.of("enabled", "disabled"));
+                if (!verifyParams(jsonMessage, session, changeMotorStateParams)) return;
+
+                try {
+                    final String status = mqttPublisher.sendMQTTMessage(MQTT_MOTOR_CONTROL_CHANNEL, jsonMessage.toString(), 2, true);
                     session.sendMessage(new TextMessage(status));
                 } catch (MqttException e) {
                     log.error("Failed to send MQTT message", e);
