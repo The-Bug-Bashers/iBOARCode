@@ -120,6 +120,7 @@ function addCommandSocketEventListeners() {
     // Event listener for when the connection is open
     commandSocket.addEventListener('open', () => {
         showMessage("Connection to CommandSocket established.", true, false, true);
+        sendMessage("{\"command\": \"changeMotorState\", \"state\": \"disabled\"}"); // Disable motors upon the new Command socket connection
     });
 
     // Event listener for when a message is received
