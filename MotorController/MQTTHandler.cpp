@@ -15,6 +15,7 @@ extern MotorController *motor2Controller;
 extern MotorController *motor3Controller;
 
 constexpr double MAX_MOTOR_RPM = 500.0;
+bool motorsEnabled = true;
 
 void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message) {
     if (message->payloadlen > 0) {
@@ -27,7 +28,10 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
 
             std::string command = jsonPayload["command"];
             if (command == "drive") {
-                if (!jsonPayload.contains("angle")  || !jsonPayload.contains("speed")) {
+                if (!motorsEnabled) {
+                    std::cout << "[MQTT] Motors are disabled. Ignoring drive command.\n";
+                    return;
+                } else if (!jsonPayload.contains("angle")  || !jsonPayload.contains("speed")) {
                     std::cerr << "Invalid JSON format: missing required fields." << std::endl;
                     return;
                 }
@@ -52,8 +56,11 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
                 motor1Controller->setTargetSpeed((m1 / 100.0) * MAX_MOTOR_RPM);
                 motor2Controller->setTargetSpeed((m2 / 100.0) * MAX_MOTOR_RPM);
                 motor3Controller->setTargetSpeed((m3 / 100.0) * MAX_MOTOR_RPM);
-            } if (command == "turn") {
-                if (!jsonPayload.contains("direction")) {
+            } else if (command == "turn") {
+                if (!motorsEnabled) {
+                    std::cout << "[MQTT] Motors are disabled. Ignoring turn command.\n";
+                    return;
+                } else if (!jsonPayload.contains("direction")) {
                     std::cerr << "Invalid JSON format: missing required fields." << std::endl;
                     return;
                 }
@@ -63,13 +70,39 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
                 speed = (speed / 100) * MAX_MOTOR_RPM;
                 if (direction == "left") {
                     speed *= -1;
-                } else if (direction != "right") {
-                    return;
-                }
+                } else if (direction != "right") return;
 
                 motor1Controller->setTargetSpeed(speed);
                 motor2Controller->setTargetSpeed(speed);
                 motor3Controller->setTargetSpeed(speed);
+            } else if (command == "changeMotorState") {
+                std::string state = jsonPayload["state"];
+                if (state == "enabled" && ! motorsEnabled) {
+                    motorsEnabled = true;
+                    motor1Controller->start();
+                    motor2Controller->start();
+                    motor3Controller->start();
+
+                    publishing = true;
+                    std::thread dataThread(publishMotorData, mosq);
+                } else if (state == "disabled" && motorsEnabled) {
+                    motorsEnabled = false;
+                    motor1Controller->setTargetSpeed(0);
+                    motor2Controller->setTargetSpeed(0);
+                    motor3Controller->setTargetSpeed(0);
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+                    motor1Controller->setSpeed(0);
+                    motor2Controller->setSpeed(0);
+                    motor3Controller->setSpeed(0);
+                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+                    motor1Controller->stop();
+                    motor2Controller->stop();
+                    motor3Controller->stop();
+
+                    publishing = false;
+                }
             }
 
         } catch (const std::exception &e) {
@@ -79,7 +112,7 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
 }
 
 void publishMotorData(struct mosquitto *mosq) {
-    while (true) {
+    while (publishing) {
         double target1, actual1, pid1_out, target2, actual2, pid2_out, target3, actual3, pid3_out;
 
         motor1Controller->getMotorData(target1, actual1, pid1_out);

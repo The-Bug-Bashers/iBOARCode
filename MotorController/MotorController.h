@@ -14,6 +14,9 @@ public:
     MotorController(struct gpiod_chip *chip, int pwm_offset, int forward_offset, int backward_offset, int encoderA, int encoderB, double kp, double ki, double kd);
     ~MotorController();
 
+    void stop();
+    void start();
+
     double getActualSpeed();
     void setSpeed(double pidOutput);
     void logPinStates(const std::string &motorName);

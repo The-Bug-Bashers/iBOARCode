@@ -7,6 +7,7 @@
 #include "Encoder.h"
 
 
+
 MotorController::MotorController(struct gpiod_chip *chip, int pwm_offset, int forward_offset, int backward_offset, int encoderA, int encoderB, double kp, double ki, double kd)
 : duty(0), running(true), targetSpeed(0), pid{kp, ki, kd, 0, 0} {
     pwm_line = gpiod_chip_get_line(chip, pwm_offset);
@@ -35,10 +36,23 @@ MotorController::~MotorController(){
     gpiod_line_release(pwm_line);
     gpiod_line_release(forward_line);
     gpiod_line_release(backward_line);
-    running = false;
     if (pid_thread.joinable()) pid_thread.join();
 
 }
+
+void MotorController::stop() {
+    running = false;
+    setSpeed(0);
+}
+
+void MotorController::start() {
+    if (!running) {
+        running = true;
+        pwm_thread = std::thread(&MotorController::pwmLoop, this);
+        pid_thread = std::thread(&MotorController::pidLoop, this);
+    }
+}
+
 
 void MotorController::setTargetSpeed(double speed) {
     if (speed == 0) {

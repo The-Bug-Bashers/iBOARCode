@@ -41,6 +41,7 @@ int main() {
 
     mosquitto_message_callback_set(mosq, onMessage);
     mosquitto_subscribe(mosq, nullptr, "boar/motor/drive", 0);
+    mosquitto_subscribe(mosq, nullptr, "boar/motor/control", 0);
     std::thread dataThread(publishMotorData, mosq);
     dataThread.detach();
 
