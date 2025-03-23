@@ -56,13 +56,13 @@ function updateChart(actual1, target1, pid_output1, actual2, target2, pid_output
 
     labels.push(time);
     datasets[0].data.push(actual1);
-    datasets[1].data.push(target1);
-    datasets[2].data.push(pid_output1);
     datasets[3].data.push(actual2);
-    datasets[4].data.push(target2);
-    datasets[5].data.push(pid_output2);
     datasets[6].data.push(actual3);
+    datasets[1].data.push(target1);
+    datasets[4].data.push(target2);
     datasets[7].data.push(target3);
+    datasets[2].data.push(pid_output1);
+    datasets[5].data.push(pid_output2);
     datasets[8].data.push(pid_output3);
 
     combinedChart.update();
