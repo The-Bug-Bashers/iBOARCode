@@ -41,8 +41,12 @@ MotorController::~MotorController(){
 }
 
 void MotorController::stop() {
-    running = false;
-    setSpeed(0);
+    if (!running) return;
+    running.store(false);
+    targetSpeed.store(0);
+    lastPidOutput = 0;
+    resetPID();
+
     if (pwm_thread.joinable())
         pwm_thread.join();
     if (pid_thread.joinable())
@@ -50,11 +54,24 @@ void MotorController::stop() {
     targetSpeed.store(0);
     lastPidOutput = 0;
 
+    disableMotor();
+}
+
+void MotorController::resetPID() {
+    pid.integral = 0;
+    pid.previous_error = 0;
+    lastPidOutput = 0;
+}
+
+void MotorController::disableMotor() {
+    gpiod_line_set_value(pwm_line, 0);
+    gpiod_line_set_value(forward_line, 0);
+    gpiod_line_set_value(backward_line, 0);
 }
 
 void MotorController::start() {
-    if (running) return;
-    running = true;
+    if (running.load()) return;
+    running.store(true);
     pwm_thread = std::thread(&MotorController::pwmLoop, this);
     pid_thread = std::thread(&MotorController::pidLoop, this);
 }

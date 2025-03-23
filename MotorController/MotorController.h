@@ -15,6 +15,8 @@ public:
     ~MotorController();
 
     void stop();
+    void resetPID();
+    void disableMotor();
     void start();
 
     double getActualSpeed();

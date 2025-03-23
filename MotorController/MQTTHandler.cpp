@@ -16,6 +16,7 @@ extern MotorController *motor3Controller;
 
 constexpr double MAX_MOTOR_RPM = 500.0;
 bool motorsEnabled = true;
+std::atomic<bool> publishing(true);
 
 void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message) {
     if (message->payloadlen > 0) {
@@ -85,6 +86,7 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
 
                     publishing = true;
                     std::thread dataThread(publishMotorData, mosq);
+                    dataThread.detach();
                 } else if (state == "disabled" && motorsEnabled) {
                     motorsEnabled = false;
                     motor1Controller->setTargetSpeed(0);
