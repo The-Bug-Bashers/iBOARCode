@@ -81,7 +81,7 @@ function processData(jsonData) {
         updateChart(
             data.motor1.actual, data.motor2.actual, data.motor3.actual,
             data.motor1.target, data.motor2.target, data.motor3.target,
-            data.motor1.pid_output, data.motor2.pid_output, ddata.motor3.pid_output
+            data.motor1.pid_output, data.motor2.pid_output, data.motor3.pid_output
         );
     } catch (error) {
         console.error("Invalid JSON data:", error);
