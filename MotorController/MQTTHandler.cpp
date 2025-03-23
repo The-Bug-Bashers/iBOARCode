@@ -30,7 +30,8 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
             std::string command = jsonPayload["command"];
             if (command == "drive") {
                 if (!motorsEnabled) {
-                    std::cout << "[MQTT] Motors are disabled. Ignoring drive command.\n";
+                    std::string ignoreDriveCommandMessage = "Error: Motors are disabled. Ignoring drive command";
+                    mosquitto_publish(mosq, NULL, "boar/motor/data", ignoreDriveCommandMessage.length(), ignoreDriveCommandMessage.c_str(), 0, false);
                     return;
                 } else if (!jsonPayload.contains("angle")  || !jsonPayload.contains("speed")) {
                     std::cerr << "Invalid JSON format: missing required fields." << std::endl;
@@ -59,7 +60,8 @@ void onMessage(struct mosquitto *mosq, void *obj, const struct mosquitto_message
                 motor3Controller->setTargetSpeed((m3 / 100.0) * MAX_MOTOR_RPM);
             } else if (command == "turn") {
                 if (!motorsEnabled) {
-                    std::cout << "[MQTT] Motors are disabled. Ignoring turn command.\n";
+                    std::string ignoreTurnCommandMessage = "Error: Motors are disabled. Ignoring turn command";
+                    mosquitto_publish(mosq, NULL, "boar/motor/data", ignoreTurnCommandMessage.length(), ignoreTurnCommandMessage.c_str(), 0, false);
                     return;
                 } else if (!jsonPayload.contains("direction")) {
                     std::cerr << "Invalid JSON format: missing required fields." << std::endl;

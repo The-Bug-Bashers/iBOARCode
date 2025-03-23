@@ -59,7 +59,7 @@ void MotorController::stop() {
 
 void MotorController::resetPID() {
     pid.integral = 0;
-    pid.previous_error = 0;
+    pid.previousError = 0;
     lastPidOutput = 0;
 }
 
