@@ -43,14 +43,20 @@ MotorController::~MotorController(){
 void MotorController::stop() {
     running = false;
     setSpeed(0);
+    if (pwm_thread.joinable())
+        pwm_thread.join();
+    if (pid_thread.joinable())
+        pid_thread.join();
+    targetSpeed.store(0);
+    lastPidOutput = 0;
+
 }
 
 void MotorController::start() {
-    if (!running) {
-        running = true;
-        pwm_thread = std::thread(&MotorController::pwmLoop, this);
-        pid_thread = std::thread(&MotorController::pidLoop, this);
-    }
+    if (running) return;
+    running = true;
+    pwm_thread = std::thread(&MotorController::pwmLoop, this);
+    pid_thread = std::thread(&MotorController::pidLoop, this);
 }
 
 
