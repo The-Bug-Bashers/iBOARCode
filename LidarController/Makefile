@@ -46,6 +46,7 @@ CXXSRC += src/sl_lidar_driver.cpp \
           src/sl_async_transceiver.cpp\
           src/sl_tcp_channel.cpp\
 	      src/sl_udp_channel.cpp
+	      lidar_mqtt.cpp
 
 
 C_INCLUDES += -I$(CURDIR)/include -I$(CURDIR)/src
@@ -69,6 +70,8 @@ CXXSRC += src/arch/macOS/net_serial.cpp \
           src/arch/macOS/net_socket.cpp \
           src/arch/macOS/timer.cpp
 endif
+
+LD_LIBS += -lmosquitto -lpthread
 
 all: build_sdk
 
