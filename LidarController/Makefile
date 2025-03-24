@@ -32,7 +32,7 @@
 # *
 # */
 #
-HOME_TREE := ../
+HOME_TREE := .
 
 MODULE_NAME := $(notdir $(CURDIR))
 
