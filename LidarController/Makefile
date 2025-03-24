@@ -45,8 +45,8 @@ CXXSRC += src/sl_lidar_driver.cpp \
 	      src/sl_lidarprotocol_codec.cpp\
           src/sl_async_transceiver.cpp\
           src/sl_tcp_channel.cpp\
-	      src/sl_udp_channel.cpp
-	      lidar_mqtt.cpp
+	      src/sl_udp_channel.cpp\
+          lidar_mqtt.cpp
 
 
 C_INCLUDES += -I$(CURDIR)/include -I$(CURDIR)/src
