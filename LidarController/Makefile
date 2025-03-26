@@ -49,7 +49,7 @@ CXXSRC += src/sl_lidar_driver.cpp \
           lidar_mqtt.cpp
 
 
-C_INCLUDES += -I$(CURDIR)/include -I$(CURDIR)/src
+C_INCLUDES += -I$(CURDIR)/include -I$(CURDIR)/src $(shell pkg-config --cflags jsoncpp)
 
 
 #dataunpacker
@@ -71,7 +71,7 @@ CXXSRC += src/arch/macOS/net_serial.cpp \
           src/arch/macOS/timer.cpp
 endif
 
-LD_LIBS += -lmosquitto -lpthread
+LD_LIBS += -lmosquitto -lpthread $(shell pkg-config --libs jsoncpp)
 
 all: build_sdk
 

@@ -53,7 +53,7 @@ echo -e "${BLUE}Installing Maven dependencies...${NC}"
 echo -e "${BLUE}Installing screen...${NC}"
 sudo apt install -y screen
 
-echo -e "${BLUE}Installing motorController dependencies...${NC}"
+echo -e "${BLUE}Installing MotorController dependencies...${NC}"
 echo -e "${BLUE}Installing libgpiod...${NC}"
 sudo apt-get install -y libgpiod-dev
 
@@ -63,5 +63,9 @@ sudo apt install -y nlohmann-json3-dev
 
 echo -e "${BLUE}Installing mosquitto for c++...${NC}"
 sudo apt install -y libmosquitto-dev
+
+echo -e "${BLUE}Installing LidarController dependencies...${NC}"
+echo -e "${BLUE}Installing libjsoncpp...${NC}"
+sudo apt install libjsoncpp-dev -y
 
 echo -e "${GREEN}Setup complete.${NC}"
