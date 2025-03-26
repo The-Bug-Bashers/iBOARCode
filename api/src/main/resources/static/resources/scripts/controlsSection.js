@@ -399,6 +399,7 @@ function getMoveMotorContent() {
 
 function getSimpleNavigateContent() {
     return `
+        <h3 style="margin: auto">Target direction</h3>
         <div class="dial" id="dial">
             <div class="angle-display" id="angle-display">0°</div>
             <div class="knob" id="knob"></div>
