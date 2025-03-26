@@ -69,7 +69,7 @@ To allow for disconnecting the SSH session that started the api, the api is run 
 
 ##### Test if API is running: `sudo screen -list | grep "API"`
 This returns something like 
-`1650.API (12/03/25 13:23:10) (Detached)` if the api is running and nothing if it is not.
+`1650.API (12/03/25 13:23:10) (Detached)` if the api is running, and nothing if it is not.
 > [!WARNING]
 > only works if the screen session of API was named correctly (API)
 
@@ -78,8 +78,8 @@ This returns something like
 > only works if the screen session of the API was named correctly (API)
 
 
-## MotorController (c++)
-The motorController module controls the motors of the robot.
+## Motor Controller (C++)
+The Motor Controller module controls the motors of the robot.
 
 ### Basic information
 The motor controller module calculates individual motor speeds based on target speed and direction,
@@ -104,10 +104,45 @@ The module also sends the current motor data (speeds, targets, PidValues) to the
 
 ##### Test if MotorController is running: `sudo screen -list | grep "MotorController"`
 This returns something like
-`1650.MotorController (12/03/25 13:23:10) (Detached)` if the MotorController is running and nothing if it is not.
+`1650.MotorController (12/03/25 13:23:10) (Detached)` if the MotorController is running, and nothing if it is not.
 > [!WARNING]
 > only works if the screen session of the MotorController was named correctly (MotorController)
 
 ##### Stop: `sudo screen -S MotorController -X stuff "^C"`
 > [!WARNING]
 > only works if the screen session of the MotorController was named correctly (MotorController)
+
+
+## Lidar Controller (C++)
+The Lidar Controller module controls the LiDAR sensor.
+
+### Basic information
+The Lidar Controller module uses the [SLAMTEC RPLIDAR](https://www.slamtec.com/en/Lidar/A1) A1M8 to scan,
+parse and relay environment data to the MQTT broker.
+
+This is achieved by using the [RPLIDAR SDK](https://github.com/Slamtec/rplidar_sdk), 
+part of which is included in this repository.
+
+The module accepts commands to start and stop scanning.
+
+###  Basic commands
+##### Compile: `make build_app`
+
+##### Run: `sudo screen -S LidarController ./output/Linux/Release/LidarController`
+> [!CAUTION]
+> It is recommended that the LiDAR controller is started after the MQTT broker is already running,
+> otherwise it cannot connect to the MQTT server
+
+> [!IMPORTANT]
+> It is strongly recommended to always start the screen session with the name: "LidarController,"
+> in order for utility scripts (like stop.sh) to work correctly
+
+##### Test if LidarController is running: `sudo screen -list | grep "LidarController"`
+This returns something like
+`1650.LidarController (12/03/25 13:23:10) (Detached)` if the LidarController is running, and nothing if it is not.
+> [!WARNING]
+> only works if the screen session of the LidarController was named correctly (LidarController)
+
+##### Stop: `sudo screen -S LidarController -X stuff "^C"`
+> [!WARNING]
+> only works if the screen session of the LidarController was named correctly (LidarController)
