@@ -36,6 +36,10 @@ function showControls(mode) {
             document.getElementById("speedMoveMotorInput").value = 50;
             addMoveMotorEventListeners();
             break;
+        case "Simple-Navigate":
+            controlsContainer.innerHTML = getSimpleNavigateContent();
+            addSimpleNavigateEventListeners();
+            break;
         default:
             controlsContainer.innerHTML = "";
     }
@@ -186,6 +190,46 @@ function addMoveMotorEventListeners() {
     document.getElementById("moveMotorMotorSelector").addEventListener("change", () => {
         sendMoveMotorMessage();
     });
+}
+
+function addSimpleNavigateEventListeners() {
+    const knob = document.getElementById("knob");
+    const dial = document.getElementById("dial");
+    const angleDisplay = document.getElementById("angle-display");
+    const radius = 100; // Radius of the dial
+
+    function setKnobPosition(angle) {
+        let radians = (angle - 90) * (Math.PI / 180); // Offset by -90° to put 0° at the top
+        let x = Math.cos(radians) * (radius - 10) + radius;
+        let y = Math.sin(radians) * (radius - 10) + radius;
+        knob.style.left = `${x - 10}px`;
+        knob.style.top = `${y - 10}px`;
+    }
+
+    function getAngle(x, y) {
+        let dx = x - (dial.offsetLeft + radius);
+        let dy = y - (dial.offsetTop + radius);
+        let angle = Math.atan2(dy, dx) * (180 / Math.PI) + 90; // Offset by +90°
+        return (angle + 360) % 360;
+    }
+
+    knob.addEventListener("mousedown", (event) => {
+        function onMouseMove(event) {
+            let angle = getAngle(event.clientX, event.clientY);
+            setKnobPosition(angle);
+            angleDisplay.innerText = `${Math.round(angle)}°`;
+        }
+
+        function onMouseUp() {
+            document.removeEventListener("mousemove", onMouseMove);
+            document.removeEventListener("mouseup", onMouseUp);
+        }
+
+        document.addEventListener("mousemove", onMouseMove);
+        document.addEventListener("mouseup", onMouseUp);
+    });
+
+    setKnobPosition(0); // Initialize position at the top
 }
 
 function sendMoveMotorMessage() {
@@ -348,6 +392,15 @@ function getMoveMotorContent() {
                 </label>
                 <p onclick="document.getElementById('SawtoothMoveMotorCheckbox').click()">Sawtooth</p>
             </div>
+        </div>
+    `;
+}
+
+function getSimpleNavigateContent() {
+    return `
+        <div class="dial" id="dial">
+            <div class="angle-display" id="angle-display">0°</div>
+            <div class="knob" id="knob"></div>
         </div>
     `;
 }
