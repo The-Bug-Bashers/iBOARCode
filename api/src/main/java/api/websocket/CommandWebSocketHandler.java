@@ -69,7 +69,7 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
             case "changeMode":
                 Map<String, Object> changeModeParams = new HashMap<>();
                 changeModeParams.put("command", "changeMode");
-                changeModeParams.put("mode", Set.of("Remote-Control", "Move-Motor"));
+                changeModeParams.put("mode", Set.of("Remote-Control", "Move-Motor", "Simple-Navigate"));
                 if (!verifyParams(jsonMessage, session, changeModeParams)) return;
 
                 String mode = jsonMessage.get("mode").asText();
