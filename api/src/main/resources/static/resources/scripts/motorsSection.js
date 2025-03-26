@@ -77,8 +77,8 @@ function addMotorRendererDataSocketListener() {
 
 function processData(jsonData) {
     try {
-        const jsonData = JSON.parse(jsonData);
-        const motorData = jsonData[1];
+        const data = JSON.parse(jsonData);
+        const motorData = data[1];
 
         updateChart(
             motorData.motor1.actual, motorData.motor2.actual, motorData.motor3.actual,
