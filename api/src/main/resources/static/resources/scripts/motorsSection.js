@@ -77,11 +77,13 @@ function addMotorRendererDataSocketListener() {
 
 function processData(jsonData) {
     try {
-        const data = JSON.parse(jsonData);
+        const jsonData = JSON.parse(jsonData);
+        const motorData = jsonData[1];
+
         updateChart(
-            data.motor1.actual, data.motor2.actual, data.motor3.actual,
-            data.motor1.target, data.motor2.target, data.motor3.target,
-            data.motor1.pid_output, data.motor2.pid_output, data.motor3.pid_output
+            motorData.motor1.actual, motorData.motor2.actual, motorData.motor3.actual,
+            motorData.motor1.target, motorData.motor2.target, motorData.motor3.target,
+            motorData.motor1.pid_output, motorData.motor2.pid_output, motorData.motor3.pid_output
         );
     } catch (error) {
         console.error("Invalid JSON data:", error);
