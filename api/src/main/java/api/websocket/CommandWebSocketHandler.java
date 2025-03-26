@@ -27,6 +27,7 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
     @Value("${mqtt.channel.mode}") String MQTT_MODE_CHANNEL;
     @Value("${mqtt.channel.motor.move}") String MQTT_MOTOR_MOVE_CHANNEL;
     @Value("${mqtt.channel.motor.control}") String MQTT_MOTOR_CONTROL_CHANNEL;
+    @Value("${mqtt.channel.lidar.control}") String MQTT_LIDAR_CONTROL_CHANNEL;
     @Value("${mqtt.channel.motor.drive}") String MQTT_MOTOR_DRIVE_CHANNEL;
 
     public CommandWebSocketHandler(MqttPublisher mqttPublisher) {
@@ -147,6 +148,20 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
 
                 try {
                     final String status = mqttPublisher.sendMQTTMessage(MQTT_MOTOR_DRIVE_CHANNEL, jsonMessage.toString(), 1, true);
+                    session.sendMessage(new TextMessage(status));
+                } catch (MqttException e) {
+                    log.error("Failed to send MQTT message", e);
+                    session.sendMessage(new TextMessage("Error: Failed to send MQTT message: " + e));
+                }
+                break;
+            case "changeLidarState":
+                Map<String, Object> changeLidarStateParams = new HashMap<>();
+                changeLidarStateParams.put("command", "changeLidarState");
+                changeLidarStateParams.put("state", Set.of("enabled", "disabled"));
+                if (!verifyParams(jsonMessage, session, changeLidarStateParams)) return;
+
+                try {
+                    final String status = mqttPublisher.sendMQTTMessage(MQTT_LIDAR_CONTROL_CHANNEL, jsonMessage.toString(), 2, true);
                     session.sendMessage(new TextMessage(status));
                 } catch (MqttException e) {
                     log.error("Failed to send MQTT message", e);

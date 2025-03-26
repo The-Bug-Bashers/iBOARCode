@@ -105,6 +105,14 @@ document.addEventListener("DOMContentLoaded", () => {
         sendMessage("{\"command\": \"changeMotorState\", \"state\": \"" + state + "\"}");
     })
 
+    const lidarEnableCheckbox = document.getElementById("lidarEnableCheckbox");
+    lidarEnableCheckbox.checked = false;
+    lidarEnableCheckbox.addEventListener("change", (event) => {
+        let state = "disabled";
+        if (event.target.checked) state = "enabled";
+        sendMessage("{\"command\": \"changeLidarState\", \"state\": \"" + state + "\"}");
+    })
+    
     const motorsFocusCheckbox = document.getElementById("motorsFocusCheckbox");
     motorsFocusCheckbox.checked = false;
     motorsFocusCheckbox.addEventListener("change", (event) => {
