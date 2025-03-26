@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <sstream>
 #include <vector>
+#include <json/json.h>
 
 using namespace std;
 using namespace sl;
@@ -13,14 +14,17 @@ using namespace sl;
 #define SERIAL_PORT "/dev/ttyUSB0"
 #define MQTT_HOST "localhost"
 #define MQTT_PORT 1883
-#define MQTT_TOPIC "boar/lidar/data"
+#define MQTT_TOPIC_DATA "boar/lidar/data"
+#define MQTT_TOPIC_CONTROL "boar/lidar/control"
 
 // MQTT client
 mosquitto *mosq = nullptr;
+bool lidar_enabled = false;
+ILidarDriver *lidar = nullptr;
+IChannel *channel = nullptr;
 
 // Helper to send the full scan data as JSON
 void publish_mqtt(const vector<pair<float, float>>& scan_data) {
-    // Build JSON string
     std::ostringstream oss;
     oss << "{ \"lidarScan\": [";
     for (size_t i = 0; i < scan_data.size(); i++) {
@@ -30,13 +34,40 @@ void publish_mqtt(const vector<pair<float, float>>& scan_data) {
     oss << "] }";
 
     std::string msg = oss.str();
+    mosquitto_publish(mosq, nullptr, MQTT_TOPIC_DATA, msg.size(), msg.c_str(), 0, false);
+}
 
-    // Publish the scan data to MQTT
-    mosquitto_publish(mosq, nullptr, MQTT_TOPIC, msg.size(), msg.c_str(), 0, false);
+void on_message(struct mosquitto *mosq, void *userdata, const struct mosquitto_message *message) {
+    if (message->payloadlen) {
+        string payload((char*)message->payload, message->payloadlen);
+        Json::Value root;
+        Json::CharReaderBuilder reader;
+        std::string errs;
+        std::istringstream s(payload);
+        if (!Json::parseFromStream(reader, s, &root, &errs)) {
+            cerr << "Failed to parse JSON: " << errs << endl;
+            return;
+        }
+
+        if (root["command"].asString() == "changeLidarState") {
+            string state = root["state"].asString();
+            if (state == "enabled" && !lidar_enabled) {
+                lidar_enabled = true;
+                lidar->setMotorSpeed(600);
+                LidarScanMode scanMode;
+                lidar->startScan(false, true, 0, &scanMode);
+                cout << "LIDAR scanning started.\n";
+            } else if (state == "disabled" && lidar_enabled) {
+                lidar_enabled = false;
+                lidar->stop();
+                lidar->setMotorSpeed(0);
+                cout << "LIDAR scanning stopped.\n";
+            }
+        }
+    }
 }
 
 int main() {
-    // Initialize MQTT
     mosquitto_lib_init();
     mosq = mosquitto_new("lidar_publisher", true, nullptr);
     if (!mosq) {
@@ -44,65 +75,51 @@ int main() {
         return 1;
     }
 
-    if (mosquitto_connect(mosq, MQTT_HOST, MQTT_PORT, 60) != MOSQ_ERR_SUCCESS) {
-        cerr << "Failed to connect to MQTT broker\n";
-        return 1;
-    }
+    mosquitto_message_callback_set(mosq, on_message);
+    mosquitto_connect(mosq, MQTT_HOST, MQTT_PORT, 60);
+    mosquitto_subscribe(mosq, nullptr, MQTT_TOPIC_CONTROL, 0);
 
-    // Initialize LIDAR
     auto channelResult = createSerialPortChannel(SERIAL_PORT, 115200);
     if (SL_IS_FAIL(static_cast<sl_result>(channelResult))) {
         cerr << "Failed to create serial channel\n";
         return -1;
     }
-    IChannel *channel = channelResult.value;
+    channel = channelResult.value;
 
     auto lidarResult = createLidarDriver();
     if (SL_IS_FAIL(static_cast<sl_result>(lidarResult))) {
         cerr << "Failed to create LIDAR driver\n";
         return -1;
     }
-    ILidarDriver *lidar = lidarResult.value;
+    lidar = lidarResult.value;
 
-    auto res = lidar->connect(channel);
-    if (SL_IS_FAIL(res)) {
+    if (SL_IS_FAIL(lidar->connect(channel))) {
         cerr << "Failed to connect to LIDAR\n";
         return -1;
     }
 
-    // Start motor and scanning
-    lidar->setMotorSpeed(600);
-    LidarScanMode scanMode;
-    lidar->startScan(false, true, 0, &scanMode);
-
-    cout << "LIDAR scanning and publishing to MQTT...\n";
+    cout << "Waiting for MQTT commands...\n";
 
     while (true) {
-        sl_lidar_response_measurement_node_hq_t nodes[8192];
-        size_t count = sizeof(nodes) / sizeof(nodes[0]);
-
-        auto scanResult = lidar->grabScanDataHq(nodes, count);
-        if (SL_IS_OK(scanResult)) {
-            vector<pair<float, float>> scan_data;
-
-            // Collect scan data
-            for (size_t i = 0; i < count; i++) {
-                if (nodes[i].dist_mm_q2 != 0) {
-                    float angle = (nodes[i].angle_z_q14 * 90.f) / (1 << 14);
-                    float distance = nodes[i].dist_mm_q2 / 4.0f / 1000.0f; // Convert to meters
-                    scan_data.push_back({angle, distance});
+        mosquitto_loop(mosq, 0, 1);
+        if (lidar_enabled) {
+            sl_lidar_response_measurement_node_hq_t nodes[8192];
+            size_t count = sizeof(nodes) / sizeof(nodes[0]);
+            if (SL_IS_OK(lidar->grabScanDataHq(nodes, count))) {
+                vector<pair<float, float>> scan_data;
+                for (size_t i = 0; i < count; i++) {
+                    if (nodes[i].dist_mm_q2 != 0) {
+                        float angle = (nodes[i].angle_z_q14 * 90.f) / (1 << 14);
+                        float distance = nodes[i].dist_mm_q2 / 4.0f / 1000.0f;
+                        scan_data.push_back({angle, distance});
+                    }
                 }
+                publish_mqtt(scan_data);
             }
-
-            // Publish the full scan data once all measurements are collected
-            publish_mqtt(scan_data);
         }
-
-        mosquitto_loop(mosq, 0, 1); // Process MQTT network events
-        usleep(50000); // 50ms sleep (~20 FPS)
+        usleep(50000);
     }
 
-    // Cleanup
     lidar->stop();
     lidar->setMotorSpeed(0);
     delete lidar;
@@ -110,6 +127,5 @@ int main() {
     mosquitto_disconnect(mosq);
     mosquitto_destroy(mosq);
     mosquitto_lib_cleanup();
-
     return 0;
 }
