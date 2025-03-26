@@ -56,12 +56,12 @@ void on_message(struct mosquitto *mosq, void *userdata, const struct mosquitto_m
                 lidar->setMotorSpeed(600);
                 LidarScanMode scanMode;
                 lidar->startScan(false, true, 0, &scanMode);
-                cout << "LIDAR scanning started.\n";
+                cout << "LIDAR scanning started." << endl;
             } else if (state == "disabled" && lidar_enabled) {
                 lidar_enabled = false;
                 lidar->stop();
                 lidar->setMotorSpeed(0);
-                cout << "LIDAR scanning stopped.\n";
+                cout << "LIDAR scanning stopped." << endl;
             }
         }
     }
@@ -71,34 +71,40 @@ int main() {
     mosquitto_lib_init();
     mosq = mosquitto_new("lidar_publisher", true, nullptr);
     if (!mosq) {
-        cerr << "Failed to initialize MQTT\n";
+        cerr << "Failed to initialize MQTT" << endl;
         return 1;
     }
 
     mosquitto_message_callback_set(mosq, on_message);
-    mosquitto_connect(mosq, MQTT_HOST, MQTT_PORT, 60);
+    if (mosquitto_connect(mosq, MQTT_HOST, MQTT_PORT, 60) != MOSQ_ERR_SUCCESS) {
+        cerr << "Failed to connect to MQTT broker" << endl;
+        return 1;
+    }
     mosquitto_subscribe(mosq, nullptr, MQTT_TOPIC_CONTROL, 0);
 
     auto channelResult = createSerialPortChannel(SERIAL_PORT, 115200);
     if (SL_IS_FAIL(static_cast<sl_result>(channelResult))) {
-        cerr << "Failed to create serial channel\n";
+        cerr << "Failed to create serial channel" << endl;
         return -1;
     }
     channel = channelResult.value;
 
     auto lidarResult = createLidarDriver();
     if (SL_IS_FAIL(static_cast<sl_result>(lidarResult))) {
-        cerr << "Failed to create LIDAR driver\n";
+        cerr << "Failed to create LIDAR driver" << endl;
         return -1;
     }
     lidar = lidarResult.value;
 
     if (SL_IS_FAIL(lidar->connect(channel))) {
-        cerr << "Failed to connect to LIDAR\n";
+        cerr << "Failed to connect to LIDAR" << endl;
         return -1;
     }
 
-    cout << "Waiting for MQTT commands...\n";
+    lidar->stop();
+    lidar->setMotorSpeed(0);
+
+    cout << "Waiting for MQTT commands..." << endl;
 
     while (true) {
         mosquitto_loop(mosq, 0, 1);
