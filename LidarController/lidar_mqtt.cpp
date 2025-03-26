@@ -22,7 +22,7 @@ mosquitto *mosq = nullptr;
 void publish_mqtt(const vector<pair<float, float>>& scan_data) {
     // Build JSON string
     std::ostringstream oss;
-    oss << "{ \"scan\": [";
+    oss << "{ \"lidarScan\": [";
     for (size_t i = 0; i < scan_data.size(); i++) {
         if (i > 0) oss << ", ";
         oss << "{ \"angle\": " << scan_data[i].first << ", \"distance\": " << scan_data[i].second << " }";
