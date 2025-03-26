@@ -3,6 +3,9 @@
     --font-color: #ffffff;
 }
 
+.link {
+    color: #2196f3;
+}
 body {
     background-color: #1e1f22;
     margin: 0;
