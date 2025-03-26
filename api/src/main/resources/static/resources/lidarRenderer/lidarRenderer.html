@@ -20,7 +20,7 @@
             display: block;
             margin: auto;
             padding: 10px;
-            font-size: 16em;
+            font-size: 2em;
         }
     </style>
 </head>
@@ -60,17 +60,25 @@
             return;
         }
 
+        // Find the maximum distance to scale properly
+        const maxDistance = Math.max(...data.map(point => parseFloat(point.distance)));
+
+        // Set scale based on the maximum distance
+        const scale = Math.min(canvas.width, canvas.height) / (maxDistance * 2);
+
         // Iterate over each data point
         data.forEach(point => {
             const angleDeg = parseFloat(point.angle);
             const distanceCm = parseFloat(point.distance);
 
             if (!isNaN(angleDeg) && !isNaN(distanceCm)) {
-                const angleRad = (angleDeg * Math.PI) / 180; // Convert to radians
+                // Adjust angle to make 0 at the bottom and 180 at the top
+                const adjustedAngle = angleDeg - 90; // Shift angle 90 degrees counter-clockwise
+                const angleRad = (adjustedAngle * Math.PI) / 180; // Convert to radians
 
                 // Convert polar to Cartesian coordinates
                 const x = centerX + distanceCm * scale * Math.cos(angleRad);
-                const y = centerY - distanceCm * scale * Math.sin(angleRad);
+                const y = centerY + distanceCm * scale * Math.sin(angleRad); // Flip the y-coordinate
 
                 // Draw point
                 ctx.fillStyle = "lime";
@@ -80,6 +88,9 @@
             }
         });
     }
+
+
+
 </script>
 </body>
 </html>
