@@ -49,7 +49,7 @@ cd ../MotorController || { echo -e "${RED}Failed to enter 'MotorController' dire
 sudo screen -dmS MotorController ./MotorController # Start MotorController in a detached screen session
 
 echo -e "${BLUE}Waiting for Motor Controller to start (not terminate)${NC}"
-sleep 3
+sleep 2
 if sudo screen -list | grep -q "MotorController"; then
     echo -e "${GREEN}Motor Controller started successfully (not terminated)!${NC}"
 else
@@ -63,7 +63,7 @@ cd ../LidarController || { echo -e "${RED}Failed to enter 'LidarController' dire
 sudo screen -dmS LidarController ./output/Linux/Release/LidarController # Start LidarController in a detached screen session
 
 echo -e "${BLUE}Waiting for LiDAR Controller to start (not terminate)${NC}"
-sleep 3
+sleep 1
 if sudo screen -list | grep -q "LidarController"; then
     echo -e "${GREEN}LiDAR Controller started successfully (not terminated)!${NC}"
 else
