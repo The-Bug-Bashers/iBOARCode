@@ -40,8 +40,23 @@ while sudo screen -list | grep -q "MotorController"; do
         exit 1
     fi
 done
-echo -e "${GREEN}Stopped MotorController successfully!${NC}"
+echo -e "${GREEN}Stopped Motor Controller successfully!${NC}"
 
+echo -e "${BLUE}Stopping LiDAR Controller...${NC}"
+sudo screen -S LidarController -X stuff "^C"
+
+echo -e "${BLUE}Waiting for LiDAR Controller to stop${NC}"
+LidarControllerTimeout=10
+LidarControllerElapsed=0
+while sudo screen -list | grep -q "LidarController"; do
+    sleep 1
+    ((LidarControllerElapsed+=1))
+    if [[ $LidarControllerElapsed -ge $LidarControllerTimeout ]]; then
+        echo -e "${RED}Failed to stop Lidar Controller in $LidarControllerTimeout seconds.${NC}"
+        exit 1
+    fi
+done
+echo -e "${GREEN}Stopped Lidar Controller successfully!${NC}"
 
 echo -e "${BLUE}Stopping MQTT broker (mosquitto)...${NC}"
 sudo systemctl stop mosquitto

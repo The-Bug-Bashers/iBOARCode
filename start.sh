@@ -58,4 +58,17 @@ else
 fi
 
 
+echo -e "${BLUE}Starting LiDAR Controller (C++)...${NC}"
+cd ../LidarController || { echo -e "${RED}Failed to enter 'LidarController' directory${NC}"; exit 1; }
+sudo screen -dmS LidarController ./output/Linux/Release/LidarController # Start LidarController in a detached screen session
+
+echo -e "${BLUE}Waiting for LiDAR Controller to start (not terminate)${NC}"
+sleep 3
+if sudo screen -list | grep -q "LidarController"; then
+    echo -e "${GREEN}LiDAR Controller started successfully (not terminated)!${NC}"
+else
+    echo -e "${RED}LiDAR Controller terminated.${NC}"
+    exit 1
+fi
+
 echo -e "${GREEN}Started iBOAR systems successfully!${NC}"
