@@ -207,9 +207,10 @@ function addSimpleNavigateEventListeners() {
     }
 
     function getAngle(x, y) {
-        let dx = x - (dial.offsetLeft + radius);
-        let dy = y - (dial.offsetTop + radius);
-        let angle = Math.atan2(dy, dx) * (180 / Math.PI) + 90; // Offset by +90°
+        const boundingClient = dial.getBoundingClientRect();
+        const dx = x - (boundingClient.left + boundingClient.width / 2);
+        const dy = y - (boundingClient.top + boundingClient.height / 2);
+        const angle = Math.atan2(dy, dx) * (180 / Math.PI) + 90; // Offset by +90°
         return (angle + 360) % 360;
     }
 
