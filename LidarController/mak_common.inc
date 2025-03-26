@@ -71,7 +71,7 @@ $(SDK_TARGET): $(OBJ) $(EXTRA_OBJ)
 $(APP_TARGET): $(OBJ) $(EXTRA_OBJ) $(SDK_TARGET)
 	@$(MKDIR) `dirname $@`
 	@echo " LD   $@"
-	$(CMD_HIDE)$(CC) $(ALL_CXXFLAGS) -o $@ $^ $(LDFLAGS)  
+	$(CMD_HIDE)$(CXX) $(ALL_CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 
 #

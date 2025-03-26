@@ -121,11 +121,11 @@ void publishMotorData(struct mosquitto *mosq) {
         motor2Controller->getMotorData(target2, actual2, pid2_out);
         motor3Controller->getMotorData(target3, actual3, pid3_out);
 
-        nlohmann::json data = {
+        nlohmann::json data = { "motorData", {
             {"motor1", {{"target", target1}, {"actual", actual1}, {"pid_output", pid1_out}}},
             {"motor2", {{"target", target2}, {"actual", actual2}, {"pid_output", pid2_out}}},
             {"motor3", {{"target", target3}, {"actual", actual3}, {"pid_output", pid3_out}}}
-        };
+        }};
 
         std::string message = data.dump();
         mosquitto_publish(mosq, NULL, "boar/motor/data", message.length(), message.c_str(), 0, false);

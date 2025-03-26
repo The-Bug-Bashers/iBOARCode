@@ -27,7 +27,7 @@ public class DataWebSocketHandler extends TextWebSocketHandler {
 
     @Value("${mqtt.broker.url}") String BROKER_URL;
     @Value("${mqtt.client.data.id}") String CLIENT_ID;
-    @Value("${mqtt.channel.motor.data}") String MQTT_TOPIC;
+    @Value("${mqtt.channel.data}") String MQTT_TOPIC;
 
     @PostConstruct
     public void ini() {
