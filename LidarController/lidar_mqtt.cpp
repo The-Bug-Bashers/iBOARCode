@@ -41,19 +41,34 @@ int main() {
     }
 
     // Initialize LIDAR
-    IChannel *channel = *createSerialPortChannel(SERIAL_PORT, 115200);
-    ILidarDriver *lidar = *createLidarDriver();
+auto channelResult = createSerialPortChannel(SERIAL_PORT, 115200);
+if (SL_IS_FAIL(static_cast<sl_result>(channelResult))) {
+    cerr << "Failed to create serial channel\n";
+    return -1;
+}
+IChannel *channel = channelResult.value;
 
-    auto res = (*lidar)->connect(*channel);
+auto lidarResult = createLidarDriver();
+if (SL_IS_FAIL(static_cast<sl_result>(lidarResult))) {
+    cerr << "Failed to create LIDAR driver\n";
+    return -1;
+}
+ILidarDriver *lidar = lidarResult.value;
+
+
+
+
+
+    auto res = lidar->connect(channel);
     if (SL_IS_FAIL(res)) {
         cerr << "Failed to connect to LIDAR\n";
         return -1;
     }
 
     // Start motor and scanning
-    (*lidar)->startMotor();
+    lidar->setMotorSpeed(600);
     LidarScanMode scanMode;
-    (*lidar)->startScan(false, true, 0, &scanMode);
+    lidar->startScan(false, true, 0, &scanMode);
 
     cout << "LIDAR scanning and publishing to MQTT...\n";
 
@@ -61,7 +76,7 @@ int main() {
         sl_lidar_response_measurement_node_hq_t nodes[8192];
         size_t count = sizeof(nodes) / sizeof(nodes[0]);
 
-        auto scanResult = (*lidar)->grabScanDataHq(nodes, count);
+        auto scanResult = lidar->grabScanDataHq(nodes, count);
         if (SL_IS_OK(scanResult)) {
             for (size_t i = 0; i < count; i++) {
                 if (nodes[i].dist_mm_q2 != 0) {
@@ -76,8 +91,8 @@ int main() {
     }
 
     // Cleanup
-    (*lidar)->stop();
-    (*lidar)->stopMotor();
+    lidar->stop();
+    lidar->setMotorSpeed(0);
     delete lidar;
     delete channel;
     mosquitto_disconnect(mosq);
