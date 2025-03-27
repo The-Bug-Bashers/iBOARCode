@@ -1,15 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
+    initialiseCanvas();
+})
+
+function initialiseCanvas() {
     canvas = document.getElementById("lidarCanvas");
     lidarCtx = canvas.getContext("2d");
 
     calculateCanvasHeight()
-    
+
     centerX = canvas.width / 2;
     centerY = canvas.height / 2;
-})
+}
 
 function calculateCanvasHeight() {
-    const size = Math.min(window.innerWidth, window.innerHeight) * 0.75;
+    const parent = canvas.parentElement;
+    const size = Math.min(parent.clientWidth - 118, parent.clientHeight - 70) ;
     canvas.width = size;
     canvas.height = size;
 }

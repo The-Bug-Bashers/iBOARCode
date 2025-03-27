@@ -85,6 +85,7 @@ function switchFocus(event) {
     reloadScript("resources/scripts/jsDelivr-chartLibrary.js");
     reloadScript("resources/scripts/motorsSection.js");
     reloadScript("resources/scripts/lidarSection.js");
+    initialiseCanvas()
 }
 
 document.addEventListener("DOMContentLoaded", () => {
