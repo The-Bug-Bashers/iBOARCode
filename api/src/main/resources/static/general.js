@@ -82,6 +82,7 @@ function switchFocus(event) {
     }
     reloadScript("resources/scripts/jsDelivr-chartLibrary.js");
     reloadScript("resources/scripts/motorsSection.js");
+    reloadScript("resources/scripts/lidarSection.js");
 }
 
 document.addEventListener("DOMContentLoaded", () => {

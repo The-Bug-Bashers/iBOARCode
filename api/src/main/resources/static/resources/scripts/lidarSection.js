@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 function calculateCanvasHeight() {
-    const size = Math.min(window.innerWidth, window.innerHeight) * 0.8;
+    const size = Math.min(window.innerWidth, window.innerHeight) * 0.75;
     canvas.width = size;
     canvas.height = size;
 }
