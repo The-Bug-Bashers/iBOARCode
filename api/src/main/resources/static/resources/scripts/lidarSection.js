@@ -1,17 +1,17 @@
 const botSize = 30; // in cm
 
-let canvas, ctx, centerX, centerY;
+let canvas, lidarCtx, centerX, centerY;
 
 document.addEventListener("DOMContentLoaded", () => {
     canvas = document.getElementById("lidarCanvas");
-    ctx = canvas.getContext("2d");
+    lidarCtx = canvas.getContext("2d");
     
     centerX = canvas.width / 2;
     centerY = canvas.height / 2;
 })
 
 function processLidarData(data) { //DO NOT REMOVE even if Unnecessary at the moment! (this will later handle drawing paths and lidarData separately)
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    lidarCtx.clearRect(0, 0, canvas.width, canvas.height);
     drawLidarData(data);
 }
 
@@ -40,15 +40,15 @@ function drawLidarData(data) {
 }
 
 function drawBot() {
-    ctx.fillStyle = "red";
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, botSize / 2, 0, Math.PI * 2);
-    ctx.fill();
+    lidarCtx.fillStyle = "red";
+    lidarCtx.beginPath();
+    lidarCtx.arc(centerX, centerY, botSize / 2, 0, Math.PI * 2);
+    lidarCtx.fill();
 }
 
 function drawLidarPoint(x, y) {
-    ctx.fillStyle = "lime";
-    ctx.beginPath();
-    ctx.arc(x, y, 2 * scale, 0, Math.PI * 2);
-    ctx.fill();
+    lidarCtx.fillStyle = "lime";
+    lidarCtx.beginPath();
+    lidarCtx.arc(x, y, 2 * scale, 0, Math.PI * 2);
+    lidarCtx.fill();
 }
