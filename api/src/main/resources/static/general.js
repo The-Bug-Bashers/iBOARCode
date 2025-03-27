@@ -17,6 +17,8 @@ function adjustControlsHeight() {
     controlsContainer.style.height = intendedContainerHeight + "px";
 
     controlsElement.querySelectorAll("*").forEach(el => el.classList.remove("hidden"));
+
+    calculateCanvasHeight(); // recalculate canvas height after box height change
 }
 
 function convertToPx(value, unit) {
@@ -117,5 +119,5 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     adjustControlsHeight();
-    window.addEventListener('resize', debounce(adjustControlsHeight, calculateCanvasHeight, 100));
+    window.addEventListener('resize', debounce(adjustControlsHeight, 100));
 })

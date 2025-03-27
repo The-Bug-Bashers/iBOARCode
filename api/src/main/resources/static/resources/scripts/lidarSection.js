@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
 })
 
 function calculateCanvasHeight() {
-    const size = Math.min(window.innerWidth, window.innerHeight) * 0.5;
+    const size = Math.min(window.innerWidth, window.innerHeight) * 0.8;
     canvas.width = size;
     canvas.height = size;
 }
@@ -57,6 +57,6 @@ function drawBot() {
 function drawLidarPoint(x, y) {
     lidarCtx.fillStyle = "lime";
     lidarCtx.beginPath();
-    lidarCtx.arc(x, y, 0.005 * scale, 0, Math.PI * 2);
+    lidarCtx.arc(x, y, 0.01 * scale, 0, Math.PI * 2);
     lidarCtx.fill();
 }
