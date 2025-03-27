@@ -20,7 +20,7 @@ function adjustControlsHeight() {
 
     controlsElement.querySelectorAll("*").forEach(el => el.classList.remove("hidden"));
 
-    calculateCanvasHeight(); // recalculate canvas height after box height change
+    calculateCanvasSize(); // recalculate canvas height after box height change
 }
 
 function convertToPx(value, unit) {

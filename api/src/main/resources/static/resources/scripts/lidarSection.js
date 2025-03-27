@@ -6,17 +6,17 @@ function initialiseCanvas() {
     canvas = document.getElementById("lidarCanvas");
     lidarCtx = canvas.getContext("2d");
 
-    calculateCanvasHeight()
-
-    centerX = canvas.width / 2;
-    centerY = canvas.height / 2;
+    calculateCanvasSize()
 }
 
-function calculateCanvasHeight() {
+function calculateCanvasSize() {
     const parent = canvas.parentElement;
     const size = Math.min(parent.clientWidth - 118, parent.clientHeight - 70) ;
     canvas.width = size;
     canvas.height = size;
+
+    centerX = canvas.width / 2;
+    centerY = canvas.height / 2;
 }
 
 function processLidarData(data) { //DO NOT REMOVE even if Unnecessary at the moment! (this will later handle drawing paths and lidarData separately)
