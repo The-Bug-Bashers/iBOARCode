@@ -1,7 +1,3 @@
-const botSize = 30; // in cm
-
-let canvas, lidarCtx, centerX, centerY, scale;
-
 document.addEventListener("DOMContentLoaded", () => {
     canvas = document.getElementById("lidarCanvas");
     lidarCtx = canvas.getContext("2d");

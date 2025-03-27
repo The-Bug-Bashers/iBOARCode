@@ -1,5 +1,7 @@
-let ctx;
-let combinedChart;
+const botSize = 30; // in cm
+let canvas, lidarCtx, centerX, centerY, scale; // Variables for lidarSection.js
+
+let ctx, combinedChart; // Variables for Chart.js
 
 function adjustControlsHeight() {
     const controlsElement = document.getElementById("controls");
