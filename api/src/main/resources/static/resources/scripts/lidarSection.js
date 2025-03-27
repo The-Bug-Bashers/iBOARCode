@@ -1,6 +1,6 @@
 const botSize = 30; // in cm
 
-let canvas, lidarCtx, centerX, centerY;
+let canvas, lidarCtx, centerX, centerY, scale;
 
 document.addEventListener("DOMContentLoaded", () => {
     canvas = document.getElementById("lidarCanvas");
@@ -17,7 +17,7 @@ function processLidarData(data) { //DO NOT REMOVE even if Unnecessary at the mom
 
 function drawLidarData(data) {
     const maxDistance = Math.max(...data.map(point => parseFloat(point.distance)));
-    const scale = Math.min(canvas.width, canvas.height) / (maxDistance * 2);
+    scale = Math.min(canvas.width, canvas.height) / (maxDistance * 2);
     
     drawBot();
     
