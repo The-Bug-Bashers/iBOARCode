@@ -31,7 +31,7 @@ body {
         font-size: 8vmin;
     }
     .headerButtons {
-        margin-left: 2vmin;
+        margin-left: 1vmin;
         display: flex;
         height: fit-content;
         white-space: nowrap;
