@@ -5,10 +5,18 @@ let canvas, lidarCtx, centerX, centerY, scale;
 document.addEventListener("DOMContentLoaded", () => {
     canvas = document.getElementById("lidarCanvas");
     lidarCtx = canvas.getContext("2d");
+
+    calculateCanvasHeight()
     
     centerX = canvas.width / 2;
     centerY = canvas.height / 2;
 })
+
+function calculateCanvasHeight() {
+    const size = Math.min(window.innerWidth, window.innerHeight) * 0.5;
+    canvas.width = size;
+    canvas.height = size;
+}
 
 function processLidarData(data) { //DO NOT REMOVE even if Unnecessary at the moment! (this will later handle drawing paths and lidarData separately)
     lidarCtx.clearRect(0, 0, canvas.width, canvas.height);
@@ -17,7 +25,7 @@ function processLidarData(data) { //DO NOT REMOVE even if Unnecessary at the mom
 
 function drawLidarData(data) {
     const maxDistance = Math.max(...data.map(point => parseFloat(point.distance)));
-    scale = Math.min(canvas.width, canvas.height) / (maxDistance * 2);
+    scale = maxDistance > 0 ? Math.min(canvas.width, canvas.height) / (maxDistance * 2) : 1;
     
     drawBot();
     
@@ -28,12 +36,12 @@ function drawLidarData(data) {
         if (isNaN(angleDeg) || isNaN(distanceCm)) return;
             
         // Adjust the angle to make 0 at the top and 180 at the bottom
-        const adjustedAngle = angleDeg + 90; // Shift angle 90 degrees counter-clockwise
+        const adjustedAngle = angleDeg - 90; // Shift angle 90 degrees clockwise
         const angleRad = (adjustedAngle * Math.PI) / 180; // Convert to radians
 
         // Convert polar to Cartesian coordinates
         const x = centerX + distanceCm * scale * Math.cos(angleRad);
-        const y = centerY - distanceCm * scale * Math.sin(angleRad);
+        const y = centerY + distanceCm * scale * Math.sin(angleRad);
         
         drawLidarPoint(x, y);
     });
@@ -49,6 +57,6 @@ function drawBot() {
 function drawLidarPoint(x, y) {
     lidarCtx.fillStyle = "lime";
     lidarCtx.beginPath();
-    lidarCtx.arc(x, y, 2 * scale, 0, Math.PI * 2);
+    lidarCtx.arc(x, y, 0.005 * scale, 0, Math.PI * 2);
     lidarCtx.fill();
 }

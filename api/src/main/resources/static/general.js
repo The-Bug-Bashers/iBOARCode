@@ -117,5 +117,5 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     adjustControlsHeight();
-    window.addEventListener('resize', debounce(adjustControlsHeight, 100));
+    window.addEventListener('resize', debounce(adjustControlsHeight, calculateCanvasHeight, 100));
 })
