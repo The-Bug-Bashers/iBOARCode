@@ -1,9 +1,5 @@
 #lidarCanvas {
-    margin-top: 3vh;
-    margin-left: auto;
-    margin-right: auto;
-    right: 1em;
-    width: calc(89vh - 2em - 12vh);
-    height: calc(89vh - 2em - 12vh);
     background-color: black;
+    width: 100%;
+    height: calc(100% - 2.4em);
 }

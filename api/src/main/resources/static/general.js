@@ -60,20 +60,18 @@ function reloadScript(scriptSrc) {
 
 function switchFocus(event) {
     if (event.target.checked) {
-        console.log("Switching focus to motors");
         document.getElementById("smallDisplayBox").innerHTML = `
             <h1>LiDAR</h1>
-            <div id="lidarCanvas"></div>
+            <canvas id="lidarCanvas"></canvas>
         `
         document.getElementById("bigDisplayBox").innerHTML = `
             <h1>Motors</h1>
             <canvas id="combinedChart"></canvas>
         `
     } else {
-        console.log("Switching focus to lidar");
         document.getElementById("bigDisplayBox").innerHTML = `
             <h1>LiDAR</h1>
-            <div id="lidarCanvas"></div>
+            <canvas id="lidarCanvas"></canvas>
         `
         document.getElementById("smallDisplayBox").innerHTML = `
             <h1>Motors</h1>
@@ -91,7 +89,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (event.target.checked) {
             dataSocket = new WebSocket(dataSocketURL);
             addDataSocketEventListeners();
-            addMotorRendererDataSocketListener();
         } else {
             dataSocket.close();
         }

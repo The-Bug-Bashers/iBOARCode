@@ -15,6 +15,7 @@ function showMessage(message, received, error, info) {
     if (received) {
         if (error) {
             messageElement.classList.add("errorMessage");
+            console.error(message);
         } else if (info) {
             messageElement.classList.add("infoMessage");
         } else {
@@ -142,26 +143,31 @@ function addCommandSocketEventListeners() {
 }
 
 function addDataSocketEventListeners() {
-    // Event listener for when the connection is open
     dataSocket.addEventListener('open', () => {
         showMessage("Connection to DataSocket established.", true, false, true);
     });
-    
-    // Event listener for when a message is received
-    dataSocket.addEventListener('message', (event) => {
-        console.log(event.data);
-    });
 
-    // Event listener for when the connection is closed
     dataSocket.addEventListener('close', () => {
         showMessage("Connection to DataSocket closed.", true, true, false);
     });
 
-    // Event listener for errors
     dataSocket.addEventListener('error', (error) => {
         showMessage(`An error occurred with DataSocket: ${error}`, true, true, false);
         console.error('DataSocket error:', error);
     });
+
+    dataSocket.onmessage = function (event) {
+        const data = JSON.parse(event.data);
+
+        if (data.lidarScan) {
+            processLidarData(data.lidarScan);
+        } else if (data[0] === "motorData") {
+            processMotorData(data[1]);
+        } else {
+            showMessage("Received data on dataSocket could not get parsed: " + data, true, true, false);
+        }
+        console.log("Received: " + data);
+    };
 }
 
 addCommandSocketEventListeners();

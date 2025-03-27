@@ -69,17 +69,11 @@ function updateChart(actual1, actual2, actual3, target1, target2, target3, pid_o
 }
 
 function addMotorRendererDataSocketListener() {
-    dataSocket.onmessage = function (event) {
-        processData(event.data);
-        console.log("Received: " + event.data);
-    };
+
 }
 
-function processData(jsonData) {
+function processMotorData(motorData) {
     try {
-        const data = JSON.parse(jsonData);
-        const motorData = data[1];
-
         updateChart(
             motorData.motor1.actual, motorData.motor2.actual, motorData.motor3.actual,
             motorData.motor1.target, motorData.motor2.target, motorData.motor3.target,
