@@ -35,6 +35,12 @@
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
 
+		<dependency> <!-- MQTT (used for communication with other modules) -->
+			<groupId>org.eclipse.paho</groupId>
+			<artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+			<version>1.2.5</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
