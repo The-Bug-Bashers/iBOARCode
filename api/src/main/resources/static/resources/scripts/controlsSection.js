@@ -267,18 +267,18 @@ function addSimpleNavigateCode() {
 function sendMoveMotorMessage() {
     const speed = document.getElementById("speedMoveMotorInput").value;
     const selectedMotor = parseInt(document.querySelector('input[name="value-radio"]:checked').value.split('-')[1], 10);
-    const paternHighSpeed = document.getElementById("highMoveMotorInput").value;
-    const paternLowSpeed = document.getElementById("lowMoveMotorInput").value;
+    const patternHighSpeed = document.getElementById("highMoveMotorInput").value;
+    const patternLowSpeed = document.getElementById("lowMoveMotorInput").value;
     const time= document.getElementById("timeMoveMotorInput").value;
 
     if (document.getElementById("SineMoveMotorCheckbox").checked) {
-        sendMessage(`{"command": "moveMotor", "motor": ${selectedMotor}, "time": ${time}, "pattern": "sine", "highSpeed": ${paternHighSpeed}, "lowSpeed": ${paternLowSpeed}}`);
+        sendMessage(`{"command": "moveMotor", "motor": ${selectedMotor}, "time": ${time}, "pattern": "sine", "highSpeed": ${patternHighSpeed}, "lowSpeed": ${patternLowSpeed}}`);
     } else if (document.getElementById("TriangleMoveMotorCheckbox").checked) {
-        sendMessage(`{"command": "moveMotor", "motor": ${selectedMotor}, "time": ${time}, "pattern": "triangle", "highSpeed": ${paternHighSpeed}, "lowSpeed": ${paternLowSpeed}}`);
+        sendMessage(`{"command": "moveMotor", "motor": ${selectedMotor}, "time": ${time}, "pattern": "triangle", "highSpeed": ${patternHighSpeed}, "lowSpeed": ${patternLowSpeed}}`);
     } else if (document.getElementById("SquareMoveMotorCheckbox").checked) {
-        sendMessage(`{"command": "moveMotor", "motor": ${selectedMotor}, "time": ${time}, "pattern": "square", "highSpeed": ${paternHighSpeed}, "lowSpeed": ${paternLowSpeed}}`);
+        sendMessage(`{"command": "moveMotor", "motor": ${selectedMotor}, "time": ${time}, "pattern": "square", "highSpeed": ${patternHighSpeed}, "lowSpeed": ${patternLowSpeed}}`);
     } else if (document.getElementById("SawtoothMoveMotorCheckbox").checked) {
-        sendMessage(`{"command": "moveMotor", "motor": ${selectedMotor}, "time": ${time}, "pattern": "sawtooth", "highSpeed": ${paternHighSpeed}, "lowSpeed": ${paternLowSpeed}}`);
+        sendMessage(`{"command": "moveMotor", "motor": ${selectedMotor}, "time": ${time}, "pattern": "sawtooth", "highSpeed": ${patternHighSpeed}, "lowSpeed": ${patternLowSpeed}}`);
     } else if (document.getElementById("forwardMoveMotorCheckbox").checked) {
         sendMessage(`{"command": "moveMotor", "motor": ${selectedMotor}, "speed": ${speed}}`);
     } else if (document.getElementById("backwardMoveMotorCheckbox").checked) {
