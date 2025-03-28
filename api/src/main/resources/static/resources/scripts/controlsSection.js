@@ -3,7 +3,6 @@ let mode;
 document.getElementById("modeSelect").value = "Please select";
 document.getElementById("modeSelect").addEventListener("change", (event) => {
     mode = event.target.value;
-    sendMessage(`{"command": "changeMode", "mode": "${mode}"}`);
     showControls(mode);
 
     adjustControlsHeight();
@@ -22,6 +21,7 @@ function showControls(mode) {
                 checkbox.checked = false;
             });
             document.getElementById("speedRemoteControlInput").value = 50;
+            sendMessage(`{"command": "changeMode", "mode": "remoteControl"}`);
             addRemoteControlCode();
             break;
         case "Move-Motor":
@@ -34,10 +34,12 @@ function showControls(mode) {
             document.getElementById("lowMoveMotorInput").value = 0;
             document.getElementById("timeMoveMotorInput").value = 5;
             document.getElementById("speedMoveMotorInput").value = 50;
+            sendMessage(`{"command": "changeMode", "mode": "moveMotor"}`);
             addMoveMotorCode();
             break;
         case "Simple-Navigate":
             controlsContainer.innerHTML = getSimpleNavigateContent();
+            sendMessage(`{"command": "changeMode", "mode": "simpleNavigate}`);
             addSimpleNavigateCode();
             break;
         default:
