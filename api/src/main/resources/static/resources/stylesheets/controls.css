@@ -159,7 +159,7 @@
     justify-content: center;
     align-items: center;
     background: #000000;
-    margin: 1vh auto 0 auto;
+    margin-top: 1vh;
 }
 .knob {
     position: absolute;
@@ -168,6 +168,9 @@
     background-color: red;
     border-radius: 50%;
     cursor: grab;
+}
+.knob:active {
+    cursor: grabbing;
 }
 .angle-display {
     position: absolute;
