@@ -39,7 +39,7 @@ function showControls(mode) {
             break;
         case "Simple-Navigate":
             controlsContainer.innerHTML = getSimpleNavigateContent();
-            sendMessage(`{"command": "changeMode", "mode": "simpleNavigate}`);
+            sendMessage(`{"command": "changeMode", "mode": "simpleNavigate"}`);
             addSimpleNavigateCode();
             break;
         default:
