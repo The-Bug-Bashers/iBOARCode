@@ -449,13 +449,13 @@ function getSimpleNavigateContent() {
         <div class="inputPlusLabel">
             <h4>Buffer distance (cm)</h4>
             <div class="inputBorder">
-                <input type="number" min="0" max="360" id="bufferDistanceSimpleNavigateInput" class="numberRange" placeholder="5" autocomplete="off">
+                <input type="number" min="0" max="5000" id="bufferDistanceSimpleNavigateInput" class="numberRange" placeholder="5" autocomplete="off">
             </div>
         </div>
         <div class="inputPlusLabel">
             <h4>Max speed (%)</h4>
             <div class="inputBorder">
-                <input type="number" min="0" max="360" id="maxSpeedSimpleNavigateInput" class="numberRange" placeholder="5" autocomplete="off">
+                <input type="number" min="0" max="100" id="maxSpeedSimpleNavigateInput" class="numberRange" placeholder="5" autocomplete="off">
             </div>
         </div>
         <div class="buttonPlusLabel">
