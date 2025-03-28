@@ -51,7 +51,7 @@ function drawLidarData(data) {
 function drawBot() {
     lidarCtx.fillStyle = "red";
     lidarCtx.beginPath();
-    lidarCtx.arc(centerX, centerY, botSize / 2, 0, Math.PI * 2);
+    lidarCtx.arc(centerX, centerY, (botSize / 2) * (scale * 0.008), 0, Math.PI * 2);
     lidarCtx.fill();
 }
 

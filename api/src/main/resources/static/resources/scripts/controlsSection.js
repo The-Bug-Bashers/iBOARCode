@@ -22,7 +22,7 @@ function showControls(mode) {
                 checkbox.checked = false;
             });
             document.getElementById("speedRemoteControlInput").value = 50;
-            addRemoteControlEventListeners();
+            addRemoteControlCode();
             break;
         case "Move-Motor":
             controlsContainer.innerHTML = getMoveMotorContent();
@@ -34,11 +34,11 @@ function showControls(mode) {
             document.getElementById("lowMoveMotorInput").value = 0;
             document.getElementById("timeMoveMotorInput").value = 5;
             document.getElementById("speedMoveMotorInput").value = 50;
-            addMoveMotorEventListeners();
+            addMoveMotorCode();
             break;
         case "Simple-Navigate":
             controlsContainer.innerHTML = getSimpleNavigateContent();
-            addSimpleNavigateEventListeners();
+            addSimpleNavigateCode();
             break;
         default:
             controlsContainer.innerHTML = "";
@@ -88,7 +88,7 @@ function getRemoteControlContent() {
     `;
 }
 
-function addRemoteControlEventListeners() {
+function addRemoteControlCode() {
     // Event listener for the direction switches
     document.querySelectorAll('#directionRemoteControlButtons input[type="checkbox"]').forEach(checkbox => {
         checkbox.addEventListener('change', (event) => {
@@ -169,7 +169,7 @@ function addRemoteControlEventListeners() {
     });
 }
 
-function addMoveMotorEventListeners() {
+function addMoveMotorCode() {
     // Event listener for direction move motor buttons
     document.querySelectorAll('.moveMotorSelectors input[type="checkbox"]').forEach(checkbox => {
         checkbox.addEventListener('change', (event) => {
@@ -192,11 +192,18 @@ function addMoveMotorEventListeners() {
     });
 }
 
-function addSimpleNavigateEventListeners() {
+function addSimpleNavigateCode() {
     const knob = document.getElementById("knob");
     const dial = document.getElementById("dial");
     const angleDisplay = document.getElementById("angle-display");
     const radius = 100; // Radius of the dial
+
+    const targetDirectionInput = document.getElementById("targetDirectionSimpleNavigateInput");
+    const staticRestrictionZoneInput = document.getElementById("staticRestrictionZoneSimpleNavigateInput");
+    const dynamicRestrictionZoneInput = document.getElementById("dynamicRestrictionZoneSimpleNavigateInput");
+    const bufferDistanceInput = document.getElementById("bufferDistanceSimpleNavigateInput");
+    const maxSpeedInput = document.getElementById("maxSpeedSimpleNavigateInput");
+    const enableToggle = document.getElementById("enableSimpleNavigateToggle");
 
     function setKnobPosition(angle) {
         let radians = (angle - 90) * (Math.PI / 180); // Offset by -90° to put 0° at the top
@@ -219,6 +226,7 @@ function addSimpleNavigateEventListeners() {
             let angle = getAngle(event.clientX, event.clientY);
             setKnobPosition(angle);
             angleDisplay.innerText = `${Math.round(angle)}°`;
+            targetDirectionInput.value = Math.round(angle);
         }
 
         function onMouseUp() {
@@ -230,7 +238,24 @@ function addSimpleNavigateEventListeners() {
         document.addEventListener("mouseup", onMouseUp);
     });
 
-    setKnobPosition(0); // Initialize position at the top
+    // Event listener for target direction input
+    targetDirectionInput.addEventListener("input", (event) => {
+        let angle = parseFloat(event.target.value);
+
+        if ((angle || angle === 0) && angle <= 360 && angle >= 0) {
+            setKnobPosition(angle);
+            angleDisplay.innerText = `${Math.round(angle)}°`;
+        }
+    });
+
+    // Set default values
+    setKnobPosition(0);
+    targetDirectionInput.value = 0;
+    staticRestrictionZoneInput.value = 45;
+    dynamicRestrictionZoneInput.value = 30;
+    bufferDistanceInput.value = 5;
+    maxSpeedInput.value = 30;
+    enableToggle.checked = false;
 }
 
 function sendMoveMotorMessage() {
@@ -399,10 +424,48 @@ function getMoveMotorContent() {
 
 function getSimpleNavigateContent() {
     return `
-        <h3 style="margin: auto">Target direction</h3>
         <div class="dial" id="dial">
             <div class="angle-display" id="angle-display">0°</div>
             <div class="knob" id="knob"></div>
+        </div>
+        <div class="inputPlusLabel">
+            <h4>Target direction</h4>
+            <div class="inputBorder">
+                <input type="number" min="0" max="360" id="targetDirectionSimpleNavigateInput" class="numberRange" placeholder="0" autocomplete="off">
+            </div>
+        </div>
+        <div class="inputPlusLabel">
+            <h4>Static restriction zone</h4>
+            <div class="inputBorder">
+                <input type="number" min="0" max="360" id="staticRestrictionZoneSimpleNavigateInput" class="numberRange" placeholder="45" autocomplete="off">
+            </div>
+        </div>
+        <div class="inputPlusLabel">
+            <h4>Dynamic restriction zone</h4>
+            <div class="inputBorder">
+                <input type="number" min="0" max="360" id="dynamicRestrictionZoneSimpleNavigateInput" class="numberRange" placeholder="30" autocomplete="off">
+            </div>
+        </div>
+        <div class="inputPlusLabel">
+            <h4>Buffer distance (cm)</h4>
+            <div class="inputBorder">
+                <input type="number" min="0" max="360" id="bufferDistanceSimpleNavigateInput" class="numberRange" placeholder="5" autocomplete="off">
+            </div>
+        </div>
+        <div class="inputPlusLabel">
+            <h4>Max speed (%)</h4>
+            <div class="inputBorder">
+                <input type="number" min="0" max="360" id="maxSpeedSimpleNavigateInput" class="numberRange" placeholder="5" autocomplete="off">
+            </div>
+        </div>
+        <div class="buttonPlusLabel">
+            <div class="directionButtonPlusLabel">
+                <label class="checkbox-container">
+                    <input class="custom-checkbox" checked="" type="checkbox" id="enableSimpleNavigateToggle">
+                    <span class="checkmark"></span>
+                </label>
+                <p onclick="document.getElementById('enableSimpleNavigateToggle').click()">Enable</p>
+            </div>
         </div>
     `;
 }
