@@ -480,7 +480,7 @@ function getSimpleNavigateContent() {
             <div class="inputPlusLabel">
                 <h4>Buffer distance (cm)</h4>
                 <div class="inputBorder">
-                    <input type="number" min="0" max="5000" id="bufferDistanceSimpleNavigateInput" class="numberRange" placeholder="5" autocomplete="off">
+                    <input type="number" min="0" max="500" id="bufferDistanceSimpleNavigateInput" class="numberRange" placeholder="5" autocomplete="off">
                 </div>
             </div>
             <div class="inputPlusLabel">
