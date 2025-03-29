@@ -42,6 +42,9 @@ function showControls(mode) {
             sendMessage(`{"command": "changeMode", "mode": "simpleNavigate"}`);
             addSimpleNavigateCode();
             break;
+        case "Settings":
+            controlsContainer.innerHTML = getSettingsContent();
+            break;
         default:
             controlsContainer.innerHTML = "";
     }
@@ -490,5 +493,10 @@ function getSimpleNavigateContent() {
                 <p onclick="document.getElementById('enableSimpleNavigateToggle').click()">Enable</p>
             </div>
         </div>
+    `;
+}
+
+function getSettingsContent() {
+    return `
     `;
 }
