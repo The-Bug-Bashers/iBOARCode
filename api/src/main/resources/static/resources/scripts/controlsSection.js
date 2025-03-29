@@ -42,6 +42,9 @@ function showControls(mode) {
             sendMessage(`{"command": "changeMode", "mode": "simpleNavigate"}`);
             addSimpleNavigateCode();
             break;
+        case "Settings":
+            controlsContainer.innerHTML = getSettingsContent();
+            break;
         default:
             controlsContainer.innerHTML = "";
     }
@@ -266,7 +269,11 @@ function addSimpleNavigateCode() {
     });
 
     function sendAPIMessage() {
-        sendMessage(`{"command": "simpleNavigate", "targetDirection": ${targetDirectionInput.value}, "staticRestrictionZone": ${staticRestrictionZoneInput.value}, "dynamicRestrictionZone": ${dynamicRestrictionZoneInput.value}, "bufferDistance": ${bufferDistanceInput.value}, "maxSpeed": ${maxSpeedInput.value}, "enabled": ${enableToggle.checked}`)
+        if (enableToggle.checked) {
+            sendMessage(`{"command": "enable", "targetDirection": ${targetDirectionInput.value}, "staticRestrictionZone": ${staticRestrictionZoneInput.value}, "dynamicRestrictionZone": ${dynamicRestrictionZoneInput.value}, "bufferDistance": ${bufferDistanceInput.value}, "maxSpeed": ${maxSpeedInput.value}}`)
+        } else {
+            sendMessage(`{"command": "disable"}`)
+        }
     }
 
     // Set default values
@@ -490,5 +497,10 @@ function getSimpleNavigateContent() {
                 <p onclick="document.getElementById('enableSimpleNavigateToggle').click()">Enable</p>
             </div>
         </div>
+    `;
+}
+
+function getSettingsContent() {
+    return `
     `;
 }
