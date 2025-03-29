@@ -58,7 +58,7 @@ public class MQTTHandler {
 
                 @Override
                 public void deliveryComplete(IMqttDeliveryToken token) {
-                    log.warn("Message delivered: {}", token.isComplete());
+                    log.debug("Message delivered: {}", token.isComplete());
                 }
             });
 
