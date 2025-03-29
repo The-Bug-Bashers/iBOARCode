@@ -48,7 +48,10 @@ echo -e "${BLUE}Installing Maven...${NC}"
 sudo apt install -y maven
 
 echo -e "${BLUE}Installing Maven dependencies...${NC}"
+echo -e "${BLUE}Installing API Maven dependencies...${NC}"
 (cd api && sudo mvn clean install)
+echo -e "${BLUE}Installing Navigation Service Maven dependencies...${NC}"
+(cd NavigationService && sudo mvn clean install)
 
 echo -e "${BLUE}Installing screen...${NC}"
 sudo apt install -y screen
@@ -67,5 +70,23 @@ sudo apt install -y libmosquitto-dev
 echo -e "${BLUE}Installing LidarController dependencies...${NC}"
 echo -e "${BLUE}Installing libjsoncpp...${NC}"
 sudo apt install libjsoncpp-dev -y
+
+
+read -p "Do you want the Raspberry to automatically connect to a hotspot on boot (using nmcli)? (y/n): " choice
+case "$choice" in
+  y|Y )
+    echo -e "${BLUE}The Raspberry will automatically connect to:\nSSID: iBoarAccesPoint\nPassword: boarBoar\nNetwork band: 2.4GHZ${NC}"
+    echo -e "${BLUE}Installing nmcli...${NC}"
+    sudo apt install -y network-manager
+    echo -e "${BLUE}Setting up automatic  connectivity...${NC}"
+    sudo systemctl enable NetworkManager
+    sudo systemctl start NetworkManager
+    sleep 5
+    sudo nmcli device wifi connect "iBoarAccesPoint" password "boarBoar"
+  ;;
+
+  n|N ) echo -e "${BLUE}Skipping automatic hotspot connectivity.${NC}";;
+  * ) echo -e "${RED}Invalid input. Setup aborted.${NC}"; exit 1;;
+esac
 
 echo -e "${GREEN}Setup complete.${NC}"
