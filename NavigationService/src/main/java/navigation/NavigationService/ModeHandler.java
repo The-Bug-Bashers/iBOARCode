@@ -57,6 +57,9 @@ public class ModeHandler {
         switch (mode) {
             case SIMPLE_NAVIGATE:
                 SimpleNavigate.stop();
+                break;
+            default:
+                log.error("stop method of mode: {} not found", mode);
         }
         MotorUtils.stopMotors();
     }
