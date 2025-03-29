@@ -42,17 +42,13 @@ public class MQTTHandler {
                     log.debug("Received message on {}: {}", topic, payload);
 
                     try {
-                        JSONObject json = new JSONObject(payload);
-
                         if (topic.equals(MODE_CHANNEL)) {
-                            if ("changeMode".equals(json.optString("command"))) {
-                                modeHandler.changeMode(json.optString("mode"));
-                            } else {
-                                log.warn("Unknown Mode Command: {}", json.optString("command"));
-                            }
+                            modeHandler.changeMode(payload);
                         } else if (topic.equals(DATA_CHANNEL)) {
+                            JSONObject json = new JSONObject(payload);
                             modeHandler.parseData(json);
                         } else if (topic.equals(CONTROL_CHANNEL)) {
+                            JSONObject json = new JSONObject(payload);
                             modeHandler.executeCommand(json);
                         }
                     } catch (Exception e) {
