@@ -29,6 +29,7 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
     @Value("${mqtt.channel.motor.control}") String MQTT_MOTOR_CONTROL_CHANNEL;
     @Value("${mqtt.channel.lidar.control}") String MQTT_LIDAR_CONTROL_CHANNEL;
     @Value("${mqtt.channel.motor.drive}") String MQTT_MOTOR_DRIVE_CHANNEL;
+    @Value("${mqtt.channel.navigation.control}") String MQTT_NAVIGATION_CHANNEL;
 
     public CommandWebSocketHandler(MqttPublisher mqttPublisher) {
         this.mqttPublisher = mqttPublisher;
@@ -179,6 +180,15 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
                 simpleNavigateParams.put("state", Set.of("enabled", "disabled"));
 
                 if (!verifyParams(jsonMessage, session, simpleNavigateParams)) return;
+
+                try {
+                    final String status = mqttPublisher.sendMQTTMessage(MQTT_NAVIGATION_CHANNEL, jsonMessage.toString(), 2, true);
+                    session.sendMessage(new TextMessage(status));
+                } catch (MqttException e) {
+                    log.error("Failed to send MQTT message", e);
+                    session.sendMessage(new TextMessage("Error: Failed to send MQTT message: " + e));
+                }
+                break;
             default:
                 session.sendMessage(new TextMessage("Error: command not found"));
                 break;
