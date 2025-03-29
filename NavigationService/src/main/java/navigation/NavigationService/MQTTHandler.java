@@ -13,8 +13,6 @@ import org.json.JSONObject;
 @Service
 public class MQTTHandler {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-    private final ModeHandler modeHandler;
-
     private MqttClient client;
 
     public MQTTHandler(
@@ -59,6 +57,5 @@ public class MQTTHandler {
         } catch (MqttException e) {
             log.error("Failed to connect to MQTT broker", e);
         }
-        this.modeHandler = modeHandler;
     }
 }

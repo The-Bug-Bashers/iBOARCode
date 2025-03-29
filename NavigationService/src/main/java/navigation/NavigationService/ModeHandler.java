@@ -6,40 +6,47 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-enum Modes {SIMPLE_NAVIGATE}
+enum NavigationModes {NOT_MANAGED_BY_NAVIGATION_CONTROLLER, SIMPLE_NAVIGATE}
 
 
 @Service
 public class ModeHandler {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-    Modes currentMode;
+
+    NavigationModes currentMode;
+    JSONObject lastLidarData;
+    JSONObject lastMotorData;
+
     public void changeMode(String mode) {
+        if (currentMode != NavigationModes.NOT_MANAGED_BY_NAVIGATION_CONTROLLER) stopMode(currentMode);
         switch (mode) {
             case "simpleNavigate":
-                currentMode = Modes.SIMPLE_NAVIGATE;
+                currentMode = NavigationModes.SIMPLE_NAVIGATE;
                 break;
             default:
-                log.error("mode not found: {}", mode);
+                log.info("mode not managed by NavigationService. mode: {}", mode);
+                currentMode = NavigationModes.NOT_MANAGED_BY_NAVIGATION_CONTROLLER;
         }
     }
 
     public void parseData(JSONObject data) {
-        switch (currentMode) {
-            case Modes.SIMPLE_NAVIGATE:
-                SimpleNavigate.parseData(data);
-                break;
-            default:
-                log.error("parseData method of mode: {} not found", currentMode);
-        }
+
     }
 
     public void executeCommand(JSONObject command) {
         switch (currentMode) {
-            case Modes.SIMPLE_NAVIGATE:
+            case SIMPLE_NAVIGATE:
                 SimpleNavigate.executeCommand(command);
                 break;
             default:
                 log.error("execute method of mode: {} not found", currentMode);
+        }
+    }
+
+    private void stopMode(NavigationModes mode) {
+        switch (mode) {
+            case SIMPLE_NAVIGATE:
+                SimpleNavigate.stop();
         }
     }
 }
