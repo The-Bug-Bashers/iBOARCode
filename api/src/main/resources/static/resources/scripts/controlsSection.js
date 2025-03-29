@@ -276,7 +276,7 @@ function addSimpleNavigateCode() {
         "dynamicRestrictionZone": ${dynamicRestrictionZoneInput.value}, 
         "bufferDistance": ${bufferDistanceInput.value}, 
         "maxSpeed": ${maxSpeedInput.value}, 
-        "state": ${state}}`);
+        "state": "${state}"}`);
     }
 
     // Set default values
