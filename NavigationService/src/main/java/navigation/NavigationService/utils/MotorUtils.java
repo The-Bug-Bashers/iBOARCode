@@ -18,6 +18,6 @@ public final class MotorUtils {
     }
 
     public static void stopMotors() {
-        MQTTHandler.publish(staticMotorDriveChannel, new JSONObject().put("left", 0).put("right", 0), 2, false);
+        MQTTHandler.publish(staticMotorDriveChannel, new JSONObject().put("command", "drive").put("angle", 0).put("speed", 0), 2, false);
     }
 }
