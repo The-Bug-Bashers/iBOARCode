@@ -269,13 +269,14 @@ function addSimpleNavigateCode() {
     });
 
     function sendAPIMessage() {
+        const state = enableToggle.checked ? "enabled" : "disabled";
         sendMessage(`{"command": "simpleNavigate", 
         "targetDirection": ${targetDirectionInput.value}, 
         "staticRestrictionZone": ${staticRestrictionZoneInput.value}, 
         "dynamicRestrictionZone": ${dynamicRestrictionZoneInput.value}, 
         "bufferDistance": ${bufferDistanceInput.value}, 
         "maxSpeed": ${maxSpeedInput.value}, 
-        "enabled": ${enableToggle.checked}}`)
+        "state": ${state}}`);
     }
 
     // Set default values
