@@ -1,9 +1,6 @@
 package navigation.NavigationService;
 
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +17,8 @@ public class MQTTHandler {
             @Value("${mqtt.client.id}") String CLIENT_ID,
             @Value("${mqtt.channel.mode}") String MODE_CHANNEL,
             @Value("${mqtt.channel.navigation.control}") String CONTROL_CHANNEL,
-            @Value("${mqtt.channel.data}") String DATA_CHANNEL, ModeHandler modeHandler) {
+            @Value("${mqtt.channel.data}") String DATA_CHANNEL,
+            ModeHandler modeHandler) {
         try {
             log.info("Connecting to broker {}", BROKER_URL);
             client = new MqttClient(BROKER_URL, CLIENT_ID);
@@ -30,33 +28,49 @@ public class MQTTHandler {
             client.connect(options);
             log.info("Connected: {}, id: {}", client.isConnected(), client.getClientId());
 
-            client.subscribe(MODE_CHANNEL, (topic, message) -> {
-                String payload = new String(message.getPayload());
-                JSONObject json = new JSONObject(payload);
-                if ("changeMode".equals(json.optString("command"))) {
-                    String mode = json.optString("mode");
-                    modeHandler.changeMode(mode);
-                } else {
-                    log.warn("Mode Command not found: {}", json.optString("command"));
+            client.subscribe(new String[]{MODE_CHANNEL, DATA_CHANNEL, CONTROL_CHANNEL}, new int[]{2, 0, 2});
+
+            client.setCallback(new MqttCallback() {
+                @Override
+                public void connectionLost(Throwable cause) {
+                    log.error("MQTT Connection lost", cause);
                 }
-            });
 
-            client.subscribe(DATA_CHANNEL, (topic, message) -> {
-                String payload = new String(message.getPayload());
-                JSONObject jsonData = new JSONObject(payload);
-                modeHandler.parseData(jsonData);
-            });
+                @Override
+                public void messageArrived(String topic, MqttMessage message) {
+                    String payload = new String(message.getPayload());
+                    log.debug("Received message on {}: {}", topic, payload);
 
-            client.subscribe(CONTROL_CHANNEL, (topic, message) -> {
-                String payload = new String(message.getPayload());
-                JSONObject parsedCommand = new JSONObject(payload);
-                modeHandler.executeCommand(parsedCommand);
+                    try {
+                        JSONObject json = new JSONObject(payload);
+
+                        if (topic.equals(MODE_CHANNEL)) {
+                            if ("changeMode".equals(json.optString("command"))) {
+                                modeHandler.changeMode(json.optString("mode"));
+                            } else {
+                                log.warn("Unknown Mode Command: {}", json.optString("command"));
+                            }
+                        } else if (topic.equals(DATA_CHANNEL)) {
+                            modeHandler.parseData(json);
+                        } else if (topic.equals(CONTROL_CHANNEL)) {
+                            modeHandler.executeCommand(json);
+                        }
+                    } catch (Exception e) {
+                        log.error("Error processing message on topic {}", topic, e);
+                    }
+                }
+
+                @Override
+                public void deliveryComplete(IMqttDeliveryToken token) {
+                    log.debug("Message delivered: {}", token.isComplete());
+                }
             });
 
         } catch (MqttException e) {
             log.error("Failed to connect to MQTT broker", e);
         }
     }
+
 
     public static void publish(String topic, JSONObject payload, int qos, boolean retained) {
         try {
