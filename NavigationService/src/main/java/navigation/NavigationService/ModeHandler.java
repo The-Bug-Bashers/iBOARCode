@@ -16,7 +16,7 @@ enum NavigationModes {NOT_MANAGED_BY_NAVIGATION_CONTROLLER, SIMPLE_NAVIGATE}
 public class ModeHandler {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
-    NavigationModes currentMode;
+    NavigationModes currentMode = NavigationModes.NOT_MANAGED_BY_NAVIGATION_CONTROLLER;
     JSONArray lastLidarData;
     JSONObject lastMotorData;
 
