@@ -168,6 +168,17 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
                     session.sendMessage(new TextMessage("Error: Failed to send MQTT message: " + e));
                 }
                 break;
+            case "simpleNavigate":
+                Map<String, Object> simpleNavigateParams = new HashMap<>();
+                simpleNavigateParams.put("command", "simpleNavigate");
+                simpleNavigateParams.put("targetDirection", new int[]{0, 360});
+                simpleNavigateParams.put("staticRestrictionZone", new int[]{0, 360});
+                simpleNavigateParams.put("dynamicRestrictionZone", new int[]{0, 360});
+                simpleNavigateParams.put("bufferDistance", new int[]{0, 500});
+                simpleNavigateParams.put("maxSpeed", new int[]{0, 100});
+                simpleNavigateParams.put("state", Set.of("enabled", "disabled"));
+
+                if (!verifyParams(jsonMessage, session, simpleNavigateParams)) return;
             default:
                 session.sendMessage(new TextMessage("Error: command not found"));
                 break;
