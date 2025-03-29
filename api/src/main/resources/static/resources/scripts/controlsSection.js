@@ -172,7 +172,7 @@ function addRemoteControlCode() {
 }
 
 function addMoveMotorCode() {
-    // Event listener for direction move motor buttons
+    // Event listener for the direction move motor buttons
     document.querySelectorAll('.moveMotorSelectors input[type="checkbox"]').forEach(checkbox => {
         checkbox.addEventListener('change', (event) => {
 
@@ -223,7 +223,7 @@ function addSimpleNavigateCode() {
         return (angle + 360) % 360;
     }
 
-    knob.addEventListener("mousedown", (event) => {
+    knob.addEventListener("mousedown", () => {
         function onMouseMove(event) {
             let angle = getAngle(event.clientX, event.clientY);
             setKnobPosition(angle);
@@ -250,7 +250,22 @@ function addSimpleNavigateCode() {
         }
     });
 
-    function sendCommand() {
+    // Event listener for enable toggle
+    enableToggle.addEventListener("change", () => {
+        sendAPIMessage();
+    });
+    
+    // Event listener for all inputs
+    document.querySelectorAll('#simpleNavigateInputs input').forEach(input => {
+        input.addEventListener('input', () => {
+            if (enableToggle.checked) {
+                enableToggle.checked = false;
+                sendAPIMessage();
+            }
+        });
+    });
+
+    function sendAPIMessage() {
         sendMessage(`{"command": "simpleNavigate", "targetDirection": ${targetDirectionInput.value}, "staticRestrictionZone": ${staticRestrictionZoneInput.value}, "dynamicRestrictionZone": ${dynamicRestrictionZoneInput.value}, "bufferDistance": ${bufferDistanceInput.value}, "maxSpeed": ${maxSpeedInput.value}, "enabled": ${enableToggle.checked}`)
     }
 
@@ -434,34 +449,36 @@ function getSimpleNavigateContent() {
             <div class="angle-display" id="angle-display">0°</div>
             <div class="knob" id="knob"></div>
         </div>
-        <div class="inputPlusLabel">
-            <h4>Target direction</h4>
-            <div class="inputBorder">
-                <input type="number" min="0" max="360" id="targetDirectionSimpleNavigateInput" class="numberRange" placeholder="0" autocomplete="off">
+        <div id="simpleNavigateInputs">
+            <div class="inputPlusLabel">
+                <h4>Target direction</h4>
+                <div class="inputBorder">
+                    <input type="number" min="0" max="360" id="targetDirectionSimpleNavigateInput" class="numberRange" placeholder="0" autocomplete="off">
+                </div>
             </div>
-        </div>
-        <div class="inputPlusLabel">
-            <h4>Static restriction zone</h4>
-            <div class="inputBorder">
-                <input type="number" min="0" max="360" id="staticRestrictionZoneSimpleNavigateInput" class="numberRange" placeholder="45" autocomplete="off">
+            <div class="inputPlusLabel">
+                <h4>Static restriction zone</h4>
+                <div class="inputBorder">
+                    <input type="number" min="0" max="360" id="staticRestrictionZoneSimpleNavigateInput" class="numberRange" placeholder="45" autocomplete="off">
+                </div>
             </div>
-        </div>
-        <div class="inputPlusLabel">
-            <h4>Dynamic restriction zone</h4>
-            <div class="inputBorder">
-                <input type="number" min="0" max="360" id="dynamicRestrictionZoneSimpleNavigateInput" class="numberRange" placeholder="30" autocomplete="off">
+            <div class="inputPlusLabel">
+                <h4>Dynamic restriction zone</h4>
+                <div class="inputBorder">
+                    <input type="number" min="0" max="360" id="dynamicRestrictionZoneSimpleNavigateInput" class="numberRange" placeholder="30" autocomplete="off">
+                </div>
             </div>
-        </div>
-        <div class="inputPlusLabel">
-            <h4>Buffer distance (cm)</h4>
-            <div class="inputBorder">
-                <input type="number" min="0" max="5000" id="bufferDistanceSimpleNavigateInput" class="numberRange" placeholder="5" autocomplete="off">
+            <div class="inputPlusLabel">
+                <h4>Buffer distance (cm)</h4>
+                <div class="inputBorder">
+                    <input type="number" min="0" max="5000" id="bufferDistanceSimpleNavigateInput" class="numberRange" placeholder="5" autocomplete="off">
+                </div>
             </div>
-        </div>
-        <div class="inputPlusLabel">
-            <h4>Max speed (%)</h4>
-            <div class="inputBorder">
-                <input type="number" min="0" max="100" id="maxSpeedSimpleNavigateInput" class="numberRange" placeholder="5" autocomplete="off">
+            <div class="inputPlusLabel">
+                <h4>Max speed (%)</h4>
+                <div class="inputBorder">
+                    <input type="number" min="0" max="100" id="maxSpeedSimpleNavigateInput" class="numberRange" placeholder="5" autocomplete="off">
+                </div>
             </div>
         </div>
         <div class="buttonPlusLabel">
