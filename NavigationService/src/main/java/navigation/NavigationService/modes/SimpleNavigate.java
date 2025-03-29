@@ -2,13 +2,13 @@ package navigation.NavigationService.modes;
 
 import org.json.JSONObject;
 
-public class SimpleNavigate {
-    public static void executeCommand(JSONObject command) {
-    }
-
-    public static void parseData(JSONObject data) {
+public final class SimpleNavigate {
+    public static void start() {
     }
 
     public static void stop() {
+    }
+
+    public static void executeCommand(JSONObject command) {
     }
 }
