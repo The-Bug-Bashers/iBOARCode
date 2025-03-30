@@ -22,8 +22,8 @@ function calculateCanvasSize() {
 
 function processLidarData(data) { //DO NOT REMOVE even if Unnecessary at the moment! (this will later handle drawing paths and lidarData separately)
     lidarCtx.clearRect(0, 0, canvas.width, canvas.height);
-    drawLidarData(data);
     if (currentNavigationData) drawNavigationData(currentNavigationData);
+    drawLidarData(data);
 }
 
 function processNavigationData(data) {
@@ -56,17 +56,6 @@ function drawNavigationData(data) {
     });
 }
 
-function drawNavigationPath(x, y) {
-    lidarCtx.strokeStyle = "blue";
-    lidarCtx.lineWidth = 2;
-
-    lidarCtx.beginPath();
-    lidarCtx.moveTo(centerX, centerY);
-    lidarCtx.lineTo(x, y);
-    lidarCtx.stroke();
-}
-
-
 function drawLidarData(data) {
     const maxDistance = Math.max(...data.map(point => parseFloat(point.distance)));
     scale = maxDistance > 0 ? Math.min(canvas.width, canvas.height) / (maxDistance * 2) : 1;
@@ -91,15 +80,27 @@ function drawLidarData(data) {
     });
 }
 
+
+function drawNavigationPath(x, y) {
+    lidarCtx.strokeStyle = "deepskyblue";
+    lidarCtx.lineWidth = (botSize / 2) * (scale * 0.008);
+
+    lidarCtx.beginPath();
+    lidarCtx.moveTo(centerX, centerY);
+    lidarCtx.lineTo(x, y);
+
+    lidarCtx.stroke();
+}
+
 function drawBot() {
-    lidarCtx.fillStyle = "red";
+    lidarCtx.fillStyle = "coral";
     lidarCtx.beginPath();
     lidarCtx.arc(centerX, centerY, (botSize / 2) * (scale * 0.008), 0, Math.PI * 2);
     lidarCtx.fill();
 }
 
 function drawLidarPoint(x, y) {
-    lidarCtx.fillStyle = "lime";
+    lidarCtx.fillStyle = "white";
     lidarCtx.beginPath();
     lidarCtx.arc(x, y, 0.01 * scale, 0, Math.PI * 2);
     lidarCtx.fill();
