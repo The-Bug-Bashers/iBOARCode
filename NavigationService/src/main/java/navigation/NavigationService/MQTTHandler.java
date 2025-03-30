@@ -44,12 +44,12 @@ public class MQTTHandler {
                     try {
                         if (topic.equals(MODE_CHANNEL)) {
                             modeHandler.changeMode(payload);
-                        } else if (topic.equals(DATA_CHANNEL)) {
-                            JSONObject json = new JSONObject(payload);
-                            modeHandler.parseData(json);
                         } else if (topic.equals(CONTROL_CHANNEL)) {
                             JSONObject json = new JSONObject(payload);
                             modeHandler.executeCommand(json);
+                        } else { // channel = one of the data channels (using wildcard)
+                            JSONObject json = new JSONObject(payload);
+                            modeHandler.parseData(json);
                         }
                     } catch (Exception e) {
                         log.error("Error processing message on topic {}", topic, e);

@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import static navigation.NavigationService.utils.MotorUtils.calculateMaxDrivingDistance;
 
 public class DebugNavigate {
-    @Value("${mqtt.channel.navigatino.data}") private static String NAVIGATION_DATA_CHANNEL;
+    @Value("${mqtt.channel.navigation.data}") private static String NAVIGATION_DATA_CHANNEL;
 
     private static boolean showMaxFrontDistance = false;
 
