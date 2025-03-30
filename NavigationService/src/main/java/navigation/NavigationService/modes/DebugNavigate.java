@@ -48,7 +48,7 @@ public final class DebugNavigate {
             }
         };
 
-        executorService.scheduleAtFixedRate(task, 0, 1, TimeUnit.SECONDS);
+        executorService.scheduleAtFixedRate(task, 0, 250, TimeUnit.MILLISECONDS);
     }
 
     public static void stop() {
