@@ -89,7 +89,6 @@ function drawNavigationPath(x, y) {
     lidarCtx.moveTo(centerX, centerY);
     lidarCtx.lineTo(x, y);
     lidarCtx.strokeStyle = "blue";
-    lidarCtx.arc(centerX, centerY, (botSize / 2) * (scale * 0.008), 0, Math.PI * 2);
 
     lidarCtx.stroke();
 }
