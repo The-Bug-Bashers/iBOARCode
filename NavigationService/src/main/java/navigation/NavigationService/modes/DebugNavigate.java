@@ -1,5 +1,6 @@
 package navigation.NavigationService.modes;
 
+import jakarta.annotation.PostConstruct;
 import navigation.NavigationService.MQTTHandler;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,7 +12,13 @@ import java.util.concurrent.TimeUnit;
 import static navigation.NavigationService.utils.MotorUtils.calculateMaxDrivingDistance;
 
 public class DebugNavigate {
-    @Value("${mqtt.channel.navigation.data}") private static String NAVIGATION_DATA_CHANNEL;
+    @Value("${mqtt.channel.navigation.data}") private String NAVIGATION_DATA_CHANNEL;
+
+    static String staticNavigationDataChannel;
+    @PostConstruct
+    public void init() {
+        staticNavigationDataChannel = NAVIGATION_DATA_CHANNEL;
+    }
 
     private static boolean showMaxFrontDistance = false;
 
@@ -25,7 +32,7 @@ public class DebugNavigate {
             if (showMaxFrontDistance) {
                 double distance = calculateMaxDrivingDistance(0);
                 System.out.println("Max front distance: " + distance);
-                MQTTHandler.publish(NAVIGATION_DATA_CHANNEL, new JSONObject().put("path", distance), 0, false);
+                MQTTHandler.publish(staticNavigationDataChannel, new JSONObject().put("path", distance), 0, false);
             }
         };
 
