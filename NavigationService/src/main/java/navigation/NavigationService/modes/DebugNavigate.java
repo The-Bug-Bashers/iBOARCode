@@ -2,6 +2,7 @@ package navigation.NavigationService.modes;
 
 import jakarta.annotation.PostConstruct;
 import navigation.NavigationService.MQTTHandler;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -30,8 +31,17 @@ public final class DebugNavigate {
         task = () -> {
             if (showMaxFrontDistance) {
                 double distance = calculateMaxDrivingDistance(0);
+
                 System.out.println("Max front distance: " + distance);
-                MQTTHandler.publish(staticNavigationDataChannel, new JSONObject().put("path", distance), 0, false);
+                JSONObject message = new JSONObject()
+                        .put("navigationData", new JSONArray()
+                                .put(new JSONObject()
+                                        .put("angle", 0)
+                                        .put("distance", distance)
+                                )
+                        );
+
+                MQTTHandler.publish(staticNavigationDataChannel, message, 0, false);
             }
         };
 

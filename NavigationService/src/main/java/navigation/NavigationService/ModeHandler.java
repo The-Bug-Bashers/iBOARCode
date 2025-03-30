@@ -43,8 +43,10 @@ public class ModeHandler {
             lastMotorData = data.getJSONObject("motorData");
         } else if (data.has("lidarScan")) {
             lastLidarData = data.getJSONArray("lidarScan");
+        } else if(data.has("navigationData")) {
+            return;
         } else {
-            log.error("Unknown data format: {}", data);
+            log.error("Unknown data origin. data: {}", data);
         }
     }
 
