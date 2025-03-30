@@ -108,16 +108,16 @@
         // Iterate over each data point
         data.forEach(point => {
             const angleDeg = parseFloat(point.angle);
-            const distanceCm = parseFloat(point.distance);
+            const distanceM = parseFloat(point.distance); // in Meters
 
-            if (!isNaN(angleDeg) && !isNaN(distanceCm)) {
+            if (!isNaN(angleDeg) && !isNaN(distanceM)) {
                 // Adjust angle to make 0 at the bottom and 180 at the top
                 const adjustedAngle = angleDeg - 90; // Shift angle 90 degrees counter-clockwise
                 const angleRad = (adjustedAngle * Math.PI) / 180; // Convert to radians
 
                 // Convert polar to Cartesian coordinates
-                const x = centerX + distanceCm * scale * Math.cos(angleRad);
-                const y = centerY + distanceCm * scale * Math.sin(angleRad); // Flip the y-coordinate
+                const x = centerX + distanceM * scale * Math.cos(angleRad);
+                const y = centerY + distanceM * scale * Math.sin(angleRad);
 
                 // Draw point
                 ctx.fillStyle = "lime";
@@ -156,16 +156,16 @@
         // Iterate over each data point
         data.forEach(point => {
             const angleDeg = parseFloat(point.angle);
-            const distanceCm = parseFloat(point.distance);
+            const distanceM = parseFloat(point.distance); // in Meters
 
-            if (!isNaN(angleDeg) && !isNaN(distanceCm)) {
+            if (!isNaN(angleDeg) && !isNaN(distanceM)) {
                 // Adjust angle to make 0 at the bottom and 180 at the top
                 const adjustedAngle = angleDeg - 90; // Shift angle 90 degrees counter-clockwise
                 const angleRad = (adjustedAngle * Math.PI) / 180; // Convert to radians
 
                 // Convert polar to Cartesian coordinates
-                const x = centerX + distanceCm * scale * Math.cos(angleRad);
-                const y = centerY + distanceCm * scale * Math.sin(angleRad); // Flip the y-coordinate
+                const x = centerX + distanceM * scale * Math.cos(angleRad);
+                const y = centerY + distanceM * scale * Math.sin(angleRad);
 
                 // Draw point
                 ctx.fillStyle = "lime";

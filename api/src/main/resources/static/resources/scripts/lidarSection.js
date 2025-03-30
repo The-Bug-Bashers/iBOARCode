@@ -20,7 +20,7 @@ function calculateCanvasSize() {
     centerY = canvas.height / 2;
 }
 
-function processLidarData(data) { //DO NOT REMOVE even if Unnecessary at the moment! (this will later handle drawing paths and lidarData separately)
+function processLidarData(data) {
     lidarCtx.clearRect(0, 0, canvas.width, canvas.height);
     if (currentNavigationData) drawNavigationData(currentNavigationData);
     drawLidarData(data);
@@ -64,17 +64,17 @@ function drawLidarData(data) {
 
     data.forEach(point => {
         const angleDeg = parseFloat(point.angle);
-        const distanceCm = parseFloat(point.distance);
+        const distanceM = parseFloat(point.distance); // in meters
 
-        if (isNaN(angleDeg) || isNaN(distanceCm)) return;
+        if (isNaN(angleDeg) || isNaN(distanceM)) return;
 
         // Adjust the angle to make 0 at the top and 180 at the bottom
         const adjustedAngle = angleDeg - 90; // Shift angle 90 degrees clockwise
         const angleRad = (adjustedAngle * Math.PI) / 180; // Convert to radians
 
         // Convert polar to Cartesian coordinates
-        const x = centerX + distanceCm * scale * Math.cos(angleRad);
-        const y = centerY + distanceCm * scale * Math.sin(angleRad);
+        const x = centerX + distanceM * scale * Math.cos(angleRad);
+        const y = centerY + distanceM * scale * Math.sin(angleRad);
 
         drawLidarPoint(x, y);
     });

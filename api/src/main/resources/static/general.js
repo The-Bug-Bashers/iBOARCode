@@ -1,4 +1,4 @@
-const botSize = 30; // in cm
+const botSize = 0.255; // in m
 let canvas, lidarCtx, centerX, centerY, scale; // Variables for lidarSection.js
 
 let ctx, combinedChart; // Variables for Chart.js
