@@ -14,4 +14,12 @@ public class AngleUtils {
 
         return angle;
     }
+
+    public static double getSmallestDifference(double angleA, double angleB) {
+        double difference = Math.abs(angleA - angleB);
+        if (difference > 180) {
+            difference = 360 - difference;
+        }
+        return difference;
+    }
 }

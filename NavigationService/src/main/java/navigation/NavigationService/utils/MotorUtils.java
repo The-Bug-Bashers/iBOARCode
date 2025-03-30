@@ -47,7 +47,7 @@ public final class MotorUtils {
 
             if (currentAngle < maxCheckAngle && currentAngle > minCheckAngle) continue;
 
-            double deviationAngle = Math.abs(currentAngle - maxCheckAngle);
+            double deviationAngle = AngleUtils.getSmallestDifference(targetAngle, currentAngle);
             double currentHalfWidth = Math.sin(Math.toRadians(deviationAngle)) * currentDistance;
 
             if(currentHalfWidth > boarRadius) continue;
