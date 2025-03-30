@@ -23,7 +23,7 @@ function calculateCanvasSize() {
 function processLidarData(data) { //DO NOT REMOVE even if Unnecessary at the moment! (this will later handle drawing paths and lidarData separately)
     lidarCtx.clearRect(0, 0, canvas.width, canvas.height);
     drawLidarData(data);
-    drawNavigationData(currentNavigationData);
+    if (currentNavigationData) drawNavigationData(currentNavigationData);
 }
 
 function processNavigationData(data) {
