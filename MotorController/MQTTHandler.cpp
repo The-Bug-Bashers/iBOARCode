@@ -126,13 +126,28 @@ void publishMotorData(struct mosquitto *mosq) {
         motor2Controller->getMotorData(target2, actual2, pid2_out);
         motor3Controller->getMotorData(target3, actual3, pid3_out);
 
-        nlohmann::json data = {
+        json data = {
             { "motorData", {
-                { "movement_target", { {"direction", latestAngle}, {"speed", latestSpeed} } },
-                { "motor1", { {"target", target1}, {"actual", actual1}, {"pid_output", pid1_out} } },
-                { "motor2", { {"target", target2}, {"actual", actual2}, {"pid_output", pid2_out} } },
-                { "motor3", { {"target", target3}, {"actual", actual3}, {"pid_output", pid3_out} } }
-            } }
+                { "movement_target", {
+                    { "direction", latestAngle.load() },
+                    { "speed", latestSpeed.load() }
+                }},
+                { "motor1", {
+                    { "target", target1 },
+                    { "actual", actual1 },
+                    { "pid_output", pid1_out }
+                }},
+                { "motor2", {
+                    { "target", target2 },
+                    { "actual", actual2 },
+                    { "pid_output", pid2_out }
+                }},
+                { "motor3", {
+                    { "target", target3 },
+                    { "actual", actual3 },
+                    { "pid_output", pid3_out }
+                }}
+            }}
         };
 
         std::string message = data.dump();
@@ -143,3 +158,4 @@ void publishMotorData(struct mosquitto *mosq) {
         std::this_thread::sleep_for(std::chrono::milliseconds(60));
     }
 }
+
