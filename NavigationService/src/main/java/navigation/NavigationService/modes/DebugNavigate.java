@@ -25,12 +25,11 @@ public final class DebugNavigate {
     private static boolean showMaxFrontDistance = false;
 
     private static ScheduledExecutorService executorService;
-    private static Runnable task;
 
     public static void start() {
         executorService = Executors.newSingleThreadScheduledExecutor();
 
-        task = () -> {
+        Runnable task = () -> {
             if (showMaxFrontDistance) {
                 double distance = calculateMaxDrivingDistance(0);
 
@@ -38,8 +37,10 @@ public final class DebugNavigate {
                 JSONObject message = new JSONObject()
                         .put("navigationData", new JSONArray()
                                 .put(new JSONObject()
-                                        .put("angle", 0)
-                                        .put("distance", distance)
+                                        .put("drawPath", new JSONObject()
+                                                .put("angle", 0)
+                                                .put("distance", distance)
+                                        )
                                 )
                         );
 
