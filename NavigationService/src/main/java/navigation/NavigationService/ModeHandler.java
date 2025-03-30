@@ -6,10 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import navigation.NavigationService.modes.DebugNavigate;
 import navigation.NavigationService.modes.SimpleNavigate;
 import navigation.NavigationService.utils.MotorUtils;
 
-enum NavigationModes {NOT_MANAGED_BY_NAVIGATION_CONTROLLER, SIMPLE_NAVIGATE}
+enum NavigationModes {NOT_MANAGED_BY_NAVIGATION_CONTROLLER, SIMPLE_NAVIGATE, DEBUG_NAVIGATE}
 
 
 @Service
@@ -26,6 +27,10 @@ public class ModeHandler {
             case "simpleNavigate":
                 currentMode = NavigationModes.SIMPLE_NAVIGATE;
                 SimpleNavigate.start();
+                break;
+            case "debugNavigate":
+                currentMode = NavigationModes.DEBUG_NAVIGATE;
+                DebugNavigate.start();
                 break;
             default:
                 log.info("mode not managed by NavigationService. mode: {}", mode);
@@ -48,6 +53,9 @@ public class ModeHandler {
             case SIMPLE_NAVIGATE:
                 SimpleNavigate.executeCommand(command);
                 break;
+            case DEBUG_NAVIGATE:
+                DebugNavigate.executeCommand(command);
+                break;
             default:
                 log.error("execute method of mode: {} not found", currentMode);
         }
@@ -57,6 +65,9 @@ public class ModeHandler {
         switch (mode) {
             case SIMPLE_NAVIGATE:
                 SimpleNavigate.stop();
+                break;
+            case DEBUG_NAVIGATE:
+                DebugNavigate.stop();
                 break;
             default:
                 log.error("stop method of mode: {} not found", mode);
