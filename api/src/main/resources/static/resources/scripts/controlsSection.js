@@ -296,10 +296,23 @@ function addSimpleNavigateCode() {
 
 function addDebugNavigationCode() {
     const showMaxFrontDistanceToggle = document.getElementById("showMaxFrontDistanceToggle");
+    const driveToMaxFrontDistanceToggle = document.getElementById("driveToMaxFrontDistanceToggle");
+    const bufferInput = document.getElementById("bufferDriveToMaxFrontDistanceInput");
     showMaxFrontDistanceToggle.checked = false;
+    driveToMaxFrontDistanceToggle.checked = false;
+    bufferInput.value = 5;
+
     showMaxFrontDistanceToggle.addEventListener("change", () => {
+        driveToMaxFrontDistanceToggle.checked = false;
         sendMessage(`{"command": "debugNavigate", "showMaxFrontDistance": ${showMaxFrontDistanceToggle.checked}}`);
     });
+    driveToMaxFrontDistanceToggle.addEventListener("change", () => {
+        showMaxFrontDistanceToggle.checked = false;
+        sendMessage(`{"command": "debugNavigate", "driveToMaxFrontDistance": ${driveToMaxFrontDistanceToggle.checked}, "buffer": ${bufferInput.value}}`);
+    });
+    
+    
+    
 }
 
 function sendMoveMotorMessage() {
@@ -518,14 +531,30 @@ function getSimpleNavigateContent() {
 
 function getDebugNavigateContent() {
     return `
-        <h3>Utils debug</h3>
+        <h3>Max front distance</h3>
         <div class="buttonPlusLabel">
             <div class="directionButtonPlusLabel">
                 <label class="checkbox-container">
                     <input class="custom-checkbox" checked="" type="checkbox" id="showMaxFrontDistanceToggle">
                     <span class="checkmark"></span>
                 </label>
-                <p onclick="document.getElementById('showMaxFrontDistanceToggle').click()">Display max front distance</p>
+                <p onclick="document.getElementById('showMaxFrontDistanceToggle').click()">Display</p>
+            </div>
+        </div>
+        <div class="buttonPlusLabel">
+            <div class="directionButtonPlusLabel">
+                <label class="checkbox-container">
+                    <input class="custom-checkbox" checked="" type="checkbox" id="driveToMaxFrontDistanceToggle">
+                    <span class="checkmark"></span>
+                </label>
+                <p onclick="document.getElementById('driveToMaxFrontDistanceToggle').click()">Drive to</p>
+            </div>
+        </div>
+        
+        <div class="inputPlusLabel">
+            <h4>Buffer (cm) </h4>
+            <div class="inputBorder">
+                <input type="number" min="0" max="500" id="bufferDriveToMaxFrontDistanceInput" class="numberRange" placeholder="5" autocomplete="off">
             </div>
         </div>
     `;
