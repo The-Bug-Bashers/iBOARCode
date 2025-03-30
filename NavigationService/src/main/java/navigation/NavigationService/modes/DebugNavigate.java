@@ -5,6 +5,7 @@ import navigation.NavigationService.MQTTHandler;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -12,10 +13,12 @@ import java.util.concurrent.TimeUnit;
 
 import static navigation.NavigationService.utils.MotorUtils.calculateMaxDrivingDistance;
 
+@Component
 public final class DebugNavigate {
+    @Value("${mqtt.channel.navigation.data}") private String NAVIGATION_DATA_CHANNEL;
     private static String staticNavigationDataChannel;
-
-    DebugNavigate(@Value("${mqtt.channel.navigation.data}") String NAVIGATION_DATA_CHANNEL){
+    @PostConstruct
+    public void init() {
         staticNavigationDataChannel = NAVIGATION_DATA_CHANNEL;
     }
 
