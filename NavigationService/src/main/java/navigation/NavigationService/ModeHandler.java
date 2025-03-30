@@ -18,7 +18,7 @@ public class ModeHandler {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     NavigationModes currentMode = NavigationModes.NOT_MANAGED_BY_NAVIGATION_CONTROLLER;
-    JSONArray lastLidarData;
+    static JSONArray lastLidarData;
     JSONObject lastMotorData;
 
     public void changeMode(String mode) {
@@ -73,5 +73,9 @@ public class ModeHandler {
                 log.error("stop method of mode: {} not found", mode);
         }
         MotorUtils.stopMotors();
+    }
+
+    public static JSONArray getLatestLidarData() {
+        return lastLidarData;
     }
 }

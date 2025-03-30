@@ -1,12 +1,18 @@
 package navigation.NavigationService.modes;
 
+import navigation.NavigationService.MQTTHandler;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static navigation.NavigationService.utils.MotorUtils.calculateMaxDrivingDistance;
+
 public class DebugNavigate {
+    @Value("${mqtt.channel.navigatino.data}") private static String NAVIGATION_DATA_CHANNEL;
+
     private static boolean showMaxFrontDistance = false;
 
     private static ScheduledExecutorService executorService;
@@ -16,10 +22,10 @@ public class DebugNavigate {
         executorService = Executors.newSingleThreadScheduledExecutor();
 
         task = () -> {
-            System.out.println("Executing task...");
-
             if (showMaxFrontDistance) {
-                System.out.println("Max front distance is being shown.");
+                double distance = calculateMaxDrivingDistance(0);
+                System.out.println("Max front distance: " + distance);
+                MQTTHandler.publish(NAVIGATION_DATA_CHANNEL, new JSONObject().put("path", distance), 0, false);
             }
         };
 
