@@ -23,8 +23,6 @@ function calculateCanvasSize() {
 function processLidarData(data) {
     lidarCtx.clearRect(0, 0, canvas.width, canvas.height);
 
-    scale = Math.min(canvas.width, canvas.height) / (Math.max(...data.map(point => parseFloat(point.distance))) * 2);
-
     if (currentNavigationData) drawNavigationData(currentNavigationData);
     drawLidarData(data);
 }
@@ -61,6 +59,9 @@ function drawNavigationData(data) {
 
 function drawLidarData(data) {
 
+
+    scale = Math.min(canvas.width, canvas.height) / (Math.max(...data.map(point => parseFloat(point.distance))) * 2);
+
     drawBot();
 
     data.forEach(point => {
@@ -83,10 +84,10 @@ function drawLidarData(data) {
 
 
 function drawNavigationPath(x, y) {
-    lidarCtx.moveTo(centerX, centerY);
     lidarCtx.strokeStyle = "royalblue";
     lidarCtx.lineWidth = (botSize / 2) * scale;
     lidarCtx.beginPath();
+    lidarCtx.moveTo(centerX, centerY);
     lidarCtx.lineTo(x, y);
     lidarCtx.stroke();
 
