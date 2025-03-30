@@ -182,7 +182,22 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
                 if (!verifyParams(jsonMessage, session, simpleNavigateParams)) return;
 
                 try {
-                    final String status = mqttPublisher.sendMQTTMessage(MQTT_NAVIGATION_CHANNEL, jsonMessage.toString(), 2, true);
+                    final String status = mqttPublisher.sendMQTTMessage(MQTT_NAVIGATION_CHANNEL, jsonMessage.toString(), 2, false);
+                    session.sendMessage(new TextMessage(status));
+                } catch (MqttException e) {
+                    log.error("Failed to send MQTT message", e);
+                    session.sendMessage(new TextMessage("Error: Failed to send MQTT message: " + e));
+                }
+                break;
+            case "debugNavigate":
+                Map<String, Object> debugNavigateParams = new HashMap<>();
+                debugNavigateParams.put("command", "debugNavigate");
+                debugNavigateParams.put("showMaxFrontDistance", Set.of("true", "false"));
+
+                if (!verifyParams(jsonMessage, session, debugNavigateParams)) return;
+
+                try {
+                    final String status = mqttPublisher.sendMQTTMessage(MQTT_NAVIGATION_CHANNEL, jsonMessage.toString(), 2, false);
                     session.sendMessage(new TextMessage(status));
                 } catch (MqttException e) {
                     log.error("Failed to send MQTT message", e);
