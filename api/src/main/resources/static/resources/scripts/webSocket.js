@@ -163,8 +163,8 @@ function addDataSocketEventListeners() {
             processLidarData(data.lidarScan);
         } else if (data.navigationData) {
             processNavigationData(data.navigationData);
-        } else if (data[0] === "motorData") {
-            processMotorData(data[1]);
+        } else if (data.motorData) {
+            processMotorData(data.motorData);
         } else {
             showMessage("Received data on dataSocket could not get parsed: " + data, true, true, false);
         }
