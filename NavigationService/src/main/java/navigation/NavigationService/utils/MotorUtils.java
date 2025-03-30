@@ -52,7 +52,8 @@ public final class MotorUtils {
 
             if(currentHalfWidth > boarRadius) continue;
 
-            double currentMaxDrivingDistance = Math.cos(Math.toRadians(deviationAngle)) * currentDistance - boarRadius;
+            double botSizeCorrection = Math.sqrt(Math.pow(boarRadius, 2) - Math.pow(currentHalfWidth, 2));
+            double currentMaxDrivingDistance = Math.cos(Math.toRadians(deviationAngle)) * currentDistance - botSizeCorrection;
             if (currentMaxDrivingDistance < maxDrivingDistance) maxDrivingDistance = currentMaxDrivingDistance;
         }
         return maxDrivingDistance;
