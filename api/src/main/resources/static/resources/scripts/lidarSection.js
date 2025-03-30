@@ -85,7 +85,7 @@ function drawLidarData(data) {
 
 function drawNavigationPath(x, y) {
     lidarCtx.strokeStyle = "royalblue";
-    lidarCtx.lineWidth = (botSize / 2) * scale;
+    lidarCtx.lineWidth = botSize * scale;
     lidarCtx.beginPath();
     lidarCtx.moveTo(centerX, centerY);
     lidarCtx.lineTo(x, y);
@@ -94,7 +94,7 @@ function drawNavigationPath(x, y) {
     lidarCtx.moveTo(x, y);
     lidarCtx.fillStyle = "cornflowerblue";
     lidarCtx.beginPath();
-    lidarCtx.arc(centerX, centerY, (botSize / 2) * scale, 0, Math.PI * 2);
+    lidarCtx.arc(x, y, (botSize / 2) * scale, 0, Math.PI * 2);
     lidarCtx.fill();
 }
 
