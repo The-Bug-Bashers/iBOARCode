@@ -22,6 +22,9 @@ function calculateCanvasSize() {
 
 function processLidarData(data) {
     lidarCtx.clearRect(0, 0, canvas.width, canvas.height);
+
+    scale = Math.min(canvas.width, canvas.height) / (Math.max(...data.map(point => parseFloat(point.distance))) * 2);
+
     if (currentNavigationData) drawNavigationData(currentNavigationData);
     drawLidarData(data);
 }
@@ -57,8 +60,6 @@ function drawNavigationData(data) {
 }
 
 function drawLidarData(data) {
-    const maxDistance = Math.max(...data.map(point => parseFloat(point.distance)));
-    scale = maxDistance > 0 ? Math.min(canvas.width, canvas.height) / (maxDistance * 2) : 1;
 
     drawBot();
 
@@ -82,26 +83,24 @@ function drawLidarData(data) {
 
 
 function drawNavigationPath(x, y) {
-    lidarCtx.strokeStyle = "deepskyblue";
-    lidarCtx.lineWidth = (botSize / 2) * (scale * 0.008);
-
-    lidarCtx.beginPath();
     lidarCtx.moveTo(centerX, centerY);
+    lidarCtx.strokeStyle = "royalblue";
+    lidarCtx.lineWidth = (botSize / 2) * scale;
+    lidarCtx.beginPath();
     lidarCtx.lineTo(x, y);
-    lidarCtx.strokeStyle = "blue";
     lidarCtx.stroke();
 
     lidarCtx.moveTo(x, y);
-    lidarCtx.fillStyle = "red";
+    lidarCtx.fillStyle = "cornflowerblue";
     lidarCtx.beginPath();
-    lidarCtx.arc(centerX, centerY, (botSize / 2) * (scale * 0.008), 0, Math.PI * 2);
+    lidarCtx.arc(centerX, centerY, (botSize / 2) * scale, 0, Math.PI * 2);
     lidarCtx.fill();
 }
 
 function drawBot() {
     lidarCtx.fillStyle = "coral";
     lidarCtx.beginPath();
-    lidarCtx.arc(centerX, centerY, (botSize / 2) * (scale * 0.008), 0, Math.PI * 2);
+    lidarCtx.arc(centerX, centerY, (botSize / 2) * scale, 0, Math.PI * 2);
     lidarCtx.fill();
 }
 
