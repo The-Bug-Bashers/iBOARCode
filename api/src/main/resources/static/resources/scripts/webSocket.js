@@ -161,6 +161,8 @@ function addDataSocketEventListeners() {
 
         if (data.lidarScan) {
             processLidarData(data.lidarScan);
+        } else if (data.navigationData) {
+            processNavigationData(data.navigationData);
         } else if (data[0] === "motorData") {
             processMotorData(data[1]);
         } else {
