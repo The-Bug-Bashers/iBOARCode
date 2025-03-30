@@ -42,6 +42,11 @@ function showControls(mode) {
             sendMessage(`{"command": "changeMode", "mode": "simpleNavigate"}`);
             addSimpleNavigateCode();
             break;
+            case "Debug-Navigate":
+            controlsContainer.innerHTML = getDebugNavigateContent();
+            sendMessage(`{"command": "changeMode", "mode": "debugNavigate"}`);
+            addDebugNavigationCode();
+            break;
         case "Settings":
             controlsContainer.innerHTML = getSettingsContent();
             break;
@@ -289,6 +294,14 @@ function addSimpleNavigateCode() {
     enableToggle.checked = false;
 }
 
+function addDebugNavigationCode() {
+    const showMaxFrontDistanceToggle = document.getElementById("showMaxFrontDistanceToggle");
+    showMaxFrontDistanceToggle.checked = false;
+    showMaxFrontDistanceToggle.addEventListener("change", () => {
+        sendMessage(`{"command": "debugNavigate", "showMaxFrontDistance": ${showMaxFrontDistanceToggle.checked}}`);
+    });
+}
+
 function sendMoveMotorMessage() {
     const speed = document.getElementById("speedMoveMotorInput").value;
     const selectedMotor = parseInt(document.querySelector('input[name="value-radio"]:checked').value.split('-')[1], 10);
@@ -498,6 +511,21 @@ function getSimpleNavigateContent() {
                     <span class="checkmark"></span>
                 </label>
                 <p onclick="document.getElementById('enableSimpleNavigateToggle').click()">Enable</p>
+            </div>
+        </div>
+    `;
+}
+
+function getDebugNavigateContent() {
+    return `
+        <h3>Utils debug</h3>
+        <div class="buttonPlusLabel">
+            <div class="directionButtonPlusLabel">
+                <label class="checkbox-container">
+                    <input class="custom-checkbox" checked="" type="checkbox" id="showMaxFrontDistanceToggle">
+                    <span class="checkmark"></span>
+                </label>
+                <p onclick="document.getElementById('showMaxFrontDistanceToggle').click()">Display max front distance</p>
             </div>
         </div>
     `;

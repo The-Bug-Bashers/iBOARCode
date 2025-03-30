@@ -166,7 +166,6 @@ function addDataSocketEventListeners() {
         } else {
             showMessage("Received data on dataSocket could not get parsed: " + data, true, true, false);
         }
-        console.log("Received: " + data);
     };
 }
 
