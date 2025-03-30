@@ -11,10 +11,9 @@ import java.util.concurrent.TimeUnit;
 
 import static navigation.NavigationService.utils.MotorUtils.calculateMaxDrivingDistance;
 
-public class DebugNavigate {
+public final class DebugNavigate {
     @Value("${mqtt.channel.navigation.data}") private String NAVIGATION_DATA_CHANNEL;
-
-    static String staticNavigationDataChannel;
+    private static String staticNavigationDataChannel;
     @PostConstruct
     public void init() {
         staticNavigationDataChannel = NAVIGATION_DATA_CHANNEL;
