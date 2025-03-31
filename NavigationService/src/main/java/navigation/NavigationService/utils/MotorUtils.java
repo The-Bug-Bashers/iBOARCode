@@ -14,48 +14,24 @@ import org.springframework.stereotype.Component;
 @Component
 public final class MotorUtils {
     private static final Logger log = LoggerFactory.getLogger(MQTTHandler.class);
-    @Value("${mqtt.channel.motor.drive}") private String MOTOR_DRIVE_CHANNEL;
-    @Value("${boar.diameter}") private double BOAR_DIAMETER;
 
+    @Value("${mqtt.channel.motor.drive}") private String MOTOR_DRIVE_CHANNEL;
     private static String staticMotorDriveChannel;
-    private static double boarRadius;
     @PostConstruct
     public void init() {
         staticMotorDriveChannel = MOTOR_DRIVE_CHANNEL;
-        boarRadius = BOAR_DIAMETER / 2.d;
-        log.info("Boar radius: {}", boarRadius);
     }
 
     public static void stopMotors() {
         MQTTHandler.publish(staticMotorDriveChannel, new JSONObject().put("command", "drive").put("angle", 0).put("speed", 0), 2, false);
     }
 
-    public static double calculateMaxDrivingDistance(double targetAngle) {
-        JSONArray data = ModeHandler.getLatestLidarData();
-        if (data == null) return 14;
-        double maxDrivingDistance = 14 - boarRadius;
+    public static void drive(double angle, double speed) {
+        JSONObject message = new JSONObject().put("command", "drive").put("angle", angle).put("speed", speed);
+        MQTTHandler.publish(staticMotorDriveChannel, message, 2, false);
+    }
 
-        final double[] checkAngles = {AngleUtils.normalizeAngle(targetAngle - 90), AngleUtils.normalizeAngle(targetAngle + 90)};
-        final double minCheckAngle = Math.min(checkAngles[0], checkAngles[1]);
-        final double maxCheckAngle = Math.max(checkAngles[0], checkAngles[1]);
-        log.info("targetAngle: {}, maxCheckAngle: {}, minCheckAngle: {}", targetAngle, maxCheckAngle, minCheckAngle);
-
-        for (int i = 0; i < data.length(); i++) {
-            JSONObject obj = data.getJSONObject(i);
-            double currentAngle = obj.getDouble("angle");
-            double currentDistance = obj.getDouble("distance");
-
-            if (currentAngle < maxCheckAngle && currentAngle > minCheckAngle) continue;
-
-            double deviationAngle = AngleUtils.getSmallestDifference(targetAngle, currentAngle);
-            double currentHalfWidth = Math.sin(Math.toRadians(deviationAngle)) * currentDistance;
-
-            if(currentHalfWidth > boarRadius) continue;
-
-            double botSizeCorrection = Math.sqrt(Math.pow(boarRadius, 2) - Math.pow(currentHalfWidth, 2));
-            double currentMaxDrivingDistance = Math.cos(Math.toRadians(deviationAngle)) * currentDistance - botSizeCorrection;
-            if (currentMaxDrivingDistance < maxDrivingDistance) maxDrivingDistance = currentMaxDrivingDistance;
-        }
-        return maxDrivingDistance;
+    public static double getSpeedToDriveDistance(double maxSpeed, double currentSpeed, double distance) {
+        return maxSpeed; //TODO: replace with proper ac-/deceleration calculation
     }
 }

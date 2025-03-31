@@ -19,7 +19,7 @@ public class ModeHandler {
 
     NavigationModes currentMode = NavigationModes.NOT_MANAGED_BY_NAVIGATION_CONTROLLER;
     static JSONArray lastLidarData;
-    JSONObject lastMotorData;
+    static JSONObject lastMotorData;
 
     public void changeMode(String mode) {
         if (currentMode != NavigationModes.NOT_MANAGED_BY_NAVIGATION_CONTROLLER) stopMode(currentMode);
@@ -79,5 +79,15 @@ public class ModeHandler {
 
     public static JSONArray getLatestLidarData() {
         return lastLidarData;
+    }
+    public static JSONObject getLatestMotorData() {
+        return lastMotorData;
+    }
+    public static double[] getCurrentMovement() {
+        JSONObject movementTarget = lastMotorData.getJSONObject("motorData").getJSONObject("movement_target");
+        double currentSpeed = movementTarget.getDouble("speed");
+        double currentDirection = movementTarget.getDouble("direction");
+
+        return new double[]{currentSpeed, currentDirection};
     }
 }
