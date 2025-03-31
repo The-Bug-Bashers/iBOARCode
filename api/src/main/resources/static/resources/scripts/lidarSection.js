@@ -1,4 +1,5 @@
 let currentNavigationData;
+let currentBufferDistance = 0;
 document.addEventListener("DOMContentLoaded", () => {
     initialiseCanvas();
 })
@@ -38,7 +39,9 @@ function processNavigationData(data) {
 
 function drawNavigationData(data) {
     data.forEach(entry => {
-        if (entry.drawPath) {
+        if (entry.buffer) {
+            currentBufferDistance = entry.buffer.buffer;
+        } else if (entry.drawPath) {
             const { angle, distance } = entry.drawPath;
 
             if (isNaN(angle) || isNaN(distance)) {
@@ -89,6 +92,20 @@ function drawLidarData(data) {
 
 
 function drawNavigationPath(x, y) {
+    if (currentBufferDistance !== 0) {
+        lidarCtx.strokeStyle = "darkkhaki";
+        lidarCtx.lineWidth = (botSize + currentBufferDistance) * scale;
+        lidarCtx.beginPath();
+        lidarCtx.moveTo(centerX, centerY);
+        lidarCtx.lineTo(x, y);
+        lidarCtx.stroke();
+
+        lidarCtx.moveTo(x, y);
+        lidarCtx.fillStyle = "darkkhaki";
+        lidarCtx.beginPath();
+        lidarCtx.arc(x, y, ((botSize + currentBufferDistance) / 2) * scale, 0, Math.PI * 2);
+        lidarCtx.fill();
+    }
     lidarCtx.strokeStyle = "royalblue";
     lidarCtx.lineWidth = botSize * scale;
     lidarCtx.beginPath();
@@ -104,6 +121,12 @@ function drawNavigationPath(x, y) {
 }
 
 function drawBot() {
+    if (currentBufferDistance !== 0) {
+        lidarCtx.fillStyle = "darkkhaki";
+        lidarCtx.beginPath();
+        lidarCtx.arc(centerX, centerY, ((botSize + currentBufferDistance) / 2) * scale, 0, Math.PI * 2);
+        lidarCtx.fill
+    }
     lidarCtx.fillStyle = "coral";
     lidarCtx.beginPath();
     lidarCtx.arc(centerX, centerY, (botSize / 2) * scale, 0, Math.PI * 2);
