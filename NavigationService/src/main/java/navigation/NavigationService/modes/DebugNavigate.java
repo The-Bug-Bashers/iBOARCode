@@ -91,7 +91,7 @@ public final class DebugNavigate {
 
             showMaxFrontDistance = true;
             drive = true;
-            double buffer = command.getDouble("buffer");
+            buffer = command.getDouble("buffer");
             double maxSpeed = command.getDouble("maxSpeed");
             while (drive) {
                 double distance = calculateMaxDrivingDistance(0, buffer);
