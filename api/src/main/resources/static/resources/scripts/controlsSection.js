@@ -316,10 +316,24 @@ function addDebugNavigationCode() {
 }
 
 function addSettingsCode() {
+    const enableLockedLidarZoomToggle = document.getElementById("enableLockedLidarZoomSettingsToggle");
+    const lockedLidarZoomInput = document.getElementById("lidarZoomSettingsInput");
     const hideMotorDataToggle = document.getElementById("hideMotorDataSettingsToggle");
 
     // Set default values
+    lockedLidarZoomInput.value = lidarZoomValue;
+    enableLockedLidarZoomToggle.checked = lockLidarZoom;
     hideMotorDataToggle.checked = hideMotorData;
+
+    // Event listener for locked LiDAR zoom toggle
+    enableLockedLidarZoomToggle.addEventListener("change", () => {
+        lockLidarZoom = enableLockedLidarZoomToggle.checked;
+    });
+
+    // Event listener for locked LiDAR zoom input
+    lockedLidarZoomInput.addEventListener("input", () => {
+        lidarZoomValue = lockedLidarZoomInput.value;
+    });
 
     // Event listener for hide motor data toggle
     hideMotorDataToggle.addEventListener("change", () => {
