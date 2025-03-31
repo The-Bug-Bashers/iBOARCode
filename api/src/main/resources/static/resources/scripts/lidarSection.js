@@ -40,7 +40,7 @@ function processNavigationData(data) {
 function drawNavigationData(data) {
     data.forEach(entry => {
         if (entry.buffer) {
-            currentBufferDistance = entry.buffer.buffer;
+            currentBufferDistance = entry.buffer.buffer * 0.01; // Convert cm to m
         } else if (entry.drawPath) {
             const { angle, distance } = entry.drawPath;
 
