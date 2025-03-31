@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 @Component
 public final class LidarUtils {
     private static final Logger log = LoggerFactory.getLogger(LidarUtils.class);
-    @Value("${boar.diameter}") private static double BOAR_DIAMETER;
+    @Value("${boar.diameter}") private double BOAR_DIAMETER;
     private static double boarRadius;
     @PostConstruct
     public void init() {
@@ -27,7 +27,7 @@ public final class LidarUtils {
      * @return maximum distance the bot can drive in a straight line without colliding with an obstacle
      */
     public static double calculateMaxDrivingDistance(double targetAngle, double buffer) {
-        double boarRadiusPlusBuffer = boarRadius + (buffer / 100.d); // convert buffer from cm to m
+        double boarRadiusPlusBuffer = boarRadius + (buffer / 200.d); // convert the buffer from cm to m and from diameter to radius
         JSONArray data = ModeHandler.getLatestLidarData();
         if (data == null) return 14;
         double maxDrivingDistance = 14 - boarRadiusPlusBuffer;
