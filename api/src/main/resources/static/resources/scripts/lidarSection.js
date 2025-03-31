@@ -95,12 +95,12 @@ function drawNavigationPath(x, y) {
     if (currentBufferDistance !== 0) {
         lidarCtx.strokeStyle = "darkkhaki";
         lidarCtx.lineWidth = (botSize + currentBufferDistance) * scale;
+        lidarCtx.lineCap = "round";
         lidarCtx.beginPath();
         lidarCtx.moveTo(centerX, centerY);
         lidarCtx.lineTo(x, y);
         lidarCtx.stroke();
 
-        lidarCtx.moveTo(x, y);
         lidarCtx.fillStyle = "darkkhaki";
         lidarCtx.beginPath();
         lidarCtx.arc(x, y, ((botSize + currentBufferDistance) / 2) * scale, 0, Math.PI * 2);
@@ -109,11 +109,10 @@ function drawNavigationPath(x, y) {
     lidarCtx.strokeStyle = "royalblue";
     lidarCtx.lineWidth = botSize * scale;
     lidarCtx.beginPath();
-    lidarCtx.moveTo(centerX, centerY);
-    lidarCtx.lineTo(x, y);
+    lidarCtx.moveTo(x, y);
+    lidarCtx.lineTo(centerX, centerY);
     lidarCtx.stroke();
 
-    lidarCtx.moveTo(x, y);
     lidarCtx.fillStyle = "cornflowerblue";
     lidarCtx.beginPath();
     lidarCtx.arc(x, y, (botSize / 2) * scale, 0, Math.PI * 2);
@@ -125,7 +124,7 @@ function drawBot() {
         lidarCtx.fillStyle = "darkkhaki";
         lidarCtx.beginPath();
         lidarCtx.arc(centerX, centerY, ((botSize + currentBufferDistance) / 2) * scale, 0, Math.PI * 2);
-        lidarCtx.fill
+        lidarCtx.fill();
     }
     lidarCtx.fillStyle = "coral";
     lidarCtx.beginPath();
