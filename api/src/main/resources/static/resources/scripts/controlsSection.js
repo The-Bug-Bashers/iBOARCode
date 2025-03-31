@@ -312,9 +312,6 @@ function addDebugNavigationCode() {
         showMaxFrontDistanceToggle.checked = false;
         sendMessage(`{"command": "debugNavigate", "driveToMaxFrontDistance": ${driveToMaxFrontDistanceToggle.checked}, "buffer": ${bufferInput.value}, "maxSpeed": ${maxSpeedInput.value}}`);
     });
-    
-    
-    
 }
 
 function sendMoveMotorMessage() {
@@ -570,5 +567,29 @@ function getDebugNavigateContent() {
 
 function getSettingsContent() {
     return `
+        <div class="buttonPlusLabel" style="margin-top: 1vh">
+            <div class="directionButtonPlusLabel">
+                <label class="checkbox-container">
+                    <input class="custom-checkbox" checked="" type="checkbox" id="enableLockedLidarZoomSettingsToggle">
+                    <span class="checkmark"></span>
+                </label>
+                <p onclick="document.getElementById('enableLockedLidarZoomSettingsToggle').click()">Lock LiDAR zoom</p>
+            </div>
+        </div>
+        <div class="inputPlusLabel">
+            <h4>LiDAR zoom (cm) </h4>
+            <div class="inputBorder">
+                <input type="number" min="1" max="1500" id="lidarZoomSettingsInput" class="numberRange" placeholder="100" autocomplete="off">
+            </div>
+        </div>
+        <div class="buttonPlusLabel">
+            <div class="directionButtonPlusLabel">
+                <label class="checkbox-container">
+                    <input class="custom-checkbox" checked="" type="checkbox" id="hideMotorDataSettingsToggle">
+                    <span class="checkmark"></span>
+                </label>
+                <p onclick="document.getElementById('hideMotorDataSettingsToggle').click()">Hide motor data</p>
+            </div>
+        </div>
     `;
 }

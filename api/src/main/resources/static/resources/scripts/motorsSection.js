@@ -68,10 +68,6 @@ function updateChart(actual1, actual2, actual3, target1, target2, target3, pid_o
     combinedChart.update();
 }
 
-function addMotorRendererDataSocketListener() {
-
-}
-
 function processMotorData(motorData) {
     try {
         updateChart(
