@@ -7,6 +7,8 @@ import navigation.NavigationService.utils.LidarNavigationDisplay;
 import navigation.NavigationService.utils.MotorUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +20,7 @@ import static navigation.NavigationService.utils.LidarUtils.calculateMaxDrivingD
 
 @Component
 public final class DebugNavigate {
+    private static final Logger log = LoggerFactory.getLogger(DebugNavigate.class);
     @Value("${mqtt.channel.navigation.data}") private String NAVIGATION_DATA_CHANNEL;
     private static String staticNavigationDataChannel;
     @PostConstruct
@@ -81,7 +84,6 @@ public final class DebugNavigate {
         else if (command.has("driveToMaxFrontDistance")) {
             if (!command.getBoolean("driveToMaxFrontDistance")) {
                 drive = false;
-                MotorUtils.stopMotors();
                 showMaxFrontDistance = false;
                 LidarNavigationDisplay.clearNavigationData();
                 return;
@@ -94,15 +96,22 @@ public final class DebugNavigate {
             while (drive) {
                 double distance = calculateMaxDrivingDistance(0, buffer);
                 if (distance <= 0.d) {
-                    MotorUtils.stopMotors();
                     drive = false;
-                } else {
-                    double currentSpeed = ModeHandler.getCurrentMovement()[0];
-                    double speed = MotorUtils.getSpeedToDriveDistance(maxSpeed, currentSpeed, distance);
-                    MotorUtils.drive(0.d, speed);
+                    continue;
+                }
+
+                double currentSpeed = ModeHandler.getCurrentMovement()[0];
+                double speed = MotorUtils.getSpeedToDriveDistance(maxSpeed, currentSpeed, distance);
+                MotorUtils.drive(0.d, speed);
+
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    log.error("Thread interrupted. {}", e.getMessage());
+                    Thread.currentThread().interrupt();
                 }
             }
-
+            MotorUtils.stopMotors();
         }
     }
 }
