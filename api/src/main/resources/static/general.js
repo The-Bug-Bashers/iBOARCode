@@ -3,6 +3,8 @@ let canvas, lidarCtx, centerX, centerY, scale; // Variables for lidarSection.js
 
 let ctx, combinedChart; // Variables for Chart.js
 
+let hideMotorData = false;
+
 function adjustControlsHeight() {
     const controlsElement = document.getElementById("controls");
     const controlsContainer = document.getElementById("controlsContainer");

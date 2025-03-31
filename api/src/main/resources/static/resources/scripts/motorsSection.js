@@ -69,6 +69,7 @@ function updateChart(actual1, actual2, actual3, target1, target2, target3, pid_o
 }
 
 function processMotorData(motorData) {
+    if (hideMotorData) return;
     try {
         updateChart(
             motorData.motor1.actual, motorData.motor2.actual, motorData.motor3.actual,

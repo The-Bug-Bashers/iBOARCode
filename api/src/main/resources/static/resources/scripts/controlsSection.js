@@ -49,6 +49,7 @@ function showControls(mode) {
             break;
         case "Settings":
             controlsContainer.innerHTML = getSettingsContent();
+            addSettingsCode();
             break;
         default:
             controlsContainer.innerHTML = "";
@@ -311,6 +312,18 @@ function addDebugNavigationCode() {
     driveToMaxFrontDistanceToggle.addEventListener("change", () => {
         showMaxFrontDistanceToggle.checked = false;
         sendMessage(`{"command": "debugNavigate", "driveToMaxFrontDistance": ${driveToMaxFrontDistanceToggle.checked}, "buffer": ${bufferInput.value}, "maxSpeed": ${maxSpeedInput.value}}`);
+    });
+}
+
+function addSettingsCode() {
+    const hideMotorDataToggle = document.getElementById("hideMotorDataSettingsToggle");
+
+    // Set default values
+    hideMotorDataToggle.checked = hideMotorData;
+
+    // Event listener for hide motor data toggle
+    hideMotorDataToggle.addEventListener("change", () => {
+        hideMotorData = hideMotorDataToggle.checked;
     });
 }
 
