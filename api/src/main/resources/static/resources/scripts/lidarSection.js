@@ -58,11 +58,14 @@ function drawNavigationData(data) {
 }
 
 function drawLidarData(data) {
+    let maxDistance;
     if (lockLidarZoom) {
-        scale = 0.01 * lidarZoomValue;
+        maxDistance = 0.01 * lidarZoomValue;
     } else {
-        scale = Math.min(canvas.width, canvas.height) / (Math.max(...data.map(point => parseFloat(point.distance))) * 2);
+        maxDistance = (Math.max(...data.map(point => parseFloat(point.distance))));
     }
+    scale = Math.min(canvas.width, canvas.height) / (maxDistance * 2);
+
 
     drawBot();
 
