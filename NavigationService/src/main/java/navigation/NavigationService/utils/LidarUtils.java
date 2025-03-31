@@ -27,7 +27,7 @@ public final class LidarUtils {
      * @return maximum distance the bot can drive in a straight line without colliding with an obstacle
      */
     public static double calculateMaxDrivingDistance(double targetAngle, double buffer) {
-        double boarRadiusPlusBuffer = boarRadius + buffer / 100; // convert buffer from cm to m
+        double boarRadiusPlusBuffer = boarRadius + (buffer / 100.d); // convert buffer from cm to m
         JSONArray data = ModeHandler.getLatestLidarData();
         if (data == null) return 14;
         double maxDrivingDistance = 14 - boarRadiusPlusBuffer;
@@ -35,7 +35,7 @@ public final class LidarUtils {
         final double[] checkAngles = {AngleUtils.normalizeAngle(targetAngle - 90), AngleUtils.normalizeAngle(targetAngle + 90)};
         final double minCheckAngle = Math.min(checkAngles[0], checkAngles[1]);
         final double maxCheckAngle = Math.max(checkAngles[0], checkAngles[1]);
-        log.info("targetAngle: {}, maxCheckAngle: {}, minCheckAngle: {}", targetAngle, maxCheckAngle, minCheckAngle);
+        log.info("boarRadiusPlusBuffer: {} targetAngle: {}, maxCheckAngle: {}, minCheckAngle: {}",boarRadiusPlusBuffer, targetAngle, maxCheckAngle, minCheckAngle);
 
         for (int i = 0; i < data.length(); i++) {
             JSONObject obj = data.getJSONObject(i);
