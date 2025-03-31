@@ -298,17 +298,19 @@ function addDebugNavigationCode() {
     const showMaxFrontDistanceToggle = document.getElementById("showMaxFrontDistanceToggle");
     const driveToMaxFrontDistanceToggle = document.getElementById("driveToMaxFrontDistanceToggle");
     const bufferInput = document.getElementById("bufferDriveToMaxFrontDistanceInput");
+    const maxSpeedInput = document.getElementById("maxSpeedDriveToMaxFrontDistanceInput");
     showMaxFrontDistanceToggle.checked = false;
     driveToMaxFrontDistanceToggle.checked = false;
     bufferInput.value = 5;
+    maxSpeedInput.value = 30;
 
     showMaxFrontDistanceToggle.addEventListener("change", () => {
         driveToMaxFrontDistanceToggle.checked = false;
-        sendMessage(`{"command": "debugNavigate", "showMaxFrontDistance": ${showMaxFrontDistanceToggle.checked}}`);
+        sendMessage(`{"command": "debugNavigate", "showMaxFrontDistance": ${showMaxFrontDistanceToggle.checked}, "buffer": ${bufferInput.value}}`);
     });
     driveToMaxFrontDistanceToggle.addEventListener("change", () => {
         showMaxFrontDistanceToggle.checked = false;
-        sendMessage(`{"command": "debugNavigate", "driveToMaxFrontDistance": ${driveToMaxFrontDistanceToggle.checked}, "buffer": ${bufferInput.value}}`);
+        sendMessage(`{"command": "debugNavigate", "driveToMaxFrontDistance": ${driveToMaxFrontDistanceToggle.checked}, "buffer": ${bufferInput.value}, "maxSpeed": ${maxSpeedInput.value}}`);
     });
     
     
@@ -555,6 +557,12 @@ function getDebugNavigateContent() {
             <h4>Buffer (cm) </h4>
             <div class="inputBorder">
                 <input type="number" min="0" max="500" id="bufferDriveToMaxFrontDistanceInput" class="numberRange" placeholder="5" autocomplete="off">
+            </div>
+        </div>
+        <div class="inputPlusLabel">
+            <h4>Max Speed (%) </h4>
+            <div class="inputBorder">
+                <input type="number" min="0" max="100" id="maxSpeedDriveToMaxFrontDistanceInput" class="numberRange" placeholder="30" autocomplete="off">
             </div>
         </div>
     `;

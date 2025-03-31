@@ -192,9 +192,10 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
             case "debugNavigate":
                 Map<String, Object> debugNavigateParams = new HashMap<>();
                 debugNavigateParams.put("command", "debugNavigate");
+                debugNavigateParams.put("buffer", new int[]{0, 500});
                 if (jsonMessage.has("driveToMaxFrontDistance")) {
                     debugNavigateParams.put("driveToMaxFrontDistance", Set.of("true", "false"));
-                    debugNavigateParams.put("buffer", new int[]{0, 500});
+                    debugNavigateParams.put("maxSpeed", new int[]{0, 100});
                 } else {
                     debugNavigateParams.put("showMaxFrontDistance", Set.of("true", "false"));
                 }
