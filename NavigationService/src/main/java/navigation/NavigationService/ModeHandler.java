@@ -84,7 +84,7 @@ public class ModeHandler {
         return lastMotorData;
     }
     public static double[] getCurrentMovement() {
-        JSONObject movementTarget = lastMotorData.getJSONObject("motorData").getJSONObject("movement_target");
+        JSONObject movementTarget = lastMotorData.getJSONObject("movement_target");
         double currentSpeed = movementTarget.getDouble("speed");
         double currentDirection = movementTarget.getDouble("direction");
 
