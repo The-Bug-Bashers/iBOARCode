@@ -1,8 +1,6 @@
 package navigation.NavigationService.utils;
 
 import jakarta.annotation.PostConstruct;
-import navigation.NavigationService.ModeHandler;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public final class MotorUtils {
+public final class Motor {
     private static final Logger log = LoggerFactory.getLogger(MQTTHandler.class);
 
     @Value("${mqtt.channel.motor.drive}") private String MOTOR_DRIVE_CHANNEL;

@@ -1,5 +1,6 @@
 package navigation.NavigationService;
 
+import navigation.NavigationService.utils.LidarNavigationDisplay;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import navigation.NavigationService.modes.DebugNavigate;
 import navigation.NavigationService.modes.SimpleNavigate;
-import navigation.NavigationService.utils.MotorUtils;
+import navigation.NavigationService.utils.Motor;
 
 enum NavigationModes {NOT_MANAGED_BY_NAVIGATION_CONTROLLER, SIMPLE_NAVIGATE, DEBUG_NAVIGATE}
 
@@ -74,7 +75,8 @@ public class ModeHandler {
             default:
                 log.error("stop method of mode: {} not found", mode);
         }
-        MotorUtils.stopMotors();
+        Motor.stopMotors();
+        LidarNavigationDisplay.clearNavigationData();
     }
 
     public static JSONArray getLatestLidarData() {

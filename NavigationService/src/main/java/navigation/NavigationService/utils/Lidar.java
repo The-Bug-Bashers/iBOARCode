@@ -1,7 +1,6 @@
 package navigation.NavigationService.utils;
 
 import jakarta.annotation.PostConstruct;
-import navigation.NavigationService.MQTTHandler;
 import navigation.NavigationService.ModeHandler;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -11,8 +10,8 @@ import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 
 @Component
-public final class LidarUtils {
-    private static final Logger log = LoggerFactory.getLogger(LidarUtils.class);
+public final class Lidar {
+    private static final Logger log = LoggerFactory.getLogger(Lidar.class);
     @Value("${boar.diameter}") private double BOAR_DIAMETER;
     private static double boarRadius;
     @PostConstruct
@@ -32,7 +31,7 @@ public final class LidarUtils {
         if (data == null) return 14;
         double maxDrivingDistance = 14 - boarRadiusPlusBuffer;
 
-        final double[] checkAngles = {AngleUtils.normalizeAngle(targetAngle - 90), AngleUtils.normalizeAngle(targetAngle + 90)};
+        final double[] checkAngles = {Angle.normalizeAngle(targetAngle - 90), Angle.normalizeAngle(targetAngle + 90)};
         final double minCheckAngle = Math.min(checkAngles[0], checkAngles[1]);
         final double maxCheckAngle = Math.max(checkAngles[0], checkAngles[1]);
         log.info("boarRadiusPlusBuffer: {} targetAngle: {}, maxCheckAngle: {}, minCheckAngle: {}",boarRadiusPlusBuffer, targetAngle, maxCheckAngle, minCheckAngle);
@@ -44,7 +43,7 @@ public final class LidarUtils {
 
             if (currentAngle < maxCheckAngle && currentAngle > minCheckAngle) continue;
 
-            double deviationAngle = AngleUtils.getSmallestDifference(targetAngle, currentAngle);
+            double deviationAngle = Angle.getSmallestDifference(targetAngle, currentAngle);
             double currentHalfWidth = Math.sin(Math.toRadians(deviationAngle)) * currentDistance;
 
             if(currentHalfWidth > boarRadiusPlusBuffer) continue;

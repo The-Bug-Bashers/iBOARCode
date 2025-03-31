@@ -1,6 +1,6 @@
 package navigation.NavigationService.utils;
 
-public final class AngleUtils {
+public final class Angle {
     public static double normalizeAngle(double angle) {
         if (angle < 0) {
             while (angle < 0) {

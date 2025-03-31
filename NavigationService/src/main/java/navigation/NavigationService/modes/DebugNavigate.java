@@ -4,7 +4,7 @@ import jakarta.annotation.PostConstruct;
 import navigation.NavigationService.MQTTHandler;
 import navigation.NavigationService.ModeHandler;
 import navigation.NavigationService.utils.LidarNavigationDisplay;
-import navigation.NavigationService.utils.MotorUtils;
+import navigation.NavigationService.utils.Motor;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -16,7 +16,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static navigation.NavigationService.utils.LidarUtils.calculateMaxDrivingDistance;
+import static navigation.NavigationService.utils.Lidar.calculateMaxDrivingDistance;
 
 @Component
 public final class DebugNavigate {
@@ -101,8 +101,8 @@ public final class DebugNavigate {
                 }
 
                 double currentSpeed = ModeHandler.getCurrentMovement()[0];
-                double speed = MotorUtils.getSpeedToDriveDistance(maxSpeed, currentSpeed, distance);
-                MotorUtils.drive(0.d, speed);
+                double speed = Motor.getSpeedToDriveDistance(maxSpeed, currentSpeed, distance);
+                Motor.drive(0.d, speed);
 
                 try {
                     Thread.sleep(200);
@@ -111,7 +111,7 @@ public final class DebugNavigate {
                     Thread.currentThread().interrupt();
                 }
             }
-            MotorUtils.stopMotors();
+            Motor.stopMotors();
         }
     }
 }
