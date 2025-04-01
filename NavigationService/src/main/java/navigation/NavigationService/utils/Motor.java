@@ -57,7 +57,7 @@ public final class Motor {
                 }
 
                 double currentSpeed = ModeHandler.getCurrentMovement()[0];
-                double speed = getSpeedToDriveDistance(maxSpeed, currentSpeed, distance);
+                double speed = getSpeedToDriveDistance(maxSpeed, currentSpeed, distance, 0.1);
                 drive(targetAngle, speed);
 
                 try {
@@ -74,28 +74,26 @@ public final class Motor {
 
 
     private static final double MAX_SPEED_MPS = 0.96;
+    private static double currentSpeed = 0.0;
 
-    public static double getSpeedToDriveDistance(double maxSpeedPercent, double currentSpeedPercent, double distance) {
+    public static double getSpeedToDriveDistance(double maxSpeedPercent, double currentSpeedPercent, double distance, double deltaTime) {
         double acceleration = 1.0;  // m/s²
         double deceleration = 1.0;  // m/s²
-        double minSpeedMps = 0.1;   // Prevents motor stall
+        double maxSpeedMps = (maxSpeedPercent / 100.0) * MAX_SPEED_MPS;
+        double currentSpeedMps = (currentSpeedPercent / 100.0) * MAX_SPEED_MPS;
 
-        // Convert percent speed to real speed in m/s
-        double maxSpeed = (maxSpeedPercent / 100.0) * MAX_SPEED_MPS;
-        double currentSpeed = (currentSpeedPercent / 100.0) * MAX_SPEED_MPS;
+        double stoppingDistance = (currentSpeedMps * currentSpeedMps) / (2 * deceleration);
 
-        // Compute stopping distance using real speed
-        double stoppingDistance = (currentSpeed * currentSpeed) / (2 * deceleration);
-
-        double newSpeed;
-        if (distance <= stoppingDistance) {
-            newSpeed = Math.sqrt(Math.max(0, currentSpeed * currentSpeed - 2 * deceleration * distance));
+        // Gradually accelerate until max speed is reached
+        if (distance > stoppingDistance) {
+            currentSpeed = Math.min(currentSpeed + (acceleration * deltaTime), maxSpeedMps);
         } else {
-            // Accelerate up to max speed
-            newSpeed = Math.sqrt(currentSpeed * currentSpeed + 2 * acceleration * distance);
-            newSpeed = Math.min(newSpeed, maxSpeed);
+            // Decelerate as we approach the target
+            currentSpeed = Math.max(currentSpeed - (deceleration * deltaTime), 0);
         }
 
-        return Math.max((newSpeed / MAX_SPEED_MPS) * 100.0, minSpeedMps); // Convert back to percentage
+        // Convert current speed back to percentage
+        return (currentSpeed / MAX_SPEED_MPS) * 100.0;
     }
+
 }
