@@ -63,7 +63,7 @@ public final class Motor {
 
             while (drive.get()) {
                 double distance = calculateMaxDrivingDistance(targetAngle, buffer);
-                if (distance <= 0.d) {
+                if (distance <= 0.0075) {
                     stopMotors();
                     break;
                 }
@@ -91,10 +91,10 @@ public final class Motor {
 
     private static final double MAX_SPEED_MPS = 0.96;
     public static double getSpeedToDriveDistance(double maxSpeedPercent, double currentSpeedPercent, double distance, double deltaTime) {
-        double acceleration = 0.8;  // m/s²
+        double acceleration = 1.3;  // m/s²
         double maxSpeedMps = (maxSpeedPercent / 100.0) * MAX_SPEED_MPS;
         double currentSpeedMps = (currentSpeedPercent / 100.0) * MAX_SPEED_MPS;
-        double deceleration = 0.8;
+        double deceleration = 1.3;
         double changedSpeedMps;
 
         double stoppingDistance = (currentSpeedMps * currentSpeedMps) / (2 * deceleration);
@@ -102,7 +102,7 @@ public final class Motor {
         if (distance > stoppingDistance) {
             changedSpeedMps = Math.min(currentSpeedMps + (acceleration * deltaTime), maxSpeedMps);
         } else {
-            changedSpeedMps = Math.max(currentSpeedMps - (deceleration * deltaTime), 0);
+            changedSpeedMps = Math.max((currentSpeedMps - ((currentSpeedMps * currentSpeedMps) / (2 * distance))), 0);
         }
 
         return (changedSpeedMps / MAX_SPEED_MPS) * 100.0; // Convert back to percentage
