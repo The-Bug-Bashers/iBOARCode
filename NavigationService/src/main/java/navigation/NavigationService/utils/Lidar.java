@@ -34,7 +34,6 @@ public final class Lidar {
         final double[] checkAngles = {Angle.normalizeAngle(targetAngle - 90), Angle.normalizeAngle(targetAngle + 90)};
         final double minCheckAngle = Math.min(checkAngles[0], checkAngles[1]);
         final double maxCheckAngle = Math.max(checkAngles[0], checkAngles[1]);
-        log.info("boarRadiusPlusBuffer: {} targetAngle: {}, maxCheckAngle: {}, minCheckAngle: {}",boarRadiusPlusBuffer, targetAngle, maxCheckAngle, minCheckAngle);
 
         for (int i = 0; i < data.length(); i++) {
             JSONObject obj = data.getJSONObject(i);
