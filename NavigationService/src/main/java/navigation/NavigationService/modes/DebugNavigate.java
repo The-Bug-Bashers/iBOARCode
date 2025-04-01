@@ -56,7 +56,7 @@ public final class DebugNavigate {
     }
 
     public static void stop() {
-        drive = false;
+        Motor.stopMotors();
         showMaxFrontDistance = false;
 
         if (executorService != null && !executorService.isShutdown()) {
@@ -73,7 +73,7 @@ public final class DebugNavigate {
 
     public static void executeCommand(JSONObject command) {
         if (command.has("showMaxFrontDistance")) {
-            drive = false;
+            Motor.stopMotors();
             if (!command.getBoolean("showMaxFrontDistance")) {;
                 showMaxFrontDistance = false;
                 LidarNavigationDisplay.clearNavigationData();
@@ -85,38 +85,14 @@ public final class DebugNavigate {
 
         else if (command.has("driveToMaxFrontDistance")) {
             if (!command.getBoolean("driveToMaxFrontDistance")) {
-                drive = false;
+                Motor.stopMotors();
                 showMaxFrontDistance = false;
                 LidarNavigationDisplay.clearNavigationData();
                 return;
             }
 
             showMaxFrontDistance = true;
-            drive = true;
-            buffer = command.getDouble("buffer");
-            double maxSpeed = command.getDouble("maxSpeed");
-            new Thread(() -> {
-                while (drive) {
-                    double distance = calculateMaxDrivingDistance(0, buffer);
-                    if (distance <= 0.d) {
-                        drive = false;
-                        break; // Exit loop
-                    }
-
-                    double currentSpeed = ModeHandler.getCurrentMovement()[0];
-                    double speed = Motor.getSpeedToDriveDistance(maxSpeed, currentSpeed, distance);
-                    Motor.drive(0.d, speed);
-
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        log.error("Thread interrupted. {}", e.getMessage());
-                        Thread.currentThread().interrupt();
-                        break;
-                    }
-                }
-                Motor.stopMotors();
-            }).start();
+            Motor.driveMaxDistance(0.d, command.getDouble("maxSpeed"), command.getDouble("buffer"));
         }
     }
 }
