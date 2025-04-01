@@ -62,6 +62,8 @@ public final class Motor {
         drive.set(true);
         currentSpeed = 0;
         drivingThread = new Thread(() -> {
+            long lastUpdateTime = System.currentTimeMillis();
+
             while (drive.get()) {
                 double distance = calculateMaxDrivingDistance(targetAngle, buffer);
                 if (distance <= 0.d) {
@@ -70,7 +72,11 @@ public final class Motor {
                 }
 
                 double currentSpeed = ModeHandler.getCurrentMovement()[0];
-                double speed = getSpeedToDriveDistance(maxSpeed, currentSpeed, distance, 0.1);
+
+                long currentTime = System.currentTimeMillis();
+                double deltaTime = (currentTime - lastUpdateTime) / 1000.0; // Convert ms to seconds
+                lastUpdateTime = currentTime;
+                double speed = getSpeedToDriveDistance(maxSpeed, currentSpeed, distance, deltaTime);
                 drive(targetAngle, speed);
 
                 try {
@@ -91,7 +97,7 @@ public final class Motor {
     public static double getSpeedToDriveDistance(double maxSpeedPercent, double currentSpeedPercent, double distance, double deltaTime) {
         double acceleration = 0.8;  // m/s²
         double maxSpeedMps = (maxSpeedPercent / 100.0) * MAX_SPEED_MPS;
-        double deceleration = Math.max(1.0, maxSpeedMps / 2);
+        double deceleration = 0.2;
 
 
         double currentSpeedMps = (currentSpeedPercent / 100.0) * MAX_SPEED_MPS;
