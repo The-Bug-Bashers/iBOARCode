@@ -77,7 +77,7 @@ public final class Motor {
                 drive(targetAngle, speed);
 
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(10);
                 } catch (InterruptedException e) {
                     log.error("Thread interrupted. {}", e.getMessage());
                     Thread.currentThread().interrupt();
@@ -97,10 +97,10 @@ public final class Motor {
         double deceleration = 1.3;
         double changedSpeedMps;
 
-        double stoppingDistance = (currentSpeedMps * currentSpeedMps) / (2 * deceleration);
+        double stoppingDistance = (currentSpeedMps * currentSpeedMps) / (2 * deceleration * deltaTime);
 
         if (distance > stoppingDistance) {
-            changedSpeedMps = Math.min(currentSpeedMps + (acceleration * deltaTime), maxSpeedMps);
+            changedSpeedMps = Math.min((currentSpeedMps + (acceleration * deltaTime)), maxSpeedMps);
         } else {
             changedSpeedMps = Math.max((currentSpeedMps - ((currentSpeedMps * currentSpeedMps) / (2 * distance))), 0);
         }
