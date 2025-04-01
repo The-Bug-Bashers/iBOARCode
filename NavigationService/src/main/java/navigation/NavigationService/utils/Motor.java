@@ -89,7 +89,7 @@ public final class Motor {
     }
 
 
-    private static final double MAX_SPEED_MPS = 0.96;
+    private static final double MAX_SPEED_MPS = 0.9;
     public static double getSpeedToDriveDistance(double maxSpeedPercent, double currentSpeedPercent, double distance, double deltaTime) {
         double acceleration = 1.3;  // m/s²
         double maxSpeedMps = (maxSpeedPercent / 100.0) * MAX_SPEED_MPS;
