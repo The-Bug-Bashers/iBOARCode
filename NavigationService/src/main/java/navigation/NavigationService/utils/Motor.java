@@ -72,7 +72,30 @@ public final class Motor {
         drivingThread.start();
     }
 
-    public static double getSpeedToDriveDistance(double maxSpeed, double currentSpeed, double distance) {
-        return maxSpeed; //TODO: replace with proper ac-/deceleration calculation
+
+    private static final double MAX_SPEED_MPS = 0.96;
+
+    public static double getSpeedToDriveDistance(double maxSpeedPercent, double currentSpeedPercent, double distance) {
+        double acceleration = 1.0;  // m/s²
+        double deceleration = 1.0;  // m/s²
+        double minSpeedMps = 0.1;   // Prevents motor stall
+
+        // Convert percent speed to real speed in m/s
+        double maxSpeed = (maxSpeedPercent / 100.0) * MAX_SPEED_MPS;
+        double currentSpeed = (currentSpeedPercent / 100.0) * MAX_SPEED_MPS;
+
+        // Compute stopping distance using real speed
+        double stoppingDistance = (currentSpeed * currentSpeed) / (2 * deceleration);
+
+        double newSpeed;
+        if (distance <= stoppingDistance) {
+            newSpeed = Math.sqrt(Math.max(0, currentSpeed * currentSpeed - 2 * deceleration * distance));
+        } else {
+            // Accelerate up to max speed
+            newSpeed = Math.sqrt(currentSpeed * currentSpeed + 2 * acceleration * distance);
+            newSpeed = Math.min(newSpeed, maxSpeed);
+        }
+
+        return Math.max((newSpeed / MAX_SPEED_MPS) * 100.0, minSpeedMps); // Convert back to percentage
     }
 }
