@@ -56,11 +56,8 @@ public final class Motor {
                 Thread.currentThread().interrupt();
             }
         }
-        if (drivingThread != null && drivingThread.isAlive()) {
-            stopMotors();
-        }
+
         drive.set(true);
-        currentSpeed = 0;
         drivingThread = new Thread(() -> {
             long lastUpdateTime = System.currentTimeMillis();
 
@@ -93,24 +90,21 @@ public final class Motor {
 
 
     private static final double MAX_SPEED_MPS = 0.96;
-    private static double currentSpeed;
     public static double getSpeedToDriveDistance(double maxSpeedPercent, double currentSpeedPercent, double distance, double deltaTime) {
         double acceleration = 0.8;  // m/s²
         double maxSpeedMps = (maxSpeedPercent / 100.0) * MAX_SPEED_MPS;
-        double deceleration = 0.2;
-
-
         double currentSpeedMps = (currentSpeedPercent / 100.0) * MAX_SPEED_MPS;
+        double deceleration = 0.8;
+        double changedSpeedMps;
+
         double stoppingDistance = (currentSpeedMps * currentSpeedMps) / (2 * deceleration);
 
         if (distance > stoppingDistance) {
-            currentSpeed = Math.min(currentSpeed + (acceleration * deltaTime), maxSpeedMps);
+            changedSpeedMps = Math.min(currentSpeedMps + (acceleration * deltaTime), maxSpeedMps);
         } else {
-            currentSpeed = Math.max(currentSpeed - (deceleration * deltaTime), 0);
+            changedSpeedMps = Math.max(currentSpeedMps - (deceleration * deltaTime), 0);
         }
 
-        return (currentSpeed / MAX_SPEED_MPS) * 100.0; // Convert back to percentage
+        return (changedSpeedMps / MAX_SPEED_MPS) * 100.0; // Convert back to percentage
     }
-
-
 }
