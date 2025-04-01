@@ -26,9 +26,18 @@ public final class Motor {
     }
 
     public static void stopMotors() {
-         if (drive.get()) drive.set(false);
-         drive(0, 0);
+        drive.set(false);
+        if (drivingThread != null && drivingThread.isAlive()) {
+            drivingThread.interrupt();
+            try {
+                drivingThread.join();
+            } catch (InterruptedException e) {
+                log.error("Error stopping driving thread: {}", e.getMessage());
+            }
+        }
+        drive(0, 0);
     }
+
 
     public static void drive(double angle, double speed) {
         JSONObject message = new JSONObject().put("command", "drive").put("angle", angle).put("speed", speed);
@@ -46,6 +55,9 @@ public final class Motor {
                 log.error("Failed to join previous driving thread: {}", e.getMessage());
                 Thread.currentThread().interrupt();
             }
+        }
+        if (drivingThread != null && drivingThread.isAlive()) {
+            stopMotors();
         }
         drive.set(true);
         drivingThread = new Thread(() -> {
@@ -75,25 +87,23 @@ public final class Motor {
 
     private static final double MAX_SPEED_MPS = 0.96;
     private static double currentSpeed = 0.0;
-
     public static double getSpeedToDriveDistance(double maxSpeedPercent, double currentSpeedPercent, double distance, double deltaTime) {
         double acceleration = 1.0;  // m/s²
-        double deceleration = 1.0;  // m/s²
         double maxSpeedMps = (maxSpeedPercent / 100.0) * MAX_SPEED_MPS;
         double currentSpeedMps = (currentSpeedPercent / 100.0) * MAX_SPEED_MPS;
 
+        // Define deceleration before using it
+        double deceleration = Math.max(1.0, maxSpeedMps / 2);
         double stoppingDistance = (currentSpeedMps * currentSpeedMps) / (2 * deceleration);
 
-        // Gradually accelerate until max speed is reached
         if (distance > stoppingDistance) {
             currentSpeed = Math.min(currentSpeed + (acceleration * deltaTime), maxSpeedMps);
         } else {
-            // Decelerate as we approach the target
             currentSpeed = Math.max(currentSpeed - (deceleration * deltaTime), 0);
         }
 
-        // Convert current speed back to percentage
-        return (currentSpeed / MAX_SPEED_MPS) * 100.0;
+        return (currentSpeed / MAX_SPEED_MPS) * 100.0; // Convert back to percentage
     }
+
 
 }
