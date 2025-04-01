@@ -60,6 +60,7 @@ public final class Motor {
             stopMotors();
         }
         drive.set(true);
+        currentSpeed = 0;
         drivingThread = new Thread(() -> {
             while (drive.get()) {
                 double distance = calculateMaxDrivingDistance(targetAngle, buffer);
@@ -86,14 +87,14 @@ public final class Motor {
 
 
     private static final double MAX_SPEED_MPS = 0.96;
-    private static double currentSpeed = 0.0;
+    private static double currentSpeed;
     public static double getSpeedToDriveDistance(double maxSpeedPercent, double currentSpeedPercent, double distance, double deltaTime) {
-        double acceleration = 1.0;  // m/s²
+        double acceleration = 0.8;  // m/s²
         double maxSpeedMps = (maxSpeedPercent / 100.0) * MAX_SPEED_MPS;
-        double currentSpeedMps = (currentSpeedPercent / 100.0) * MAX_SPEED_MPS;
-
-        // Define deceleration before using it
         double deceleration = Math.max(1.0, maxSpeedMps / 2);
+
+
+        double currentSpeedMps = (currentSpeedPercent / 100.0) * MAX_SPEED_MPS;
         double stoppingDistance = (currentSpeedMps * currentSpeedMps) / (2 * deceleration);
 
         if (distance > stoppingDistance) {
