@@ -29,7 +29,7 @@ public final class DebugNavigate {
     }
 
     private static boolean showMaxFrontDistance = false;
-    private static boolean drive = false;
+    private static volatile boolean drive = false;
     private static double buffer = 0;
 
 
@@ -57,10 +57,12 @@ public final class DebugNavigate {
 
     public static void stop() {
         drive = false;
+        showMaxFrontDistance = false;
+
         if (executorService != null && !executorService.isShutdown()) {
             executorService.shutdown();
             try {
-                if (!executorService.awaitTermination(60, TimeUnit.SECONDS)) {
+                if (!executorService.awaitTermination(1, TimeUnit.SECONDS)) {
                     executorService.shutdownNow();
                 }
             } catch (InterruptedException e) {
@@ -93,25 +95,28 @@ public final class DebugNavigate {
             drive = true;
             buffer = command.getDouble("buffer");
             double maxSpeed = command.getDouble("maxSpeed");
-            while (drive) {
-                double distance = calculateMaxDrivingDistance(0, buffer);
-                if (distance <= 0.d) {
-                    drive = false;
-                    continue;
-                }
+            new Thread(() -> {
+                while (drive) {
+                    double distance = calculateMaxDrivingDistance(0, buffer);
+                    if (distance <= 0.d) {
+                        drive = false;
+                        break; // Exit loop
+                    }
 
-                double currentSpeed = ModeHandler.getCurrentMovement()[0];
-                double speed = Motor.getSpeedToDriveDistance(maxSpeed, currentSpeed, distance);
-                Motor.drive(0.d, speed);
+                    double currentSpeed = ModeHandler.getCurrentMovement()[0];
+                    double speed = Motor.getSpeedToDriveDistance(maxSpeed, currentSpeed, distance);
+                    Motor.drive(0.d, speed);
 
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    log.error("Thread interrupted. {}", e.getMessage());
-                    Thread.currentThread().interrupt();
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        log.error("Thread interrupted. {}", e.getMessage());
+                        Thread.currentThread().interrupt();
+                        break;
+                    }
                 }
-            }
-            Motor.stopMotors();
+                Motor.stopMotors();
+            }).start();
         }
     }
 }
