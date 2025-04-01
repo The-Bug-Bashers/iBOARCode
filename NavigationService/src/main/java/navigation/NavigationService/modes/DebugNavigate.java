@@ -79,8 +79,8 @@ public final class DebugNavigate {
                 LidarNavigationDisplay.clearNavigationData();
                 return;
             }
-            showMaxFrontDistance = true;
             buffer = command.getDouble("buffer");
+            showMaxFrontDistance = true;
         }
 
         else if (command.has("driveToMaxFrontDistance")) {
@@ -91,8 +91,9 @@ public final class DebugNavigate {
                 return;
             }
 
+            buffer = command.getDouble("buffer");
             showMaxFrontDistance = true;
-            Motor.driveMaxDistance(0.d, command.getDouble("maxSpeed"), command.getDouble("buffer"));
+            Motor.driveMaxDistance(0.d, command.getDouble("maxSpeed"), buffer);
         }
     }
 }
