@@ -35,6 +35,7 @@ public final class DebugNavigate {
     private static mode currentMode = mode.NONE;
     private static ScheduledExecutorService executorService;
     private static double buffer = 0;
+    private static double maxSpeed = 0;
 
 
     public static void start() {
@@ -42,6 +43,7 @@ public final class DebugNavigate {
 
         Runnable task = () -> {
             switch (currentMode) {
+                case DRIVE_MAX_FRONT_DISTANCE:
                 case MAX_FRONT_DISTANCE:
                     double distance = calculateMaxDrivingDistance(0, buffer);
                     LidarNavigationDisplay.setNavigationData(buffer, new JSONArray()
@@ -54,7 +56,7 @@ public final class DebugNavigate {
                     break;
                 case DRIVE_FURTHEST_DISTANCE:
                     double[] furthestDriveValues = calculateFurthestDistance(targetAngles, buffer);
-                    Motor.driveMaxDistance(furthestDriveValues[0], 0.5, buffer);
+                    Motor.driveMaxDistance(furthestDriveValues[0], maxSpeed, buffer);
                     LidarNavigationDisplay.setNavigationData(buffer, new JSONArray()
                             .put(new JSONObject().put("drawPath", new JSONObject().put("angle", furthestDriveValues[0]).put("distance", furthestDriveValues[1]))), true);
                     break;
@@ -119,6 +121,7 @@ public final class DebugNavigate {
             }
 
             buffer = command.getDouble("buffer");
+            maxSpeed = command.getDouble("maxSpeed");
             currentMode = mode.DRIVE_FURTHEST_DISTANCE;
         }
     }
