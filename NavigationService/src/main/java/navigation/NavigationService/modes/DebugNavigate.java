@@ -86,7 +86,7 @@ public final class DebugNavigate {
             showMaxFrontDistance = true;
         } else if (command.has("showFurthestDistance")) {
             Motor.stopMotors();
-            if (!command.getBoolean("showMaxFrontDistance")) {;
+            if (!command.getBoolean("showFurthestDistance")) {;
                 showFurthestDistance = false;
                 LidarNavigationDisplay.clearNavigationData();
                 return;
