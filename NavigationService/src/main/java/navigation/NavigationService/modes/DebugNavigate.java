@@ -29,28 +29,35 @@ public final class DebugNavigate {
         staticNavigationDataChannel = NAVIGATION_DATA_CHANNEL;
     }
 
-    private static boolean showMaxFrontDistance = false;
-    private static boolean showFurthestDistance = false;
-    private static volatile boolean drive = false;
-
-    private static double buffer = 0;
     private static final double[] targetAngles = Angle.getAngleArray(360);
+    private static enum mode {NONE, MAX_FRONT_DISTANCE, FURTHEST_DISTANCE, DRIVE_MAX_FRONT_DISTANCE, DRIVE_FURTHEST_DISTANCE}
 
-
+    private static mode currentMode = mode.NONE;
     private static ScheduledExecutorService executorService;
+    private static double buffer = 0;
+
 
     public static void start() {
         executorService = Executors.newSingleThreadScheduledExecutor();
 
         Runnable task = () -> {
-            if (showMaxFrontDistance) {
-                double distance = calculateMaxDrivingDistance(0, buffer);
-                LidarNavigationDisplay.setNavigationData(buffer, new JSONArray()
-                        .put(new JSONObject().put("drawPath", new JSONObject().put("angle", 0).put("distance", distance))), true);
-            } else if (showFurthestDistance) {
-                double[] values = calculateFurthestDistance(targetAngles, buffer);
-                LidarNavigationDisplay.setNavigationData(buffer, new JSONArray()
+            switch (currentMode) {
+                case MAX_FRONT_DISTANCE:
+                    double distance = calculateMaxDrivingDistance(0, buffer);
+                    LidarNavigationDisplay.setNavigationData(buffer, new JSONArray()
+                            .put(new JSONObject().put("drawPath", new JSONObject().put("angle", 0).put("distance", distance))), true);
+                    break;
+                case FURTHEST_DISTANCE:
+                    double[] values = calculateFurthestDistance(targetAngles, buffer);
+                    LidarNavigationDisplay.setNavigationData(buffer, new JSONArray()
                         .put(new JSONObject().put("drawPath", new JSONObject().put("angle", values[0]).put("distance", values[1]))), true);
+                    break;
+                case DRIVE_FURTHEST_DISTANCE:
+                    double[] furthestDriveValues = calculateFurthestDistance(targetAngles, buffer);
+                    Motor.driveMaxDistance(furthestDriveValues[0], 0.5, buffer);
+                    LidarNavigationDisplay.setNavigationData(buffer, new JSONArray()
+                            .put(new JSONObject().put("drawPath", new JSONObject().put("angle", furthestDriveValues[0]).put("distance", furthestDriveValues[1]))), true);
+                    break;
             }
         };
 
@@ -58,12 +65,12 @@ public final class DebugNavigate {
     }
 
     public static void stop() {
-        showMaxFrontDistance = false;
-        showFurthestDistance = false;
+        currentMode = mode.NONE;
 
         if (executorService != null && !executorService.isShutdown()) {
             executorService.shutdown();
             try {
+
                 if (!executorService.awaitTermination(1, TimeUnit.SECONDS)) {
                     executorService.shutdownNow();
                 }
@@ -77,35 +84,42 @@ public final class DebugNavigate {
         if (command.has("showMaxFrontDistance")) {
             Motor.stopMotors();
             if (!command.getBoolean("showMaxFrontDistance")) {;
-                showMaxFrontDistance = false;
+                currentMode = mode.NONE;
                 LidarNavigationDisplay.clearNavigationData();
                 return;
             }
             buffer = command.getDouble("buffer");
-            showFurthestDistance = false;
-            showMaxFrontDistance = true;
+            currentMode = mode.MAX_FRONT_DISTANCE;
         } else if (command.has("showFurthestDistance")) {
             Motor.stopMotors();
             if (!command.getBoolean("showFurthestDistance")) {;
-                showFurthestDistance = false;
+                currentMode = mode.NONE;
                 LidarNavigationDisplay.clearNavigationData();
                 return;
             }
             buffer = command.getDouble("buffer");
-            showMaxFrontDistance = false;
-            showFurthestDistance = true;
+            currentMode = mode.FURTHEST_DISTANCE;
         } else if (command.has("driveToMaxFrontDistance")) {
             if (!command.getBoolean("driveToMaxFrontDistance")) {
+                currentMode = mode.NONE;
                 Motor.stopMotors();
-                showMaxFrontDistance = false;
                 LidarNavigationDisplay.clearNavigationData();
                 return;
             }
 
             buffer = command.getDouble("buffer");
-            showFurthestDistance = false;
-            showMaxFrontDistance = true;
+            currentMode = mode.DRIVE_MAX_FRONT_DISTANCE;
             Motor.driveMaxDistance(0.d, command.getDouble("maxSpeed"), buffer);
+        } else if (command.has("driveToFurthestDistance")) {
+            if (!command.getBoolean("driveToFurthestDistance")) {
+                currentMode = mode.NONE;
+                Motor.stopMotors();
+                LidarNavigationDisplay.clearNavigationData();
+                return;
+            }
+
+            buffer = command.getDouble("buffer");
+            currentMode = mode.DRIVE_FURTHEST_DISTANCE;
         }
     }
 }
