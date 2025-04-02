@@ -40,7 +40,7 @@ public final class Lidar {
             double currentAngle = obj.getDouble("angle");
             double currentDistance = obj.getDouble("distance");
 
-            if (currentAngle < maxCheckAngle && currentAngle > minCheckAngle) continue;
+            if (Angle.getSmallestDifference(targetAngle, currentAngle) > 90) continue;
 
             double deviationAngle = Angle.getSmallestDifference(targetAngle, currentAngle);
             double currentHalfWidth = Math.sin(Math.toRadians(deviationAngle)) * currentDistance;
