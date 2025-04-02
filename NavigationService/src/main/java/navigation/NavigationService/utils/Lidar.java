@@ -53,4 +53,16 @@ public final class Lidar {
         }
         return maxDrivingDistance;
     }
+
+    public static double[] calculateFurthestDistance(double[] targetAngles, double buffer) {
+        double[] values = new double[]{0, 0};
+        for (double targetAngle : targetAngles) {
+            double currentMaxDistance = calculateMaxDrivingDistance(targetAngle, buffer);
+            if (currentMaxDistance > values[1]) {
+                values[1] = currentMaxDistance;
+                values[0] = targetAngle;
+            }
+        }
+        return values;
+    }
 }

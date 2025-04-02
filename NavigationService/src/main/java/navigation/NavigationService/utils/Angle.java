@@ -22,4 +22,13 @@ public final class Angle {
         }
         return difference;
     }
+
+    public static double[] getAngleArray(int angleCount) {
+        double[] angles = new double[angleCount];
+        double angleStep = 360.0 / angleCount;
+        for (int i = 0; i < angleCount; i++) {
+            angles[i] = angleStep * i;
+        }
+        return angles;
+    }
 }
