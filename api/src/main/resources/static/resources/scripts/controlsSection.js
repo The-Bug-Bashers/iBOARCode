@@ -20,7 +20,7 @@ function showControls(mode) {
             document.querySelectorAll('#controlsContainer input[type="checkbox"]').forEach(checkbox => {
                 checkbox.checked = false;
             });
-            document.getElementById("speedRemoteControlInput").value = 50;
+            document.getElementById("speedRemoteControlInput").value = 30;
             sendMessage(`{"command": "changeMode", "mode": "remoteControl"}`);
             addRemoteControlCode();
             break;
