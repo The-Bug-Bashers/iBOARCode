@@ -2,7 +2,6 @@ package navigation.NavigationService.modes;
 
 import jakarta.annotation.PostConstruct;
 import navigation.NavigationService.MQTTHandler;
-import navigation.NavigationService.ModeHandler;
 import navigation.NavigationService.utils.LidarNavigationDisplay;
 import navigation.NavigationService.utils.Motor;
 import org.json.JSONArray;
@@ -37,18 +36,13 @@ public final class DebugNavigate {
 
     public static void start() {
         executorService = Executors.newSingleThreadScheduledExecutor();
+        LidarNavigationDisplay.setNavigationData(0, new JSONArray(), true);
 
         Runnable task = () -> {
             if (showMaxFrontDistance) {
                 double distance = calculateMaxDrivingDistance(0, buffer);
-                JSONObject message =
-                        new JSONObject().put("navigationData",
-                                new JSONArray()
-                                        .put(new JSONObject().put("buffer", new JSONObject().put("buffer", buffer)))
-                                        .put(new JSONObject().put("drawPath", new JSONObject().put("angle", 0).put("distance", distance)))
-                        );
-
-                MQTTHandler.publish(staticNavigationDataChannel, message, 0, false);
+                LidarNavigationDisplay.setNavigationData(buffer, new JSONArray()
+                        .put(new JSONObject().put("drawPath", new JSONObject().put("angle", 0).put("distance", distance))), false);
             }
         };
 
@@ -56,7 +50,6 @@ public final class DebugNavigate {
     }
 
     public static void stop() {
-        Motor.stopMotors();
         showMaxFrontDistance = false;
 
         if (executorService != null && !executorService.isShutdown()) {
