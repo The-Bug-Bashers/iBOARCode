@@ -196,8 +196,13 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
                 if (jsonMessage.has("driveToMaxFrontDistance")) {
                     debugNavigateParams.put("driveToMaxFrontDistance", Set.of("true", "false"));
                     debugNavigateParams.put("maxSpeed", new int[]{0, 100});
-                } else {
+                } else if (jsonMessage.has("driveToFurthestDistance")) {
+                    debugNavigateParams.put("driveToFurthestDistance", Set.of("true", "false"));
+                    debugNavigateParams.put("maxSpeed", new int[]{0, 100});
+                } else if (jsonMessage.has("showMaxFrontDistance")) {
                     debugNavigateParams.put("showMaxFrontDistance", Set.of("true", "false"));
+                } else  {
+                    debugNavigateParams.put("showFurthestDistance", Set.of("true", "false"));
                 }
 
                 if (!verifyParams(jsonMessage, session, debugNavigateParams)) return;
