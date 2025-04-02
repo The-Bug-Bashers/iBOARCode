@@ -39,7 +39,7 @@ public final class LidarNavigationDisplay {
                         .putAll(navigationData)
         );
 
-        if (startScheduling && !running) {
+        if (!running && startScheduling) {
             running = true;
             broadcastThread = new Thread(() -> {
                 while (running) {

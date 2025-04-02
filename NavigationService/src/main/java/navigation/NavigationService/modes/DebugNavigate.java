@@ -36,13 +36,12 @@ public final class DebugNavigate {
 
     public static void start() {
         executorService = Executors.newSingleThreadScheduledExecutor();
-        LidarNavigationDisplay.setNavigationData(0, new JSONArray(), true);
 
         Runnable task = () -> {
             if (showMaxFrontDistance) {
                 double distance = calculateMaxDrivingDistance(0, buffer);
                 LidarNavigationDisplay.setNavigationData(buffer, new JSONArray()
-                        .put(new JSONObject().put("drawPath", new JSONObject().put("angle", 0).put("distance", distance))), false);
+                        .put(new JSONObject().put("drawPath", new JSONObject().put("angle", 0).put("distance", distance))), true);
             }
         };
 
