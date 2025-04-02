@@ -26,9 +26,18 @@ public final class Motor {
     }
 
     public static void stopMotors() {
-         if (drive.get()) drive.set(false);
-         drive(0, 0);
+        drive.set(false);
+        if (drivingThread != null && drivingThread.isAlive()) {
+            drivingThread.interrupt();
+            try {
+                drivingThread.join();
+            } catch (InterruptedException e) {
+                log.error("Error stopping driving thread: {}", e.getMessage());
+            }
+        }
+        drive(0, 0);
     }
+
 
     public static void drive(double angle, double speed) {
         JSONObject message = new JSONObject().put("command", "drive").put("angle", angle).put("speed", speed);
@@ -47,21 +56,28 @@ public final class Motor {
                 Thread.currentThread().interrupt();
             }
         }
+
         drive.set(true);
         drivingThread = new Thread(() -> {
+            long lastUpdateTime = System.currentTimeMillis();
+
             while (drive.get()) {
                 double distance = calculateMaxDrivingDistance(targetAngle, buffer);
-                if (distance <= 0.d) {
+                if (distance <= 0.0075) {
                     stopMotors();
                     break;
                 }
 
                 double currentSpeed = ModeHandler.getCurrentMovement()[0];
-                double speed = getSpeedToDriveDistance(maxSpeed, currentSpeed, distance, 0.1);
+
+                long currentTime = System.currentTimeMillis();
+                double deltaTime = (currentTime - lastUpdateTime) / 1000.0; // Convert ms to seconds
+                lastUpdateTime = currentTime;
+                double speed = getSpeedToDriveDistance(maxSpeed, currentSpeed, distance, deltaTime);
                 drive(targetAngle, speed);
 
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(10);
                 } catch (InterruptedException e) {
                     log.error("Thread interrupted. {}", e.getMessage());
                     Thread.currentThread().interrupt();
@@ -73,27 +89,22 @@ public final class Motor {
     }
 
 
-    private static final double MAX_SPEED_MPS = 0.96;
-    private static double currentSpeed = 0.0;
-
+    private static final double MAX_SPEED_MPS = 0.9;
     public static double getSpeedToDriveDistance(double maxSpeedPercent, double currentSpeedPercent, double distance, double deltaTime) {
-        double acceleration = 1.0;  // m/s²
-        double deceleration = 1.0;  // m/s²
+        double acceleration = 1.3;  // m/s²
         double maxSpeedMps = (maxSpeedPercent / 100.0) * MAX_SPEED_MPS;
         double currentSpeedMps = (currentSpeedPercent / 100.0) * MAX_SPEED_MPS;
+        double deceleration = 1.3;
+        double changedSpeedMps;
 
-        double stoppingDistance = (currentSpeedMps * currentSpeedMps) / (2 * deceleration);
+        double stoppingDistance = (currentSpeedMps * currentSpeedMps) / (2 * deceleration * deltaTime);
 
-        // Gradually accelerate until max speed is reached
         if (distance > stoppingDistance) {
-            currentSpeed = Math.min(currentSpeed + (acceleration * deltaTime), maxSpeedMps);
+            changedSpeedMps = Math.min((currentSpeedMps + (acceleration * deltaTime)), maxSpeedMps);
         } else {
-            // Decelerate as we approach the target
-            currentSpeed = Math.max(currentSpeed - (deceleration * deltaTime), 0);
+            changedSpeedMps = Math.max((currentSpeedMps - ((currentSpeedMps * currentSpeedMps) / (2 * distance))), 0);
         }
 
-        // Convert current speed back to percentage
-        return (currentSpeed / MAX_SPEED_MPS) * 100.0;
+        return (changedSpeedMps / MAX_SPEED_MPS) * 100.0; // Convert back to percentage
     }
-
 }
