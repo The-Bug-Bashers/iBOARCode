@@ -36,14 +36,13 @@ public final class SimpleNavigate {
             }
         }
 
-        running.set(true);
         thread = new Thread(() -> {
             while (running.get()) {
                 final double[] targetAngles = Angle.getAngleArray(360);
 
                 double[] furthestDriveValues = calculateFurthestDistance(targetAngles, buffer);
                 dynamicRestrictionZone[0] = furthestDriveValues[0];
-                
+
                 Motor.driveMaxDistance(furthestDriveValues[0], maxSpeed, buffer);
                 LidarNavigationDisplay.setNavigationData(buffer, new JSONArray()
                         .put(new JSONObject().put("drawZone", new JSONObject().put("direction", Angle.normalizeAngle(targetDirection + 180)).put("width", staticRestrictionZoneWidth).put("colour", staticRestrictionZoneColour)))
@@ -80,6 +79,11 @@ public final class SimpleNavigate {
             stop();
             return;
         }
+        if (!running.get()) {
+            running.set(true);
+            start();
+        }
+
         running.set(true);
         maxSpeed = command.getDouble("maxSpeed");
         buffer = command.getDouble("bufferDistance");
