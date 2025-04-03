@@ -41,7 +41,7 @@ public final class SimpleNavigate {
                 final double[] targetAngles = Angle.getAngleArray(360);
 
                 double[] furthestDriveValues = calculateFurthestDistance(targetAngles, buffer);
-                dynamicRestrictionZone[0] = furthestDriveValues[0];
+                dynamicRestrictionZone[0] = Angle.normalizeAngle(furthestDriveValues[0] +180);
 
                 Motor.driveMaxDistance(furthestDriveValues[0], maxSpeed, buffer);
                 LidarNavigationDisplay.setNavigationData(buffer, new JSONArray()
