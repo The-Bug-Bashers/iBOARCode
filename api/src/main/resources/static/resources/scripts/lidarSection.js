@@ -130,7 +130,7 @@ function drawNavigationPath(x, y) {
 
 function drawZone(direction, width, colour) {
     const halfWidth = width / 2;
-    const startAngle = ((direction - halfWidth) * (Math.PI / 180); // Convert to radians
+    const startAngle = ((direction - halfWidth) * (Math.PI / 180)); // Convert to radians
     const endAngle = ((direction + halfWidth)) * (Math.PI / 180);
     const radius = Math.min(canvas.width, canvas.height) / 2; // Extend to canvas edge
 
