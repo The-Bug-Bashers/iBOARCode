@@ -42,7 +42,7 @@ function drawNavigationData(data) {
         if (entry.buffer) {
             currentBufferDistance = entry.buffer.buffer * 0.01; // Convert cm to m
         } else if (entry.drawPath) {
-            const { angle, distance } = entry.drawPath;
+            const {angle, distance} = entry.drawPath;
 
             if (isNaN(angle) || isNaN(distance)) {
                 console.error("Invalid drawPath values:", entry.drawPath);
@@ -56,6 +56,15 @@ function drawNavigationData(data) {
             const y = centerY + distance * scale * Math.sin(angleRad);
 
             drawNavigationPath(x, y);
+        } else if (entry.drawZone) {
+            const {direction, width, colour} = entry.drawZone;
+            
+            if (isNaN(direction) || isNaN(width) || isNaN(colour)) {
+                console.error("Invalid drawZone values:", entry.drawZone);
+                return;
+            }
+            
+            drawZone(direction - 90, width, colour);
         }
     });
 }
@@ -116,6 +125,20 @@ function drawNavigationPath(x, y) {
     lidarCtx.fillStyle = "cornflowerblue";
     lidarCtx.beginPath();
     lidarCtx.arc(x, y, (botSize / 2) * scale, 0, Math.PI * 2);
+    lidarCtx.fill();
+}
+
+function drawZone(direction, width, colour) {
+    const halfWidth = width / 2;
+    const startAngle = ((direction - halfWidth) * (Math.PI / 180); // Convert to radians
+    const endAngle = ((direction + halfWidth)) * (Math.PI / 180);
+    const radius = Math.min(canvas.width, canvas.height) / 2; // Extend to canvas edge
+
+    lidarCtx.fillStyle = colour;
+    lidarCtx.beginPath();
+    lidarCtx.moveTo(centerX, centerY);
+    lidarCtx.arc(centerX, centerY, radius, startAngle, endAngle);
+    lidarCtx.closePath();
     lidarCtx.fill();
 }
 
