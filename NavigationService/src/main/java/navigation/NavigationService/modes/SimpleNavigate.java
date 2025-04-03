@@ -8,6 +8,8 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static navigation.NavigationService.utils.Lidar.calculateFurthestDistance;
@@ -38,8 +40,21 @@ public final class SimpleNavigate {
 
         thread = new Thread(() -> {
             while (running.get()) {
-                final double[] targetAngles = Angle.getAngleArray(360);
+                List<Double> targetAnglesList = new ArrayList<>();
+                for (double angle : Angle.getAngleArray(360)) {
+                    targetAnglesList.add(angle);
+                }
 
+                for (int i = 0; i < targetAnglesList.size(); i++) {
+                    double angle = targetAnglesList.get(i);
+                    if (Angle.getSmallestDifference(angle, Angle.normalizeAngle(targetDirection + 180)) < staticRestrictionZoneWidth / 2 ||
+                    Angle.getSmallestDifference(angle, dynamicRestrictionZone[0]) < dynamicRestrictionZone[1] / 2) {
+                        targetAnglesList.remove(i);
+                        i--; // Adjust the index after removal
+                    }
+                }
+
+                double[] targetAngles = targetAnglesList.stream().mapToDouble(Double::doubleValue).toArray();
                 double[] furthestDriveValues = calculateFurthestDistance(targetAngles, buffer);
                 dynamicRestrictionZone[0] = Angle.normalizeAngle(furthestDriveValues[0] +180);
 
@@ -50,7 +65,7 @@ public final class SimpleNavigate {
                         .put(new JSONObject().put("drawPath", new JSONObject().put("angle", furthestDriveValues[0]).put("distance", furthestDriveValues[1])))
                         , true);
                 try {
-                    Thread.sleep(142); //this value was carefully calibrated by π * a
+                    Thread.sleep(500); //π*a carefully calibrated this value
                 } catch (InterruptedException e) {
                     log.error("Thread interrupted. {}", e.getMessage());
                     Thread.currentThread().interrupt();
