@@ -59,7 +59,7 @@ function drawNavigationData(data) {
         } else if (entry.drawZone) {
             const {direction, width, colour} = entry.drawZone;
             
-            if (isNaN(direction) || isNaN(width) || isNaN(colour)) {
+            if (isNaN(direction) || isNaN(width) || typeof colour !== "string") {
                 console.error("Invalid drawZone values:", entry.drawZone);
                 return;
             }
