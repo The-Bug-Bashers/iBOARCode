@@ -21,8 +21,8 @@ public final class SimpleNavigate {
     private static double[] dynamicRestrictionZone = new double[]{0,0}; // stores: 0: angle, 1: width
     private static double targetDirection = 0;
 
-    private static final String staticRestrictionZoneColour = "red";
-    private static final String dynamicRestrictionZoneColour = "lila";
+    private static final String staticRestrictionZoneColour = "darkred";
+    private static final String dynamicRestrictionZoneColour = "darkmagenta";
     private static final AtomicBoolean running = new AtomicBoolean(false);
     private static volatile Thread thread = null;
     public static void start() {
