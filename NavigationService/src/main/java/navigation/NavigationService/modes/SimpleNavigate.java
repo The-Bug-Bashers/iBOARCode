@@ -42,12 +42,13 @@ public final class SimpleNavigate {
                 final double[] targetAngles = Angle.getAngleArray(360);
 
                 double[] furthestDriveValues = calculateFurthestDistance(targetAngles, buffer);
+                dynamicRestrictionZone[0] = furthestDriveValues[0];
+                
                 Motor.driveMaxDistance(furthestDriveValues[0], maxSpeed, buffer);
                 LidarNavigationDisplay.setNavigationData(buffer, new JSONArray()
+                        .put(new JSONObject().put("drawZone", new JSONObject().put("direction", Angle.normalizeAngle(targetDirection + 180)).put("width", staticRestrictionZoneWidth).put("colour", staticRestrictionZoneColour)))
+                        .put(new JSONObject().put("drawZone", new JSONObject().put("direction", dynamicRestrictionZone[0]).put("width", dynamicRestrictionZone[1]).put("colour", dynamicRestrictionZoneColour)))
                         .put(new JSONObject().put("drawPath", new JSONObject().put("angle", furthestDriveValues[0]).put("distance", furthestDriveValues[1])))
-                        .put(new JSONObject().put("drawZone", new JSONObject().put("direction", 180).put("width", staticRestrictionZoneWidth).put("colour", staticRestrictionZoneColour)))
-                        .put(new JSONObject().put("drawZone", new JSONObject().put("direction", Angle.normalizeAngle(targetDirection + 180
-                        )).put("width", staticRestrictionZoneWidth).put("colour", dynamicRestrictionZoneColour)))
                         , true);
                 try {
                     Thread.sleep(142); //this value was carefully calibrated by π * a
@@ -71,10 +72,15 @@ public final class SimpleNavigate {
                 log.error("Error stopping driving thread: {}", e.getMessage());
             }
         }
+        Motor.stopMotors();
     }
 
     public static void executeCommand(JSONObject command) {
-        running.set(command.getString("state").equals("enabled"));
+        if (command.getString("state").equals("disabled")) {
+            stop();
+            return;
+        }
+        running.set(true);
         maxSpeed = command.getDouble("maxSpeed");
         buffer = command.getDouble("bufferDistance");
         staticRestrictionZoneWidth = command.getDouble("staticRestrictionZone");
