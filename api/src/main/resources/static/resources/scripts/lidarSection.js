@@ -1,5 +1,6 @@
 let currentNavigationData;
 let currentBufferDistance = 0;
+
 document.addEventListener("DOMContentLoaded", () => {
     initialiseCanvas();
 })
@@ -77,7 +78,6 @@ function drawLidarData(data) {
         maxDistance = (Math.max(...data.map(point => parseFloat(point.distance))));
     }
     scale = Math.min(canvas.width, canvas.height) / (maxDistance * 2);
-
 
     drawBot();
 
