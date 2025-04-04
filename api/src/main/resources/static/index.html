@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-    <html lang="en">
+<html lang="en">
     <head>
         <meta charset="UTF-8">
         <title>iBOAR Control Panel</title> <!-- DO NOT CHANGE THIS! unless you also change the value in start.sh -->
         <link rel="icon" href="resources/images/BOAR-logo-trans.png">
+
         <link type="text/css" rel="stylesheet" href="general.css">
         <link type="text/css" rel="stylesheet" href="resources/stylesheets/elements/box.css">
         <link type="text/css" rel="stylesheet" href="resources/stylesheets/elements/console.css">
@@ -11,81 +12,89 @@
         <link type="text/css" rel="stylesheet" href="resources/stylesheets/motors.css">
         <link type="text/css" rel="stylesheet" href="resources/stylesheets/controls.css">
         <link type="text/css" rel="stylesheet" href="resources/stylesheets/elements/select.css">
+
         <script src="resources/scripts/lidarSection.js" defer></script>
         <script src="resources/scripts/webSocket.js" defer></script>
         <script src="general.js" defer></script>
         <script src="resources/scripts/controlsSection.js" defer></script>
+        <script src="resources/scripts/modes/RemoteControl.js" defer></script>
         <script src="resources/scripts/jsDelivr-chartLibrary.js" defer></script>
         <script src="resources/scripts/motorsSection.js" defer></script>
+
+        <script src="resources/scripts/modes/RemoteControl.js" defer></script>
+        <script src="resources/scripts/modes/MoveMotor.js" defer></script>
+        <script src="resources/scripts/modes/SimpleNavigate.js" defer></script>
+        <script src="resources/scripts/modes/DebugNavigate.js" defer></script>
+        <script src="resources/scripts/modes/Settings.js" defer></script>
     </head>
     <body>
-    <div>
-        <div id="header">
-            <h1 id="headerLogoText">i</h1><img src="resources/images/BOAR-logo-trans.png" id="logo" alt="BOAR logo">
-            <div class="inputBorder headerButtons">
-                <label class="checkbox-container">
-                    <input class="custom-checkbox" checked="" type="checkbox" id="autoRefreshCheckbox">
-                    <span class="checkmark"></span>
-                </label>
-                <p onclick="document.getElementById('autoRefreshCheckbox').click()">Auto Refresh</p>
-            </div>
-            <div class="inputBorder headerButtons">
-                <label class="checkbox-container">
-                    <input class="custom-checkbox" checked="" type="checkbox" id="motorsFocusCheckbox">
-                    <span class="checkmark"></span>
-                </label>
-                <p onclick="document.getElementById('motorsFocusCheckbox').click()">Focus Motors</p>
-            </div>
-            <div class="inputBorder headerButtons">
-                <label class="checkbox-container">
-                    <input class="custom-checkbox" checked="" type="checkbox" id="motorsEnableCheckbox">
-                    <span class="checkmark"></span>
-                </label>
-                <p onclick="document.getElementById('motorsEnableCheckbox').click()">Enable Motors</p>
-            </div>
-            <div class="inputBorder headerButtons">
-                <label class="checkbox-container">
-                    <input class="custom-checkbox" checked="" type="checkbox" id="lidarEnableCheckbox">
-                    <span class="checkmark"></span>
-                </label>
-                <p onclick="document.getElementById('lidarEnableCheckbox').click()">Enable LiDAR</p>
-            </div>
-            <p id="headerText">improved Basic Obstacle Avoidance Robot<br>by <a href="https://github.com/The-Bug-Bashers" class="link">The-Bug-Bashers</a> see code <a href="https://github.com/The-Bug-Bashers/iBOARCode" class="link">here</a></p>
-        </div>
-        <div id="content">
-            <div class="box" id="controls">
-                <h1 id="controlsHeader">Controls</h1>
-                <label>
-                    <select id="modeSelect">
-                        <option selected id="placeholder">Please select</option>
-                        <option>Remote-Control</option>
-                        <option>Move-Motor</option>
-                        <option>Simple-Navigate</option>
-                        <option>Debug-Navigate</option>
-                        <option>Settings</option>
-                    </select>
-                </label>
-                <div id="controlsContainer"><!-- Controls get inserted here --></div>
-            </div>
-            <div id="middleColumn">
-                <div class="box" id="smallDisplayBox">
-                    <h1>Motors</h1>
-                    <canvas id="combinedChart"></canvas>
+        <div>
+            <div id="header">
+                <h1 id="headerLogoText">i</h1><img src="resources/images/BOAR-logo-trans.png" id="logo" alt="BOAR logo">
+                <div class="inputBorder headerButtons">
+                    <label class="checkbox-container">
+                        <input class="custom-checkbox" checked="" type="checkbox" id="autoRefreshCheckbox">
+                        <span class="checkmark"></span>
+                    </label>
+                    <p onclick="document.getElementById('autoRefreshCheckbox').click()">Auto Refresh</p>
                 </div>
-                <div id="console" class="box">
-                    <h1>Console</h1>
-                    <div id="consoleOutput"></div>
-                    <form id="consoleTextField">
-                        <input type="text" id="consoleInput" placeholder="Enter command here" autocomplete="off">
-                        <button id="consoleSubmit" class="button">Send</button>
-                    </form>
+                <div class="inputBorder headerButtons">
+                    <label class="checkbox-container">
+                        <input class="custom-checkbox" checked="" type="checkbox" id="motorsFocusCheckbox">
+                        <span class="checkmark"></span>
+                    </label>
+                    <p onclick="document.getElementById('motorsFocusCheckbox').click()">Focus Motors</p>
+                </div>
+                <div class="inputBorder headerButtons">
+                    <label class="checkbox-container">
+                        <input class="custom-checkbox" checked="" type="checkbox" id="motorsEnableCheckbox">
+                        <span class="checkmark"></span>
+                    </label>
+                    <p onclick="document.getElementById('motorsEnableCheckbox').click()">Enable Motors</p>
+                </div>
+                <div class="inputBorder headerButtons">
+                    <label class="checkbox-container">
+                        <input class="custom-checkbox" checked="" type="checkbox" id="lidarEnableCheckbox">
+                        <span class="checkmark"></span>
+                    </label>
+                    <p onclick="document.getElementById('lidarEnableCheckbox').click()">Enable LiDAR</p>
+                </div>
+                <p id="headerText">improved Basic Obstacle Avoidance Robot<br>by <a href="https://github.com/The-Bug-Bashers" class="link">The-Bug-Bashers</a> see code <a href="https://github.com/The-Bug-Bashers/iBOARCode" class="link">here</a></p>
+            </div>
+            <div id="content">
+                <div class="box" id="controls">
+                    <h1 id="controlsHeader">Controls</h1>
+                    <label>
+                        <select id="modeSelect">
+                            <option selected id="placeholder">Please select</option>
+                            <option>Remote-Control</option>
+                            <option>Move-Motor</option>
+                            <option>Simple-Navigate</option>
+                            <option>Debug-Navigate</option>
+                            <option>Settings</option>
+                        </select>
+                    </label>
+                    <div id="controlsContainer"><!-- Controls get inserted here --></div>
+                </div>
+                <div id="middleColumn">
+                    <div class="box" id="smallDisplayBox">
+                        <h1>Motors</h1>
+                        <canvas id="combinedChart"></canvas>
+                    </div>
+                    <div id="console" class="box">
+                        <h1>Console</h1>
+                        <div id="consoleOutput"></div>
+                        <form id="consoleTextField">
+                            <input type="text" id="consoleInput" placeholder="Enter command here" autocomplete="off">
+                            <button id="consoleSubmit" class="button">Send</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="box" id="bigDisplayBox">
+                    <h1>LiDAR</h1>
+                    <canvas id="lidarCanvas"></canvas>
                 </div>
             </div>
-            <div class="box" id="bigDisplayBox">
-                <h1>LiDAR</h1>
-                <canvas id="lidarCanvas"></canvas>
-            </div>
         </div>
-    </div>
     </body>
 </html>
