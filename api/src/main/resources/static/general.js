@@ -1,28 +1,29 @@
-const botSize = 0.255; // in m
+const botSize = 0.256; // in m
+
 let canvas, lidarCtx, centerX, centerY, scale; // Variables for lidarSection.js
+let ctx, combinedChart; // Variables for motorsSection.js
 
-let ctx, combinedChart; // Variables for Chart.js
-
+// variables for settings.js
 let lockLidarZoomValue = 100;
 let lockLidarZoom = false;
 let hideMotorData = false;
 
 function adjustControlsHeight() {
-    const controlsElement = document.getElementById("controls");
-    const controlsContainer = document.getElementById("controlsContainer");
+    const controlsSection = document.getElementById("controls");
+    const controlsContent = document.getElementById("controlsContainer");
 
-    const otherElementsHeight = document.getElementById("controlsHeader").offsetHeight + document.getElementById("modeSelect").offsetHeight + convertToPx(1, "vh");
-    controlsElement.style.height = null;
-    controlsContainer.style.height = null;
-    controlsElement.querySelectorAll("*").forEach(el => el.classList.add("hidden"));
+    const otherSectionsHeight = document.getElementById("controlsHeader").offsetHeight + document.getElementById("modeSelect").offsetHeight + convertToPx(1, "vh");
+    controlsSection.style.height = null;
+    controlsContent.style.height = null;
+    controlsSection.querySelectorAll("*").forEach(element => element.classList.add("hidden"));
 
-    const intendedHeight = controlsElement.clientHeight - convertToPx(1, "em");
-    controlsElement.style.height = intendedHeight + "px";
+    const intendedHeight = controlsSection.clientHeight - convertToPx(1, "em");
+    controlsSection.style.height = intendedHeight + "px";
 
-    const intendedContainerHeight = intendedHeight - otherElementsHeight;
-    controlsContainer.style.height = intendedContainerHeight + "px";
+    const intendedContainerHeight = intendedHeight - otherSectionsHeight;
+    controlsContent.style.height = intendedContainerHeight + "px";
 
-    controlsElement.querySelectorAll("*").forEach(el => el.classList.remove("hidden"));
+    controlsSection.querySelectorAll("*").forEach(element => element.classList.remove("hidden"));
 
     calculateCanvasSize(); // recalculate canvas height after box height change
 }
@@ -50,19 +51,14 @@ function debounce(func, delay) {
 }
 
 function reloadScript(scriptSrc) {
-    // Find the existing script tag
     const oldScript = document.querySelector(`script[src="${scriptSrc}"]`);
 
-    if (oldScript) {
-        oldScript.remove(); // Remove the old script
-    }
+    if (oldScript) oldScript.remove();
 
-    // Create a new script element
     const newScript = document.createElement("script");
     newScript.src = scriptSrc;
     newScript.defer = true;
 
-    // Append the new script to the head
     document.head.appendChild(newScript);
 }
 
