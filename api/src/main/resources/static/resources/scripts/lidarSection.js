@@ -72,7 +72,7 @@ function drawNavigationData(data) {
 function drawLidarData(data) {
     let maxDistance;
     if (lockLidarZoom) {
-        maxDistance = 0.01 * lidarZoomValue;
+        maxDistance = 0.01 * lockLidarZoomValue;
     } else {
         maxDistance = (Math.max(...data.map(point => parseFloat(point.distance))));
     }

@@ -344,7 +344,7 @@ function addSettingsCode() {
     const hideMotorDataToggle = document.getElementById("hideMotorDataSettingsToggle");
 
     // Set default values
-    lockedLidarZoomInput.value = lidarZoomValue;
+    lockedLidarZoomInput.value = lockLidarZoomValue;
     enableLockedLidarZoomToggle.checked = lockLidarZoom;
     hideMotorDataToggle.checked = hideMotorData;
 
@@ -355,7 +355,7 @@ function addSettingsCode() {
 
     // Event listener for locked LiDAR zoom input
     lockedLidarZoomInput.addEventListener("input", () => {
-        lidarZoomValue = lockedLidarZoomInput.value;
+        lockLidarZoomValue = lockedLidarZoomInput.value;
     });
 
     // Event listener for hide motor data toggle
