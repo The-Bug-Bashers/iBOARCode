@@ -1,8 +1,9 @@
 :root {
     --modal-backround-color: #2b2d30;
-    --modal-backround-color-hover: #404145;
+    --hover-color: #404145;
     --modal-border-color: #43454a;
 }
+
 .box {
     background-color: var(--modal-backround-color);
     border-color: var(--modal-border-color);
@@ -13,7 +14,6 @@
     display: block;
     width: 80vw;
 }
-
 .box h1 {
     text-align: center;
     margin: 0;
@@ -22,35 +22,12 @@
 
     font-size: calc(clamp(15px, 3vw, var(--max-font-size)) + 60%);
 }
-
 .box h2 {
     text-align: left;
     color: #ffffff;
     margin: 10px 0;
 }
-
 .box h3 {
     margin: 1vh 0 0 0;
 }
 
-.box-row {
-    padding: 0.7em;
-    border-bottom: 3px solid #ffffff;
-}
-
-.box-row:last-child {
-    border-bottom: none;
-}
-
-.box-row-highlight {
-    background-color: #733556;
-    color: #6ca524;
-}
-
-.box-row-header {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 10px;
-    border-bottom: 2px solid #7589a6;
-    padding-bottom: 10px;
-}

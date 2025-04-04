@@ -51,16 +51,10 @@
 }
 
 /* Message types */
-.receivedMessage {
-    background-color: #62656a;
-}
+.receivedMessage {background-color: #62656a;}
 .sentMessage {
     background-color: #4c4d53;
     margin-left: auto;
 }
-.errorMessage {
-    background-color: #a52424;
-}
-.infoMessage {
-    background-color: #245fa3;
-}
+.errorMessage {background-color: #a52424;}
+.infoMessage {background-color: #245fa3;}

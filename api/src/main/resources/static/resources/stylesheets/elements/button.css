@@ -62,7 +62,7 @@
     user-select: none;
 }
 
-.custom-checkbox {
+.custom-checkbox { /* the real checkbox which stores the current state */
     position: absolute;
     opacity: 0;
     cursor: pointer;
@@ -70,7 +70,7 @@
     width: 0;
 }
 
-.checkmark {
+.checkmark { /* the display */
     position: absolute;
     top: 0;
     left: 0;
@@ -82,7 +82,7 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.checkmark:after {
+.checkmark:after { /* the display if checked */
     content: "";
     position: absolute;
     display: none;
@@ -105,13 +105,8 @@
 }
 
 @keyframes checkAnim {
-    0% {
-        height: 0;
-    }
-
-    100% {
-        height: 10px;
-    }
+    0% {height: 0;}
+    100% {height: 10px;}
 }
 
 .custom-checkbox:checked ~ .checkmark:after {

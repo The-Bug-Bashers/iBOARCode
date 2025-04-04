@@ -16,7 +16,7 @@ select {
 }
 
 select:hover {
-    background-color: var(--modal-backround-color-hover);
+    background-color: var(--hover-color);
 }
 
 option { /* the dropdown of the select item */
