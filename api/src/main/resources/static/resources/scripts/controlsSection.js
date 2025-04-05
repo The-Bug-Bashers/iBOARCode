@@ -41,10 +41,10 @@ function showControls(mode) {
             sendMessage(`{"command": "changeMode", "mode": "simpleNavigate"}`);
             addSimpleNavigateCode();
             break;
-            case "Debug-Navigate":
-            controlsContainer.innerHTML = getDebugNavigateContent();
-            sendMessage(`{"command": "changeMode", "mode": "debugNavigate"}`);
-            addDebugNavigationCode();
+            case "Debug-Distance":
+            controlsContainer.innerHTML = getDebugDistanceContent();
+            sendMessage(`{"command": "changeMode", "mode": "debugDistance"}`);
+            addDebugDistanceCode();
             break;
         case "Settings":
             controlsContainer.innerHTML = getSettingsContent();

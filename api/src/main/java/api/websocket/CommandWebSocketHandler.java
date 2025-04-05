@@ -70,7 +70,7 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
             case "changeMode":
                 Map<String, Object> changeModeParams = new HashMap<>();
                 changeModeParams.put("command", "changeMode");
-                changeModeParams.put("mode", Set.of("remoteControl", "moveMotor", "simpleNavigate", "debugNavigate"));
+                changeModeParams.put("mode", Set.of("remoteControl", "moveMotor", "simpleNavigate", "debugDistance"));
                 if (!verifyParams(jsonMessage, session, changeModeParams)) return;
 
                 String mode = jsonMessage.get("mode").asText();
@@ -189,23 +189,23 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
                     session.sendMessage(new TextMessage("Error: Failed to send MQTT message: " + e));
                 }
                 break;
-            case "debugNavigate":
-                Map<String, Object> debugNavigateParams = new HashMap<>();
-                debugNavigateParams.put("command", "debugNavigate");
-                debugNavigateParams.put("buffer", new int[]{0, 500});
+            case "debugDistance":
+                Map<String, Object> debugDistanceParams = new HashMap<>();
+                debugDistanceParams.put("command", "debugDistance");
+                debugDistanceParams.put("buffer", new int[]{0, 500});
                 if (jsonMessage.has("driveToMaxFrontDistance")) {
-                    debugNavigateParams.put("driveToMaxFrontDistance", Set.of("true", "false"));
-                    debugNavigateParams.put("maxSpeed", new int[]{0, 100});
+                    debugDistanceParams.put("driveToMaxFrontDistance", Set.of("true", "false"));
+                    debugDistanceParams.put("maxSpeed", new int[]{0, 100});
                 } else if (jsonMessage.has("driveToFurthestDistance")) {
-                    debugNavigateParams.put("driveToFurthestDistance", Set.of("true", "false"));
-                    debugNavigateParams.put("maxSpeed", new int[]{0, 100});
+                    debugDistanceParams.put("driveToFurthestDistance", Set.of("true", "false"));
+                    debugDistanceParams.put("maxSpeed", new int[]{0, 100});
                 } else if (jsonMessage.has("showMaxFrontDistance")) {
-                    debugNavigateParams.put("showMaxFrontDistance", Set.of("true", "false"));
+                    debugDistanceParams.put("showMaxFrontDistance", Set.of("true", "false"));
                 } else  {
-                    debugNavigateParams.put("showFurthestDistance", Set.of("true", "false"));
+                    debugDistanceParams.put("showFurthestDistance", Set.of("true", "false"));
                 }
 
-                if (!verifyParams(jsonMessage, session, debugNavigateParams)) return;
+                if (!verifyParams(jsonMessage, session, debugDistanceParams)) return;
 
                 try {
                     final String status = mqttPublisher.sendMQTTMessage(MQTT_NAVIGATION_CHANNEL, jsonMessage.toString(), 2, false);

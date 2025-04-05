@@ -1,4 +1,4 @@
-function getDebugNavigateContent() {
+function getDebugDistanceContent() {
     return `
         <h3>Max front distance</h3>
         <div class="buttonPlusLabel">
@@ -56,7 +56,7 @@ function getDebugNavigateContent() {
     `;
 }
 
-function addDebugNavigationCode() {
+function addDebugDistanceCode() {
     const showMaxFrontDistanceToggle = document.getElementById("showMaxFrontDistanceToggle");
     const driveToMaxFrontDistanceToggle = document.getElementById("driveToMaxFrontDistanceToggle");
 
@@ -77,24 +77,24 @@ function addDebugNavigationCode() {
         driveToMaxFrontDistanceToggle.checked = false;
         showFurthestDistanceToggle.checked = false;
         driveToFurthestDistanceToggle.checked = false;
-        sendMessage(`{"command": "debugNavigate", "showMaxFrontDistance": ${showMaxFrontDistanceToggle.checked}, "buffer": ${bufferInput.value}}`);
+        sendMessage(`{"command": "debugDistance", "showMaxFrontDistance": ${showMaxFrontDistanceToggle.checked}, "buffer": ${bufferInput.value}}`);
     });
     driveToMaxFrontDistanceToggle.addEventListener("change", () => {
         showMaxFrontDistanceToggle.checked = false;
         showFurthestDistanceToggle.checked = false;
         driveToFurthestDistanceToggle.checked = false;
-        sendMessage(`{"command": "debugNavigate", "driveToMaxFrontDistance": ${driveToMaxFrontDistanceToggle.checked}, "buffer": ${bufferInput.value}, "maxSpeed": ${maxSpeedInput.value}}`);
+        sendMessage(`{"command": "debugDistance", "driveToMaxFrontDistance": ${driveToMaxFrontDistanceToggle.checked}, "buffer": ${bufferInput.value}, "maxSpeed": ${maxSpeedInput.value}}`);
     });
     showFurthestDistanceToggle.addEventListener("change", () => {
         driveToMaxFrontDistanceToggle.checked = false;
         showMaxFrontDistanceToggle.checked = false;
         driveToFurthestDistanceToggle.checked = false;
-        sendMessage(`{"command": "debugNavigate", "showFurthestDistance": ${showFurthestDistanceToggle.checked}, "buffer": ${bufferInput.value}}`);
+        sendMessage(`{"command": "debugDistance", "showFurthestDistance": ${showFurthestDistanceToggle.checked}, "buffer": ${bufferInput.value}}`);
     });
     driveToFurthestDistanceToggle.addEventListener("change", () => {
         driveToMaxFrontDistanceToggle.checked = false;
         showMaxFrontDistanceToggle.checked = false;
         showFurthestDistanceToggle.checked = false;
-        sendMessage(`{"command": "debugNavigate", "driveToFurthestDistance": ${driveToFurthestDistanceToggle.checked}, "buffer": ${bufferInput.value}, "maxSpeed": ${maxSpeedInput.value}}`);
+        sendMessage(`{"command": "debugDistance", "driveToFurthestDistance": ${driveToFurthestDistanceToggle.checked}, "buffer": ${bufferInput.value}, "maxSpeed": ${maxSpeedInput.value}}`);
     });
 }
