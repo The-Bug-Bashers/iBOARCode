@@ -7,6 +7,7 @@ document.getElementById("modeSelect").addEventListener("change", (event) => {
 
     const placeholder = document.getElementById("placeholder");
     if (placeholder) placeholder.remove();
+    
 });
 
 function showControls(mode) {
@@ -47,6 +48,7 @@ function showControls(mode) {
         case "Debug-Odometry":
             controlsContainer.innerHTML = getDebugOdometryContent();
             sendMessage(`{"command": "changeMode", "mode": "debugOdometry"}`);
+            addDebugOdometryCode();
             break;
         case "Settings":
             controlsContainer.innerHTML = getSettingsContent();

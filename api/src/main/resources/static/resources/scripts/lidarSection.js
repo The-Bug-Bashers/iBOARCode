@@ -27,7 +27,7 @@ function processLidarData(data) {
 
     if (currentNavigationData) drawNavigationData(currentNavigationData);
     
-    if (mode !== "Debug-Odometry") drawLidarData(data);
+    if (showLidarData) drawLidarData(data);
 }
 
 function processNavigationData(data) {
