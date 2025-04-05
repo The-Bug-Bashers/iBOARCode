@@ -101,7 +101,7 @@ public final class SimpleNavigate {
 
         running.set(true);
         maxSpeed = command.getDouble("maxSpeed");
-        buffer = command.getDouble("bufferDistance");
+        buffer = command.getDouble("bufferDistance") * 2; // 2 times because buffer gets applied to every side of the robot
         staticRestrictionZoneWidth = command.getDouble("staticRestrictionZone");
         targetDirection = command.getDouble("targetDirection");
         dynamicRestrictionZone[1] = command.getDouble("dynamicRestrictionZone"); // set width

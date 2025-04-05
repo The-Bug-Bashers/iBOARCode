@@ -90,7 +90,7 @@ public final class DebugNavigate {
                 LidarNavigationDisplay.clearNavigationData();
                 return;
             }
-            buffer = command.getDouble("buffer");
+            buffer = command.getDouble("buffer") * 2; // 2 times because buffer gets applied to every side of the robot
             currentMode = mode.MAX_FRONT_DISTANCE;
         } else if (command.has("showFurthestDistance")) {
             Motor.stopMotors();
@@ -99,7 +99,7 @@ public final class DebugNavigate {
                 LidarNavigationDisplay.clearNavigationData();
                 return;
             }
-            buffer = command.getDouble("buffer");
+            buffer = command.getDouble("buffer") * 2; // 2 times because buffer gets applied to every side of the robot
             currentMode = mode.FURTHEST_DISTANCE;
         } else if (command.has("driveToMaxFrontDistance")) {
             if (!command.getBoolean("driveToMaxFrontDistance")) {
@@ -109,7 +109,7 @@ public final class DebugNavigate {
                 return;
             }
 
-            buffer = command.getDouble("buffer");
+            buffer = command.getDouble("buffer") * 2; // 2 times because buffer gets applied to every side of the robot
             currentMode = mode.DRIVE_MAX_FRONT_DISTANCE;
             Motor.driveMaxDistance(0.d, command.getDouble("maxSpeed"), buffer);
         } else if (command.has("driveToFurthestDistance")) {
@@ -120,7 +120,7 @@ public final class DebugNavigate {
                 return;
             }
 
-            buffer = command.getDouble("buffer");
+            buffer = command.getDouble("buffer") * 2; // 2 times because buffer gets applied to every side of the robot
             maxSpeed = command.getDouble("maxSpeed");
             currentMode = mode.DRIVE_FURTHEST_DISTANCE;
         }

@@ -26,8 +26,8 @@ function processLidarData(data) {
     lidarCtx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (currentNavigationData) drawNavigationData(currentNavigationData);
-    
     if (showLidarData) drawLidarData(data);
+    drawBot();
 }
 
 function processNavigationData(data) {
@@ -42,7 +42,9 @@ function processNavigationData(data) {
 function drawNavigationData(data) {
     data.forEach(entry => {
         if (entry.buffer) {
-            currentBufferDistance = entry.buffer.buffer * 0.01; // Convert cm to m
+            currentBufferDistance = entry.buffer.buffer * 0.01; // Convert cm to m;
+            // value is expected as 2 times the buffer distance in cm
+            
         } else if (entry.drawPath) {
             const {angle, distance} = entry.drawPath;
 
@@ -79,9 +81,7 @@ function drawLidarData(data) {
         maxDistance = (Math.max(...data.map(point => parseFloat(point.distance))));
     }
     scale = Math.min(canvas.width, canvas.height) / (maxDistance * 2);
-
-    drawBot();
-
+    
     data.forEach(point => {
         const angleDeg = parseFloat(point.angle);
         const distanceM = parseFloat(point.distance); // in meters
