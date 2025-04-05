@@ -25,6 +25,21 @@ while sudo screen -list | grep -q "API"; do
 done
 echo -e "${GREEN}Stopped API successfully!${NC}"
 
+echo -e "${BLUE}Stopping Navigation Service...${NC}"
+sudo screen -S NavigationService -X stuff "^C"
+
+echo -e "${BLUE}Waiting for Motor Controller to stop${NC}"
+NavigationServiceTimeout=10
+NavigationServiceElapsed=0
+while sudo screen -list | grep -q "NavigationService"; do
+    sleep 1
+    ((NavigationServiceElapsed+=1))
+    if [[ $NavigationServiceElapsed -ge $NavigationServiceTimeout ]]; then
+        echo -e "${RED}Failed to stop Navigation Service in $NavigationServiceTimeout seconds.${NC}"
+        exit 1
+    fi
+done
+echo -e "${GREEN}Stopped Navigation Service successfully!${NC}"
 
 echo -e "${BLUE}Stopping Motor Controller...${NC}"
 sudo screen -S MotorController -X stuff "^C"
