@@ -133,9 +133,9 @@ function addSimpleNavigateCode() {
     // Set default values
     setKnobPosition(0);
     targetDirectionInput.value = 0;
-    staticRestrictionZoneInput.value = 100;
-    dynamicRestrictionZoneInput.value = 30;
-    bufferDistanceInput.value = 5;
+    staticRestrictionZoneInput.value = 110;
+    dynamicRestrictionZoneInput.value = 60;
+    bufferDistanceInput.value = 2;
     maxSpeedInput.value = 30;
     enableToggle.checked = false;
 }
