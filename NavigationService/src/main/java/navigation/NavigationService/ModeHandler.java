@@ -7,11 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import navigation.NavigationService.modes.DebugNavigate;
+import navigation.NavigationService.modes.debugDistance;
 import navigation.NavigationService.modes.SimpleNavigate;
 import navigation.NavigationService.utils.Motor;
 
-enum NavigationModes {NOT_MANAGED_BY_NAVIGATION_CONTROLLER, SIMPLE_NAVIGATE, DEBUG_NAVIGATE}
+enum NavigationModes {NOT_MANAGED_BY_NAVIGATION_CONTROLLER, SIMPLE_NAVIGATE, DEBUG_DISTANCE}
 
 
 @Service
@@ -29,9 +29,9 @@ public class ModeHandler {
                 currentMode = NavigationModes.SIMPLE_NAVIGATE;
                 SimpleNavigate.start();
                 break;
-            case "debugNavigate":
-                currentMode = NavigationModes.DEBUG_NAVIGATE;
-                DebugNavigate.start();
+            case "debugDistance":
+                currentMode = NavigationModes.DEBUG_DISTANCE;
+                debugDistance.start();
                 break;
             default:
                 log.info("mode not managed by NavigationService. mode: {}", mode);
@@ -56,8 +56,8 @@ public class ModeHandler {
             case SIMPLE_NAVIGATE:
                 SimpleNavigate.executeCommand(command);
                 break;
-            case DEBUG_NAVIGATE:
-                DebugNavigate.executeCommand(command);
+            case DEBUG_DISTANCE:
+                debugDistance.executeCommand(command);
                 break;
             default:
                 log.error("execute method of mode: {} not found", currentMode);
@@ -69,8 +69,8 @@ public class ModeHandler {
             case SIMPLE_NAVIGATE:
                 SimpleNavigate.stop();
                 break;
-            case DEBUG_NAVIGATE:
-                DebugNavigate.stop();
+            case DEBUG_DISTANCE:
+                debugDistance.stop();
                 break;
             default:
                 log.error("stop method of mode: {} not found", mode);

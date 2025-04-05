@@ -1,7 +1,6 @@
 package navigation.NavigationService.modes;
 
 import jakarta.annotation.PostConstruct;
-import navigation.NavigationService.MQTTHandler;
 import navigation.NavigationService.utils.Angle;
 import navigation.NavigationService.utils.LidarNavigationDisplay;
 import navigation.NavigationService.utils.Motor;
@@ -20,14 +19,8 @@ import static navigation.NavigationService.utils.Lidar.calculateFurthestDistance
 import static navigation.NavigationService.utils.Lidar.calculateMaxDrivingDistance;
 
 @Component
-public final class DebugNavigate {
-    private static final Logger log = LoggerFactory.getLogger(DebugNavigate.class);
-    @Value("${mqtt.channel.navigation.data}") private String NAVIGATION_DATA_CHANNEL;
-    private static String staticNavigationDataChannel;
-    @PostConstruct
-    public void init() {
-        staticNavigationDataChannel = NAVIGATION_DATA_CHANNEL;
-    }
+public final class debugDistance {
+    private static final Logger log = LoggerFactory.getLogger(debugDistance.class);
 
     private static final double[] targetAngles = Angle.getAngleArray(360);
     private static enum mode {NONE, MAX_FRONT_DISTANCE, FURTHEST_DISTANCE, DRIVE_MAX_FRONT_DISTANCE, DRIVE_FURTHEST_DISTANCE}
