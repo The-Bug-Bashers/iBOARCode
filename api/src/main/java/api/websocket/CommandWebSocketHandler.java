@@ -70,7 +70,7 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
             case "changeMode":
                 Map<String, Object> changeModeParams = new HashMap<>();
                 changeModeParams.put("command", "changeMode");
-                changeModeParams.put("mode", Set.of("remoteControl", "moveMotor", "simpleNavigate", "debugDistance"));
+                changeModeParams.put("mode", Set.of("remoteControl", "moveMotor", "simpleNavigate", "debugDistance", "debugOdometry"));
                 if (!verifyParams(jsonMessage, session, changeModeParams)) return;
 
                 String mode = jsonMessage.get("mode").asText();
@@ -206,6 +206,21 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
                 }
 
                 if (!verifyParams(jsonMessage, session, debugDistanceParams)) return;
+
+                try {
+                    final String status = mqttPublisher.sendMQTTMessage(MQTT_NAVIGATION_CHANNEL, jsonMessage.toString(), 2, false);
+                    session.sendMessage(new TextMessage(status));
+                } catch (MqttException e) {
+                    log.error("Failed to send MQTT message", e);
+                    session.sendMessage(new TextMessage("Error: Failed to send MQTT message: " + e));
+                }
+                break;
+            case "debugOdometry":
+                Map<String, Object> debugOdometryParams = new HashMap<>();
+                debugOdometryParams.put("command", "debugOdometry");
+                    debugOdometryParams.put("action", Set.of("captureA", "captureB", "compare"));
+
+                if (!verifyParams(jsonMessage, session, debugOdometryParams)) return;
 
                 try {
                     final String status = mqttPublisher.sendMQTTMessage(MQTT_NAVIGATION_CHANNEL, jsonMessage.toString(), 2, false);

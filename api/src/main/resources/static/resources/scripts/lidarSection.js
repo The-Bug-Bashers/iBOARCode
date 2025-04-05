@@ -26,7 +26,8 @@ function processLidarData(data) {
     lidarCtx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (currentNavigationData) drawNavigationData(currentNavigationData);
-    drawLidarData(data);
+    
+    if (mode !== "Debug-Odometry") drawLidarData(data);
 }
 
 function processNavigationData(data) {

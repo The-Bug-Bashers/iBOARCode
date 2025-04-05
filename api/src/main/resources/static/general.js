@@ -1,4 +1,5 @@
 const botSize = 0.256; // in m
+let mode //stores the current controls section mode
 
 let canvas, lidarCtx, centerX, centerY, scale; // Variables for lidarSection.js
 let ctx, combinedChart; // Variables for motorsSection.js

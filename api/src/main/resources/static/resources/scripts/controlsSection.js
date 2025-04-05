@@ -1,5 +1,3 @@
-let mode;
-
 document.getElementById("modeSelect").value = "Please select";
 document.getElementById("modeSelect").addEventListener("change", (event) => {
     mode = event.target.value;
@@ -45,6 +43,10 @@ function showControls(mode) {
             controlsContainer.innerHTML = getDebugDistanceContent();
             sendMessage(`{"command": "changeMode", "mode": "debugDistance"}`);
             addDebugDistanceCode();
+            break;
+        case "Debug-Odometry":
+            controlsContainer.innerHTML = getDebugOdometryContent();
+            sendMessage(`{"command": "changeMode", "mode": "debugOdometry"}`);
             break;
         case "Settings":
             controlsContainer.innerHTML = getSettingsContent();
