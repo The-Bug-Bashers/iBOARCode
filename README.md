@@ -143,6 +143,43 @@ This returns something like
 > [!WARNING]
 > only works if the screen session of the LidarController was named correctly (LidarController)
 
-##### Stop: `sudo screen -S LidarController -X stuff "^C"`
+
+## Navigation Service (Java, Maven, Spring Boot)
+The Navigation Service is responsible for autonomus navigation.
+This is acceaved by calculating movement directions and speeds based on lidar data.
+
+### Basic information
+The Navigation Service Uses idfferent algorithms to calculate the current best heading.
+
+#### Currently supported modes:
+##### Simple Navigate
+This mode calculates the current best heading by selecting the furthes distance that is not in a restriction zone.
+
+There are 2 modes for when the next best heading should get calculated.
+Per default the next best heading is calculated 2times a second.
+If enabled, the next best heading 
+###### Restriction Zones
+**Static**
+This restriction zone is always 180°degree from the target direction and is used to prevent backtracking.
+> [!NOTE]
+> This function prevents the robot from compleating mazes where driving away from the target (in a steep angle) is required. The width of the zone cn be set to 0 but then the chances of not backtracking are slimm.
+
+**Dnamic**
+This restrictoin zone is alsways 180°degree from the current heading and prevents getting stuck in a line because the furthest distance alsways changes to the heading where the bot just came from.
+
+###  Basic commands
+##### Run: `sudo screen -S NavigationService mvn spring-boot:run`
+> [!CAUTION]
+> It is recommended that the Navigation Service is started after the MQTT broker is already running,
+> otherwise it cannot connect to the MQTT server
+
+> [!IMPORTANT]
+> It is strongly recommended to always start the screen session with the name: "NavigationService,"
+> in order for utility scripts (like stop.sh) to work correctly
+
+##### Test if LidarController is running: `sudo screen -list | grep "NavigationService"`
+This returns something like
+`1650.NavigationService (12/03/25 13:23:10) (Detached)` if the Navigation Service is running, and nothing if it is not.
 > [!WARNING]
-> only works if the screen session of the LidarController was named correctly (LidarController)
+> only works if the screen session of the Navigation Service was named correctly (NavigationService)
+##### Stop: `sudo screen -S LidarController -X stuff "^C"`
