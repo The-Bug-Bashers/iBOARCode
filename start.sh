@@ -27,7 +27,7 @@ echo -e "${GREEN}MQTT broker started successfully (is active)!${NC}"
 
 
 echo -e "${BLUE}Starting Motor Controller (C++)...${NC}"
-cd ../MotorController || { echo -e "${RED}Failed to enter 'MotorController' directory${NC}"; exit 1; }
+cd MotorController || { echo -e "${RED}Failed to enter 'MotorController' directory${NC}"; exit 1; }
 sudo screen -dmS MotorController ./MotorController # Start MotorController in a detached screen session
 
 echo -e "${BLUE}Waiting for Motor Controller to start (not terminate)${NC}"
@@ -66,7 +66,7 @@ else
 fi
 
 echo -e "${BLUE}Starting API (Java Maven Spring Boot)...${NC}"
-cd api || { echo -e "${RED}Failed to enter 'api' directory${NC}"; exit 1; }
+cd ../api || { echo -e "${RED}Failed to enter 'api' directory${NC}"; exit 1; }
 sudo screen -dmS API mvn spring-boot:run # Start Spring Boot in a detached screen session
 
 echo -e "${BLUE}Waiting for API to start (return header)${NC}"
