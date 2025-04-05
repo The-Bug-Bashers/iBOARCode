@@ -50,6 +50,7 @@ sudo apt install -y maven
 echo -e "${BLUE}Installing Maven dependencies...${NC}"
 echo -e "${BLUE}Installing API Maven dependencies...${NC}"
 (cd api && sudo mvn clean install)
+
 echo -e "${BLUE}Installing Navigation Service Maven dependencies...${NC}"
 (cd NavigationService && sudo mvn clean install)
 
@@ -75,14 +76,15 @@ sudo apt install libjsoncpp-dev -y
 read -p "Do you want the Raspberry to automatically connect to a hotspot on boot (using nmcli)? (y/n): " choice
 case "$choice" in
   y|Y )
-    echo -e "${BLUE}The Raspberry will automatically connect to:\nSSID: iBoarAccesPoint\nPassword: boarBoar\nNetwork band: 2.4GHZ${NC}"
     echo -e "${BLUE}Installing nmcli...${NC}"
     sudo apt install -y network-manager
     echo -e "${BLUE}Setting up automatic  connectivity...${NC}"
-    sudo systemctl enable NetworkManager
     sudo systemctl start NetworkManager
-    sleep 5
-    sudo nmcli device wifi connect "iBoarAccesPoint" password "boarBoar"
+    sleep 2
+    sudo nmcli device wifi connect "iBoarAccessPoint" password "boarBoar"
+    sleep 1
+    sudo systemctl enable NetworkManager
+    echo -e "${GREEN}The Raspberry will automatically connect to:\nSSID: iBoarAccessPoint\nPassword: boarBoar\nNetwork band: 2.4GHZ${NC}"
   ;;
 
   n|N ) echo -e "${BLUE}Skipping automatic hotspot connectivity.${NC}";;
