@@ -1,6 +1,7 @@
 package navigation.NavigationService.modes;
 
 import navigation.NavigationService.utils.Angle;
+import navigation.NavigationService.utils.Lidar;
 import navigation.NavigationService.utils.LidarNavigationDisplay;
 import navigation.NavigationService.utils.Motor;
 import org.json.JSONArray;
@@ -63,7 +64,7 @@ public final class SimpleNavigate {
                 LidarNavigationDisplay.setNavigationData(buffer, new JSONArray()
                         .put(new JSONObject().put("drawZone", new JSONObject().put("direction", Angle.normalizeAngle(targetDirection + 180)).put("width", staticRestrictionZoneWidth).put("colour", staticRestrictionZoneColour)))
                         .put(new JSONObject().put("drawZone", new JSONObject().put("direction", dynamicRestrictionZone[0]).put("width", dynamicRestrictionZone[1]).put("colour", dynamicRestrictionZoneColour)))
-                        .put(new JSONObject().put("drawPath", new JSONObject().put("angle", furthestDriveValues[0]).put("distance", furthestDriveValues[1])))
+                        .put(new JSONObject().put("drawPath", new JSONObject().put("angle", furthestDriveValues[0]).put("distance", Lidar.calculateMaxDrivingDistance(furthestDriveValues[0], buffer))))
                         , true);
                 try {
                     Thread.sleep(500); //π*a carefully calibrated this value
