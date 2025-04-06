@@ -18,6 +18,7 @@ public final class SimpleNavigate {
     private static final Logger log = LoggerFactory.getLogger(SimpleNavigate.class);
 
     private static double buffer = 0;
+    private static double scanBuffer = 0;
     private static double maxSpeed = 0;
     private static double staticRestrictionZoneWidth = 0;
     private static double[] dynamicRestrictionZone = new double[]{0,0}; // stores: 0: angle, 1: width
@@ -55,7 +56,7 @@ public final class SimpleNavigate {
                 }
 
                 double[] targetAngles = targetAnglesList.stream().mapToDouble(Double::doubleValue).toArray();
-                double[] furthestDriveValues = calculateFurthestDistance(targetAngles, buffer);
+                double[] furthestDriveValues = calculateFurthestDistance(targetAngles, scanBuffer);
                 dynamicRestrictionZone[0] = Angle.normalizeAngle(furthestDriveValues[0] +180);
 
                 Motor.driveMaxDistance(furthestDriveValues[0], maxSpeed, buffer);
@@ -102,6 +103,7 @@ public final class SimpleNavigate {
         running.set(true);
         maxSpeed = command.getDouble("maxSpeed");
         buffer = command.getDouble("bufferDistance") * 2; // 2 times because buffer gets applied to every side of the robot
+        scanBuffer = command.getDouble("scanBufferDistance") * 2; // 2 times because buffer gets applied to every side of the robot
         staticRestrictionZoneWidth = command.getDouble("staticRestrictionZone");
         targetDirection = command.getDouble("targetDirection");
         dynamicRestrictionZone[1] = command.getDouble("dynamicRestrictionZone"); // set width
