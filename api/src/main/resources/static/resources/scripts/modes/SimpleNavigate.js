@@ -26,7 +26,13 @@ function getSimpleNavigateContent() {
             <div class="inputPlusLabel">
                 <h4>Buffer distance (cm)</h4>
                 <div class="inputBorder">
-                    <input type="number" min="0" max="500" id="bufferDistanceSimpleNavigateInput" class="numberRange" placeholder="5" autocomplete="off">
+                    <input type="number" min="0" max="500" id="bufferDistanceSimpleNavigateInput" class="numberRange" placeholder="2" autocomplete="off">
+                </div>
+            </div>
+            <div class="inputPlusLabel">
+                <h4>Scan Buffer distance (cm)</h4>
+                <div class="inputBorder">
+                    <input type="number" min="0" max="500" id="scanBufferDistanceSimpleNavigateInput" class="numberRange" placeholder="4" autocomplete="off">
                 </div>
             </div>
             <div class="inputPlusLabel">
@@ -36,6 +42,16 @@ function getSimpleNavigateContent() {
                 </div>
             </div>
         </div>
+        <div class="buttonPlusLabel">
+            <div class="directionButtonPlusLabel">
+                <label class="checkbox-container">
+                    <input class="custom-checkbox" checked="" type="checkbox" id="recalculateIfFinishedDrivingToggle">
+                    <span class="checkmark"></span>
+                </label>
+                <p onclick="document.getElementById('recalculateIfFinishedDrivingToggle').click()">prevent recalculate heading until finished driving</p>
+            </div>
+        </div>
+        
         <div class="buttonPlusLabel">
             <div class="directionButtonPlusLabel">
                 <label class="checkbox-container">
@@ -58,7 +74,9 @@ function addSimpleNavigateCode() {
     const staticRestrictionZoneInput = document.getElementById("staticRestrictionZoneSimpleNavigateInput");
     const dynamicRestrictionZoneInput = document.getElementById("dynamicRestrictionZoneSimpleNavigateInput");
     const bufferDistanceInput = document.getElementById("bufferDistanceSimpleNavigateInput");
+    const scanBufferDistanceInput = document.getElementById("scanBufferDistanceSimpleNavigateInput");
     const maxSpeedInput = document.getElementById("maxSpeedSimpleNavigateInput");
+    const recalculateIfFinishedDrivingToggle = document.getElementById("recalculateIfFinishedDrivingToggle");
     const enableToggle = document.getElementById("enableSimpleNavigateToggle");
 
     function setKnobPosition(angle) {
@@ -122,10 +140,12 @@ function addSimpleNavigateCode() {
     function sendAPIMessage() {
         const state = enableToggle.checked ? "enabled" : "disabled";
         sendMessage(`{"command": "simpleNavigate", 
+        "recalculateIfFinishedDriving": ${recalculateIfFinishedDrivingToggle.checked}, 
         "targetDirection": ${targetDirectionInput.value}, 
         "staticRestrictionZone": ${staticRestrictionZoneInput.value}, 
         "dynamicRestrictionZone": ${dynamicRestrictionZoneInput.value}, 
         "bufferDistance": ${bufferDistanceInput.value}, 
+        "scanBufferDistance": ${scanBufferDistanceInput.value}, 
         "maxSpeed": ${maxSpeedInput.value}, 
         "state": "${state}"}`);
     }
@@ -136,6 +156,7 @@ function addSimpleNavigateCode() {
     staticRestrictionZoneInput.value = 110;
     dynamicRestrictionZoneInput.value = 60;
     bufferDistanceInput.value = 2;
+    scanBufferDistanceInput.value = 4;
     maxSpeedInput.value = 30;
     enableToggle.checked = false;
 }

@@ -172,10 +172,12 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
             case "simpleNavigate":
                 Map<String, Object> simpleNavigateParams = new HashMap<>();
                 simpleNavigateParams.put("command", "simpleNavigate");
+                simpleNavigateParams.put("recalculateIfFinishedDriving", Set.of("true", "false"));
                 simpleNavigateParams.put("targetDirection", new int[]{0, 360});
                 simpleNavigateParams.put("staticRestrictionZone", new int[]{0, 360});
                 simpleNavigateParams.put("dynamicRestrictionZone", new int[]{0, 360});
                 simpleNavigateParams.put("bufferDistance", new int[]{0, 500});
+                simpleNavigateParams.put("scanBufferDistance", new int[]{0, 500});
                 simpleNavigateParams.put("maxSpeed", new int[]{0, 100});
                 simpleNavigateParams.put("state", Set.of("enabled", "disabled"));
 
