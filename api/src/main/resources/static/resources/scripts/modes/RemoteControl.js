@@ -107,19 +107,23 @@ function addRemoteControlCode() {
     });
 
     // Event listeners for keys getting pressed and released
-    const keyState = {};
-    document.addEventListener("keydown", (event) => {
-        if (!keyState[event.key] && document.activeElement.id !== "consoleInput") {
-            keyState[event.key] = true;
-            handleKeyDown(event.key);
-        }
-    });
-    document.addEventListener("keyup", (event) => {
-        if (keyState[event.key] && document.activeElement.id !== "consoleInput") {
-            keyState[event.key] = false;
-            handleKeyUp(event.key);
-        }
-    });
+    if (!remoteControlEventListenersAdded) {
+        const keyState = {};
+        document.addEventListener("keydown", (event) => {
+            if (!keyState[event.key] && document.activeElement.id !== "consoleInput") {
+                keyState[event.key] = true;
+                handleKeyDown(event.key);
+            }
+        });
+        document.addEventListener("keyup", (event) => {
+            if (keyState[event.key] && document.activeElement.id !== "consoleInput") {
+                keyState[event.key] = false;
+                handleKeyUp(event.key);
+            }
+        });
+    }
+
+    remoteControlEventListenersAdded = true;
 }
 
 function handleKeyDown(key) {

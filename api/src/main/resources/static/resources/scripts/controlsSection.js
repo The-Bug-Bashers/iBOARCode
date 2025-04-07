@@ -1,3 +1,5 @@
+let remoteControlEventListenersAdded = false;
+
 document.getElementById("modeSelect").value = "Please select";
 document.getElementById("modeSelect").addEventListener("change", (event) => {
     mode = event.target.value;
