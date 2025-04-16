@@ -24,6 +24,7 @@ public final class SimpleNavigate {
     private static double staticRestrictionZoneWidth = 0;
     private static double[] dynamicRestrictionZone = new double[]{0,0}; // stores: 0: angle, 1: width
     private static double targetDirection = 0;
+    private static boolean waitUntilMaxDistanceIsDriven = false;
 
     private static final String staticRestrictionZoneColour = "darkred";
     private static final String dynamicRestrictionZoneColour = "darkmagenta";
@@ -108,5 +109,6 @@ public final class SimpleNavigate {
         staticRestrictionZoneWidth = command.getDouble("staticRestrictionZone");
         targetDirection = command.getDouble("targetDirection");
         dynamicRestrictionZone[1] = command.getDouble("dynamicRestrictionZone"); // set width
+        waitUntilMaxDistanceIsDriven = command.getBoolean("recalculateIfFinishedDriving");
     }
 }

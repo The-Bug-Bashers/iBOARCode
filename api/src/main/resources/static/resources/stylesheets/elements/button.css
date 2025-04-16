@@ -64,8 +64,6 @@
 
 .custom-checkbox { /* the real checkbox which stores the current state */
     position: absolute;
-    opacity: 0;
-    cursor: pointer;
     height: 0;
     width: 0;
 }
