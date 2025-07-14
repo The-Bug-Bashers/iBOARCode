@@ -91,4 +91,22 @@ case "$choice" in
   * ) echo -e "${RED}Invalid input. Setup aborted.${NC}"; exit 1;;
 esac
 
+
+SCRIPT_DIR="$(pwd)"
+SHELL_RC="$HOME/.bashrc"
+
+echo -e "${BLUE}Adding start and stop aliases to $SHELL_RC...${NC}"
+
+# Avoid duplicate entries by first removing any existing lines
+sed -i '/alias start=/d' "$SHELL_RC"
+sed -i '/alias stop=/d' "$SHELL_RC"
+
+# Append new aliases
+echo "alias start='$SCRIPT_DIR/start.sh'" >> "$SHELL_RC"
+echo "alias stop='$SCRIPT_DIR/stop.sh'" >> "$SHELL_RC"
+
+echo -e "${GREEN}Aliases added successfully.${NC}"
+
+
+
 echo -e "${GREEN}Setup complete.${NC}"
