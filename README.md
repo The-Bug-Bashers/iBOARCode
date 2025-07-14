@@ -44,6 +44,6 @@ Full setup instructions, build commands, and usage examples are provided in the 
 
 ---
 
-## CAD files and 
+## CAD files and hardware documentation
 
 If you’re interested in the robot’s hardware design, you’ll find CAD files in the [iBOARAssets](https://github.com/The-Bug-Bashers/iBOARAssets) repository.
