@@ -97,16 +97,17 @@ SHELL_RC="$HOME/.bashrc"
 
 echo -e "${BLUE}Adding start and stop aliases to $SHELL_RC...${NC}"
 
-# Avoid duplicate entries by first removing any existing lines
 sed -i '/alias start=/d' "$SHELL_RC"
 sed -i '/alias stop=/d' "$SHELL_RC"
 
-# Append new aliases
 echo "alias start='$SCRIPT_DIR/start.sh'" >> "$SHELL_RC"
 echo "alias stop='$SCRIPT_DIR/stop.sh'" >> "$SHELL_RC"
 
+source "$SHELL_RC"
 echo -e "${GREEN}Aliases added successfully.${NC}"
 
+echo -e "${BLUE}Adding execution permission to all shellscripts...${NC}"
+chmod +x *.sh
 
 
 echo -e "${GREEN}Setup complete.${NC}"
