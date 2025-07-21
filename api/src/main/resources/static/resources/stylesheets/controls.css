@@ -52,7 +52,7 @@
     }
 }
 
-#directionMoveMotorButtons {margin-top: 1vh;}
+#directionDebugMotorButtons {margin-top: 1vh;}
 
 .inputBorder {
     display: flex;

@@ -25,17 +25,17 @@ function showControls(mode) {
             addRemoteControlCode();
             break;
         case "Move-Motor":
-            controlsContainer.innerHTML = getMoveMotorContent();
+            controlsContainer.innerHTML = getDebugMotorContent();
             document.getElementById("value-1").checked = true;
             document.querySelectorAll('#controlsContainer input[type="checkbox"]').forEach(checkbox => {
                 checkbox.checked = false;
             });
-            document.getElementById("highMoveMotorInput").value = 100;
-            document.getElementById("lowMoveMotorInput").value = 0;
-            document.getElementById("timeMoveMotorInput").value = 5;
-            document.getElementById("speedMoveMotorInput").value = 50;
-            sendMessage(`{"command": "changeMode", "mode": "moveMotor"}`);
-            addMoveMotorCode();
+            document.getElementById("highDebugMotorInput").value = 100;
+            document.getElementById("lowDebugMotorInput").value = 0;
+            document.getElementById("timeDebugMotorInput").value = 5;
+            document.getElementById("speedDebugMotorInput").value = 50;
+            sendMessage(`{"command": "changeMode", "mode": "debugMotor"}`);
+            addDebugMotorCode();
             break;
         case "Simple-Navigate":
             controlsContainer.innerHTML = getSimpleNavigateContent();

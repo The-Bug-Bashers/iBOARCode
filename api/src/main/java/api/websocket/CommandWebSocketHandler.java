@@ -70,7 +70,7 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
             case "changeMode":
                 Map<String, Object> changeModeParams = new HashMap<>();
                 changeModeParams.put("command", "changeMode");
-                changeModeParams.put("mode", Set.of("remoteControl", "moveMotor", "simpleNavigate", "debugDistance", "debugOdometry"));
+                changeModeParams.put("mode", Set.of("remoteControl", "debugMotor", "simpleNavigate", "debugDistance", "debugOdometry"));
                 if (!verifyParams(jsonMessage, session, changeModeParams)) return;
 
                 String mode = jsonMessage.get("mode").asText();
@@ -87,19 +87,19 @@ public class CommandWebSocketHandler extends TextWebSocketHandler {
                     session.sendMessage(new TextMessage("Error: Failed to send MQTT message: " + e));
                 }
                 break;
-            case "moveMotor":
-                Map<String, Object> moveMotorParams = new HashMap<>();
-                moveMotorParams.put("command", "moveMotor");
-                moveMotorParams.put("motor", new int[]{1, 3});
+            case "debugMotor":
+                Map<String, Object> debugMotorParams = new HashMap<>();
+                debugMotorParams.put("command", "debugMotor");
+                debugMotorParams.put("motor", new int[]{1, 3});
                 if (jsonMessage.has("pattern")) {
-                    moveMotorParams.put("pattern", Set.of("sine", "triangle", "square", "sawtooth"));
-                    moveMotorParams.put("time", new int[]{1, 60});
-                    moveMotorParams.put("highSpeed", new int[]{-100, 100});
-                    moveMotorParams.put("lowSpeed", new int[]{-100, 100});
+                    debugMotorParams.put("pattern", Set.of("sine", "triangle", "square", "sawtooth"));
+                    debugMotorParams.put("time", new int[]{1, 60});
+                    debugMotorParams.put("highSpeed", new int[]{-100, 100});
+                    debugMotorParams.put("lowSpeed", new int[]{-100, 100});
                 } else {
-                    moveMotorParams.put("speed", new int[]{-100, 100});
+                    debugMotorParams.put("speed", new int[]{-100, 100});
                     }
-                if (!verifyParams(jsonMessage, session, moveMotorParams)) return;
+                if (!verifyParams(jsonMessage, session, debugMotorParams)) return;
 
                 try {
                     final String status = mqttPublisher.sendMQTTMessage(MQTT_MOTOR_MOVE_CHANNEL, jsonMessage.toString(), 1, true);
