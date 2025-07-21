@@ -24,7 +24,7 @@ function showControls(mode) {
             sendMessage(`{"command": "changeMode", "mode": "remoteControl"}`);
             addRemoteControlCode();
             break;
-        case "Move-Motor":
+        case "Debug-Motor":
             controlsContainer.innerHTML = getDebugMotorContent();
             document.getElementById("value-1").checked = true;
             document.querySelectorAll('#controlsContainer input[type="checkbox"]').forEach(checkbox => {
